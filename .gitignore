@@ -8,6 +8,11 @@ node_modules/
 /.svelte-kit
 /build
 
+# Generated og:image cards (scripts/og.ts) — fully reproducible from character data,
+# palette.ts and the bundled fonts. 48 binaries rewritten on every epithet reword would
+# permanently bloat clone size, so these are build output, not source.
+/static/og/
+
 # OS
 .DS_Store
 Thumbs.db
@@ -21,6 +26,9 @@ __pycache__/
 .env.*
 !.env.example
 !.env.test
+# .env itself is tracked: it holds only PUBLIC_SITE_ORIGIN, a public URL (see src/lib/site.ts).
+# Anything with actual secrets goes in .env.local or similar, which stays ignored above.
+!.env
 
 # Vite
 vite.config.js.timestamp-*

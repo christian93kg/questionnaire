@@ -8,10 +8,12 @@ import {
 	questionsForTier,
 	rank,
 	scoreQuiz,
+	sectionsForTier,
 	sortRanked
 } from './score';
 import type { Character, QuizPack, TierId } from './types';
 import { fixturePack } from '../packs/_fixture';
+import { starWars } from '../packs/star-wars';
 import { makeRng } from '../../../scripts/lib/rng';
 
 const TIERS: TierId[] = ['short', 'medium', 'long'];
@@ -308,6 +310,76 @@ describe('tier nesting', () => {
 
 		expect(mediumIds.length).toBeGreaterThan(shortIds.length);
 		expect(longIds.length).toBeGreaterThan(mediumIds.length);
+	});
+});
+
+describe('sectionsForTier', () => {
+	it('returns [] for a pack with no sections declared', () => {
+		expect(sectionsForTier(fixturePack, 'short')).toEqual([]);
+		expect(sectionsForTier(fixturePack, 'long')).toEqual([]);
+	});
+
+	it('covers every question in the tier exactly once, in contiguous, gapless, pack-declaration order', () => {
+		for (const tier of TIERS) {
+			const qs = questionsForTier(starWars, tier);
+			const sections = sectionsForTier(starWars, tier);
+
+			const declOrder = starWars.sections!.map((s) => s.id);
+			const presentIds = sections.map((s) => s.id);
+			expect(presentIds).toEqual(declOrder.filter((id) => presentIds.includes(id)));
+
+			let cursor = 0;
+			for (const s of sections) {
+				expect(s.startIndex).toBe(cursor);
+				expect(s.endIndex).toBeGreaterThan(s.startIndex);
+				expect(s.count).toBe(s.endIndex - s.startIndex);
+				for (let i = s.startIndex; i < s.endIndex; i++) {
+					expect(qs[i].section).toBe(s.id);
+				}
+				cursor = s.endIndex;
+			}
+			expect(cursor).toBe(qs.length);
+		}
+	});
+
+	it('numbers sections 1-based against a shared total, and omits a section with zero questions in this tier', () => {
+		for (const tier of TIERS) {
+			const sections = sectionsForTier(starWars, tier);
+			sections.forEach((s, i) => {
+				expect(s.index).toBe(i + 1);
+				expect(s.total).toBe(sections.length);
+			});
+		}
+		// `disclosure` (candor) has no short-tier question in the star-wars pack.
+		expect(sectionsForTier(starWars, 'short').some((s) => s.id === 'disclosure')).toBe(false);
+		expect(sectionsForTier(starWars, 'medium').some((s) => s.id === 'disclosure')).toBe(true);
+	});
+
+	it('nests: every section present in short is present in medium, and every section in medium is present in long', () => {
+		const shortIds = sectionsForTier(starWars, 'short').map((s) => s.id);
+		const mediumIds = sectionsForTier(starWars, 'medium').map((s) => s.id);
+		const longIds = sectionsForTier(starWars, 'long').map((s) => s.id);
+
+		expect(shortIds.every((id) => mediumIds.includes(id))).toBe(true);
+		expect(mediumIds.every((id) => longIds.includes(id))).toBe(true);
+		// the long tier carries every question, so it is the only tier guaranteed to show all sections
+		expect(longIds).toEqual(starWars.sections!.map((s) => s.id));
+	});
+
+	it('throws when a section is not contiguous in the given tier', () => {
+		const pack: QuizPack = {
+			...starWars,
+			sections: [
+				{ id: 'a', label: 'A' },
+				{ id: 'b', label: 'B' }
+			],
+			questions: [
+				{ ...starWars.questions[0], section: 'a' },
+				{ ...starWars.questions[1], section: 'b' },
+				{ ...starWars.questions[2], section: 'a' }
+			]
+		};
+		expect(() => sectionsForTier(pack, 'long')).toThrow(/not contiguous/);
 	});
 });
 

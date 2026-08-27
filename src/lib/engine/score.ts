@@ -9,6 +9,7 @@ import {
 	type Question,
 	type QuizPack,
 	type ScoreResult,
+	type Section,
 	type TierId
 } from './types';
 
@@ -25,6 +26,60 @@ const SIGNATURE_REFERENCE_QUESTIONS = 34;
 
 export function questionsForTier(pack: QuizPack, tier: TierId): Question[] {
 	return pack.questions.filter((q) => TIER_RANK[q.tier] <= TIER_RANK[tier]);
+}
+
+/** A `Section` resolved against one tier's question list: its contiguous slice and its
+ *  position among the sections that actually appear in that tier. */
+export interface TierSection extends Section {
+	/** Index into `questionsForTier(pack, tier)` of this section's first question. */
+	startIndex: number;
+	/** Exclusive end index into the same array. */
+	endIndex: number;
+	count: number;
+	/** 1-based position among the sections present in this tier. */
+	index: number;
+	/** How many sections are present in this tier, in total. */
+	total: number;
+}
+
+/**
+ * Sections actually present in `tier`, in `pack.sections` declaration order, each carrying
+ * the index range it occupies in `questionsForTier(pack, tier)`. Drives the interstitial
+ * screens: a pack with no `sections` declared yields `[]`, and a section with zero questions
+ * in this tier is simply absent rather than showing an empty part.
+ *
+ * Requires each section's questions to be contiguous within the tier (an authoring
+ * invariant, not a runtime one derived here) -- violating it throws rather than silently
+ * mis-numbering parts.
+ */
+export function sectionsForTier(pack: QuizPack, tier: TierId): TierSection[] {
+	const qs = questionsForTier(pack, tier);
+	const declared = pack.sections ?? [];
+
+	const out: TierSection[] = [];
+	for (const section of declared) {
+		let startIndex = -1;
+		let endIndex = -1;
+		let count = 0;
+		qs.forEach((q, i) => {
+			if (q.section !== section.id) return;
+			if (startIndex === -1) startIndex = i;
+			endIndex = i + 1;
+			count++;
+		});
+		if (count === 0) continue;
+		if (endIndex - startIndex !== count) {
+			throw new Error(
+				`section "${section.id}" is not contiguous in tier "${tier}" -- questions must be reordered so each section's questions sit together`
+			);
+		}
+		out.push({ ...section, startIndex, endIndex, count, index: 0, total: 0 });
+	}
+	out.forEach((s, i) => {
+		s.index = i + 1;
+		s.total = out.length;
+	});
+	return out;
 }
 
 /** Roster mean and sd per axis. Bootstraps calibration before the solver has run. */

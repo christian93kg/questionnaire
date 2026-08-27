@@ -7,6 +7,7 @@
  * With no packId, audits every pack under src/lib/packs.
  */
 
+import { glyphFor } from '../src/lib/engine/glyph';
 import { scoreQuiz } from '../src/lib/engine/score';
 import type { QuizPack, TierId } from '../src/lib/engine/types';
 import {
@@ -164,6 +165,80 @@ function lintReachability(pack: QuizPack): LintResult {
 	};
 }
 
+// --- 6. glyph uniqueness -----------------------------------------------------------------
+
+const GLYPH_COLS = 40;
+const GLYPH_ROWS = 20;
+
+/** Fraction of cells that differ between two equal-length glyph grids. */
+function glyphHamming(a: string[], b: string[]): number {
+	const flatA = a.join('');
+	const flatB = b.join('');
+	let diff = 0;
+	for (let i = 0; i < flatA.length; i++) if (flatA[i] !== flatB[i]) diff++;
+	return diff / flatA.length;
+}
+
+/**
+ * Every character's glyph (scripts/../src/lib/engine/glyph.ts) must be visually
+ * distinguishable from every other's, or the "each axis gets its own visual channel"
+ * design is decoration rather than a system: two characters whose axis vectors differ
+ * but whose renders don't are exactly the failure mode the orthogonal-channel design
+ * exists to prevent.
+ *
+ * Threshold picked empirically against the star-wars roster (48 characters, 1128
+ * pairs): the closest real pair (chewbacca / grogu, two "anchor" archetypes) sits at
+ * a Hamming distance of ~0.1375 of the grid's 800 cells, with the next 9 closest pairs
+ * all above 0.14. Two statistically independent grids at this generator's roster-mean
+ * ink density (~19%) would be expected to differ in ~31% of cells by chance alone
+ * (2*p*(1-p)), so 0.1375 is already a real, structurally-driven similarity rather than
+ * noise. 0.10 sits comfortably below every observed pair (>=30 cells of headroom on
+ * the closest one) while still catching a genuine near-duplicate should one be
+ * authored later -- the same headroom relationship the twins lint's 0.90 cosine
+ * ceiling has to its own closest-pair reading.
+ */
+const MIN_GLYPH_HAMMING = 0.1;
+
+function lintGlyphUniqueness(pack: QuizPack): LintResult {
+	const grids = pack.characters.map((c) => ({ id: c.id, grid: glyphFor(pack, c.id, GLYPH_COLS, GLYPH_ROWS) }));
+
+	const degenerate: string[] = [];
+	for (const { id, grid } of grids) {
+		const flat = grid.join('');
+		if (!flat.includes(' ')) degenerate.push(`${id} — entirely filled, no blank cells`);
+		else if (flat.trim() === '') degenerate.push(`${id} — entirely blank`);
+	}
+
+	const tooClose: Array<[string, string, number]> = [];
+	let closest: [string, string, number] = ['', '', Infinity];
+	for (let i = 0; i < grids.length; i++) {
+		for (let j = i + 1; j < grids.length; j++) {
+			const d = glyphHamming(grids[i].grid, grids[j].grid);
+			if (d < closest[2]) closest = [grids[i].id, grids[j].id, d];
+			if (d < MIN_GLYPH_HAMMING) tooClose.push([grids[i].id, grids[j].id, d]);
+		}
+	}
+	tooClose.sort((a, b) => a[2] - b[2]);
+
+	const pass = degenerate.length === 0 && tooClose.length === 0;
+	const details: string[] = [
+		...degenerate,
+		...tooClose.map(
+			([a, b, d]) =>
+				`${a} / ${b} — glyphs differ in only ${(d * 100).toFixed(1)}% of cells (floor ${(MIN_GLYPH_HAMMING * 100).toFixed(0)}%); one of these can't be told apart on the holoprojector`
+		)
+	];
+
+	return {
+		name: 'glyph-uniqueness',
+		pass,
+		summary: pass
+			? `all ${pack.characters.length} glyphs distinct and non-degenerate — closest pair ${closest[0]} / ${closest[1]} at ${(closest[2] * 100).toFixed(1)}% (floor ${(MIN_GLYPH_HAMMING * 100).toFixed(0)}%)`
+			: `${degenerate.length} degenerate glyph(s), ${tooClose.length} pair(s) below ${(MIN_GLYPH_HAMMING * 100).toFixed(0)}% Hamming distance`,
+		details
+	};
+}
+
 // ----------------------------------------------------------------------------------------
 
 function auditPack(pack: QuizPack): boolean {
@@ -173,7 +248,8 @@ function auditPack(pack: QuizPack): boolean {
 		lintDimensionality(pack),
 		lintTwins(pack),
 		lintGeneralists(pack),
-		lintReachability(pack)
+		lintReachability(pack),
+		lintGlyphUniqueness(pack)
 	];
 
 	const w = Math.max(...lints.map((l) => l.name.length));

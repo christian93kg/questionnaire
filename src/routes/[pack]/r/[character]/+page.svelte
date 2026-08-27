@@ -6,7 +6,9 @@
 	import { scoreQuiz } from '$lib/engine/score';
 	import { decodeResult } from '$lib/engine/share';
 	import { tap, REVEAL } from '$lib/haptics';
-	import { rarityOf, rarityLabel } from '$lib/engine/rarity';
+	import { rarityOf, rarityLabel, shareOf } from '$lib/engine/rarity';
+	import { glyphFor } from '$lib/engine/glyph';
+	import { absolute } from '$lib/site';
 	import type { ScoreResult } from '$lib/engine/types';
 
 	let { data } = $props();
@@ -47,6 +49,32 @@
 
 	const rarity = $derived(rarityOf(pack, winner.id));
 	const rarityText = $derived(rarityLabel(pack, winner.id));
+	const share = $derived(shareOf(pack, winner.id));
+	/** Derived from the winner's trait vector, so the art is the character, not decoration. */
+	const glyph = $derived(glyphFor(pack, winner.id, 44, 12).join('\n'));
+
+	// Chat crawlers do not resolve relative og:image URLs, and page.url.origin is
+	// 'http://sveltekit-prerender' at build time. absolute() supplies origin + base path.
+	const ogImage = $derived(absolute(`/og/${pack.id}/${winner.id}.png`));
+	const canonicalUrl = $derived(absolute(`/${pack.id}/r/${winner.id}/`));
+
+	/**
+	 * The bare "Question 28 — answer it differently and this reads X" was useless: you had
+	 * to retake the quiz to learn what Q28 even asked, and all three lines named the same
+	 * runner-up. Resolve the real text, and state the alternative once.
+	 */
+	const decisiveDetail = $derived.by(() => {
+		if (!result) return [];
+		const flipAt = result.decisive.findIndex((d) => d.wouldFlip && d.counterfactualWinner);
+		return result.decisive.map((d, i) => {
+			const q = pack.questions.find((x) => x.id === d.questionId);
+			return {
+				text: q?.text ?? `Question ${d.questionIndex + 1}`,
+				answer: q?.options.find((o) => o.id === d.optionId)?.text ?? '',
+				alt: i === flipAt ? (named(d.counterfactualWinner!)?.name ?? null) : null
+			};
+		});
+	});
 
 	const shareText = $derived(
 		result
@@ -94,9 +122,29 @@
 <svelte:head>
 	<title>{winner.name} — {pack.title}</title>
 	<meta name="description" content={winner.blurb} />
+
+	<!--
+		og:* uses property=, twitter:* uses name= — mixing them is the silent failure mode.
+		og:url is the blob-free canonical path so every share of a character dedupes to one
+		cached card; page.url.href would carry ?a= and defeat that.
+	-->
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content={pack.title} />
 	<meta property="og:title" content="{winner.name} — {winner.epithet}" />
 	<meta property="og:description" content={winner.blurb} />
-	<meta property="og:type" content="website" />
+	<meta property="og:url" content={canonicalUrl} />
+	<meta property="og:image" content={ogImage} />
+	<meta property="og:image:secure_url" content={ogImage} />
+	<meta property="og:image:type" content="image/png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content="{winner.name} — {winner.epithet}" />
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="{winner.name} — {winner.epithet}" />
+	<meta name="twitter:description" content={winner.blurb} />
+	<meta name="twitter:image" content={ogImage} />
+	<meta name="twitter:image:alt" content="{winner.name} — {winner.epithet}" />
 </svelte:head>
 
 {#if decoded?.status === 'superseded'}
@@ -131,9 +179,21 @@
 			<p class="filed-by">Filed by someone else. Scroll down to run your own.</p>
 		{/if}
 
+		<pre class="glyph" aria-hidden="true">{glyph}</pre>
+
 		<div class="card-body">
 			<h1 class="verdict">{winner.name}</h1>
 			<p class="epithet">{winner.epithet}</p>
+
+			<p class="meta-row">
+				{#if winner.debut}
+					<span>Introduced in {winner.debut.title} ({winner.debut.year})</span>
+				{/if}
+				{#if share !== null}
+					<span>{share < 1 ? share.toFixed(1) : Math.round(share)}% land here</span>
+				{/if}
+			</p>
+
 			<p class="body-copy">{winner.blurb}</p>
 
 			<div class="facts">
@@ -160,33 +220,39 @@
 				<p class="k">Closest to you</p>
 				<ul class="plain">
 					{#each result.crew as id}
-						<li>{named(id)?.name} — <span class="dim">{named(id)?.epithet}</span></li>
+						<li>
+							<a href="{base}/{pack.id}/r/{id}/">{named(id)?.name}</a>
+							— <span class="dim">{named(id)?.epithet}</span>
+						</li>
 					{/each}
 				</ul>
 			</section>
 
-			{#if result.opposite}
-				<section>
-					<p class="k">Furthest from you</p>
-					<p class="v">{named(result.opposite)?.name}</p>
-				</section>
-			{:else}
-				<section>
-					<p class="k">Furthest from you</p>
+			<section>
+				<p class="k">Furthest from you</p>
+				{#if result.opposite}
+					<p class="v">
+						<a href="{base}/{pack.id}/r/{result.opposite}/">{named(result.opposite)?.name}</a>
+						— <span class="dim">{named(result.opposite)?.epithet}</span>
+					</p>
+				{:else}
 					<p class="v">No true opposite. You're legible to almost everyone in this file.</p>
-				</section>
-			{/if}
+				{/if}
+			</section>
 
 			<section>
 				<p class="k">What decided it</p>
-				<ul class="plain">
-					{#each result.decisive as d}
+				<ol class="decisive">
+					{#each decisiveDetail as d}
 						<li>
-							Question {d.questionIndex + 1}{#if d.wouldFlip && d.counterfactualWinner}
-								— answer it differently and this reads {named(d.counterfactualWinner)?.name}{/if}
+							<p class="dq">{d.text}</p>
+							<p class="da">{d.answer}</p>
+							{#if d.alt}
+								<p class="dalt">Answer that one differently and this reads {d.alt}.</p>
+							{/if}
 						</li>
 					{/each}
-				</ul>
+				</ol>
 			</section>
 
 			<section>
@@ -263,6 +329,76 @@
 		border-radius: var(--radius);
 		box-shadow: var(--glow-soft);
 		overflow: hidden;
+	}
+	/* Decorative: the accessible identity is the name and epithet immediately below. */
+	.glyph {
+		margin: 0;
+		padding: var(--space-4) 0 var(--space-2);
+		font-family: var(--font-mono);
+		font-size: clamp(7px, 2.5vw, 12px);
+		line-height: 1.12;
+		text-align: center;
+		white-space: pre;
+		overflow: hidden;
+		color: var(--accent-primary);
+		text-shadow: var(--glow-text);
+		background-image: var(--scanline);
+		border-bottom: 1px solid var(--rule-hairline);
+		animation: holo-flicker 6s var(--ease) infinite;
+	}
+	.meta-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-1) var(--space-4);
+		margin: 0 0 var(--space-4);
+		font-size: var(--type-2xs);
+		letter-spacing: var(--track-label);
+		text-transform: uppercase;
+		color: var(--text-faint);
+	}
+	.decisive {
+		list-style: none;
+		counter-reset: d;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: var(--space-4);
+	}
+	.decisive li {
+		counter-increment: d;
+		padding-left: var(--space-5);
+		position: relative;
+	}
+	.decisive li::before {
+		content: counter(d, decimal-leading-zero);
+		position: absolute;
+		left: 0;
+		top: 1px;
+		font-size: var(--type-2xs);
+		color: var(--accent-primary);
+		letter-spacing: 0.08em;
+	}
+	.dq {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: var(--type-sm);
+		line-height: 1.4;
+		color: var(--text-secondary);
+		text-wrap: pretty;
+	}
+	.da {
+		margin: var(--space-1) 0 0;
+		font-size: var(--type-sm);
+		color: var(--text-primary);
+		border-left: 2px solid var(--accent-primary-dim);
+		padding-left: var(--space-3);
+	}
+	.dalt {
+		margin: var(--space-2) 0 0;
+		font-size: var(--type-2xs);
+		letter-spacing: var(--track-label);
+		text-transform: uppercase;
+		color: var(--accent-secondary);
 	}
 	.rarity {
 		color: var(--accent-primary);

@@ -119,7 +119,10 @@ npm test                  # vitest
 
 - **Live site** — [christian93kg.github.io/questionnaire](https://christian93kg.github.io/questionnaire/)
 - **Origin** — started as a single-file HTML/JS prototype; the pack/engine split, z-scored cosine scoring, calibration solver, and audit gates all came after, once "add a character" stopped being cheap enough to keep doing by hand.
-- **License** — MIT, see [`LICENSE`](LICENSE)
+- **Character art** — procedurally generated from each character's trait vector (`src/lib/engine/glyph.ts`). No third-party artwork is used or redistributed.
+- **Font** — social cards are rendered with [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono), © 2020 The JetBrains Mono Project Authors, under the SIL Open Font License 1.1. The font is aggregated with, not merged into, this project; its license travels with it in [`scripts/og/fonts/OFL.txt`](scripts/og/fonts/OFL.txt).
+- **License** — MIT, see [`LICENSE`](LICENSE). It covers this repository's code and generated assets, and grants no rights in third-party trademarks.
+- Not affiliated with, authorized, or endorsed by Lucasfilm Ltd. or The Walt Disney Company. *Star Wars* and all associated names and marks are the property of Lucasfilm Ltd., used here nominatively to identify the fictional works discussed.
 
 <div align="center">
 <br>

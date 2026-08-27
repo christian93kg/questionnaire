@@ -35,6 +35,8 @@ export interface Character {
 	/** Near-duplicates that must not appear alongside this character in a crew. */
 	eclipses?: string[];
 	era?: string[];
+	/** First appearance, for lore colour on the result card. */
+	debut?: { title: string; year: number };
 }
 
 export interface QuestionOption {
@@ -53,6 +55,18 @@ export interface Question {
 	/** Smallest tier that includes this question. Tiers are nested supersets. */
 	tier: TierId;
 	primaryAxis: AxisId;
+	/**
+	 * Themed group this question belongs to, matching a `Section.id` on the pack.
+	 * Drives the interstitial screens. Optional so a pack can skip sectioning entirely.
+	 */
+	section?: string;
+}
+
+/** A themed run of questions, shown as an interstitial before its first question. */
+export interface Section {
+	id: string;
+	label: string;
+	blurb?: string;
 }
 
 export interface QuizTier {
@@ -102,6 +116,11 @@ export interface QuizPack {
 	/** Master bank in stable order. Tier membership is a property of each question. */
 	questions: Question[];
 	tiers: QuizTier[];
+	/**
+	 * Declaration order is presentation order. Which of these actually appear depends on
+	 * the tier, since a shorter tier may not include any question from a given section.
+	 */
+	sections?: Section[];
 	signatureWeight: number;
 	calibration: PackCalibration;
 	migrations?: PackMigration[];
