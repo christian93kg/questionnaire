@@ -11,85 +11,139 @@
 	<meta property="og:description" content={pack.intro.lede[0]} />
 </svelte:head>
 
-<p class="eyebrow">{pack.intro.eyebrow} · Form {pack.formCode}</p>
-<h1>{pack.title}</h1>
-{#each pack.intro.lede as line}
-	<p class="lede">{line}</p>
-{/each}
-
-<h2>How long have you got?</h2>
-<ul class="tiers">
-	{#each pack.tiers as tier}
-		<li>
-			<a href="{base}/{pack.id}/quiz/{tier.id}/">
-				<strong>{tier.label}</strong>
-				<span class="meta">{tier.questionCount} questions · ~{tier.estMinutes} min</span>
-				<span class="blurb">{tier.blurb}</span>
-			</a>
-		</li>
+<div class="intro">
+	<p class="eyebrow">{pack.intro.eyebrow} · Form {pack.formCode}</p>
+	<h1>{pack.title}</h1>
+	{#each pack.intro.lede as line}
+		<p class="lede">{line}</p>
 	{/each}
-</ul>
+</div>
 
-<p class="fine">{pack.intro.fine}</p>
+<div class="picker">
+	<h2>Select depth of assessment</h2>
+	<ul class="tiers">
+		{#each pack.tiers as tier}
+			<li>
+				<a href="{base}/{pack.id}/quiz/{tier.id}/">
+					<span class="count">{tier.questionCount}</span>
+					<span class="detail">
+						<span class="name">{tier.label}</span>
+						<span class="meta">{tier.questionCount} questions · ~{tier.estMinutes} min</span>
+						<span class="blurb">{tier.blurb}</span>
+					</span>
+					<span class="arrow" aria-hidden="true">&rarr;</span>
+				</a>
+			</li>
+		{/each}
+	</ul>
+	<p class="fine">{pack.intro.fine}</p>
+</div>
 
 <style>
+	.intro {
+		padding: var(--space-7) 0 var(--space-6);
+	}
 	.eyebrow {
-		font-family: var(--font-mono);
-		font-size: 0.7rem;
-		letter-spacing: 0.24em;
+		font-size: var(--type-2xs);
+		letter-spacing: var(--track-label);
 		text-transform: uppercase;
-		color: var(--accent);
-		margin: 0 0 var(--space-2);
+		color: var(--text-faint);
+		margin: 0;
 	}
 	h1 {
-		font-family: var(--font-mono);
-		font-size: var(--step-3);
-		line-height: 1.05;
+		font-family: var(--font-display);
+		font-size: var(--type-3xl);
+		line-height: 1;
+		letter-spacing: var(--track-display);
+		font-weight: 700;
 		text-transform: uppercase;
-		margin: 0 0 var(--space-2);
-	}
-	h2 {
-		font-size: var(--step-1);
-		margin: var(--space-4) 0 var(--space-2);
+		text-shadow: var(--glow-text);
+		margin: var(--space-4) 0 0;
 	}
 	.lede {
-		color: var(--dim);
-		margin: 0 0 var(--space-1);
+		font-size: var(--type-base);
+		line-height: 1.5;
+		color: var(--text-secondary);
+		max-width: 34ch;
+		margin: var(--space-3) 0 0;
+		text-wrap: pretty;
+	}
+	.picker {
+		border-top: 1px solid var(--rule-hairline);
+		padding-top: var(--space-4);
+	}
+	h2 {
+		font-family: var(--font-mono);
+		font-size: var(--type-2xs);
+		font-weight: 400;
+		letter-spacing: var(--track-label);
+		text-transform: uppercase;
+		color: var(--accent-primary);
+		margin: 0 0 var(--space-3);
 	}
 	.tiers {
 		list-style: none;
 		padding: 0;
 		margin: 0;
 		display: grid;
-		gap: var(--space-1);
+		gap: var(--space-3);
 	}
 	.tiers a {
 		display: grid;
-		gap: 0.2rem;
-		padding: var(--space-2);
-		background: var(--panel);
-		border: 1px solid var(--edge);
-		border-left: 2px solid var(--edge);
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: var(--space-4);
+		padding: var(--space-4);
+		background: var(--surface-raised);
+		border: 1px solid var(--rule-hairline);
 		border-radius: var(--radius);
 		color: inherit;
 		text-decoration: none;
-		transition: border-color var(--motion-fast) var(--ease);
+		transition:
+			background var(--dur-fast) var(--ease),
+			border-color var(--dur-fast) var(--ease),
+			transform var(--dur-fast) var(--ease);
 	}
 	.tiers a:hover {
-		border-left-color: var(--accent);
+		background: var(--surface-raised-2);
+		border-color: var(--accent-primary);
+		transform: translateX(2px);
+	}
+	.tiers a:active {
+		transform: translateX(0);
+	}
+	.count {
+		font-family: var(--font-display);
+		font-size: var(--type-xl);
+		font-weight: 700;
+		color: var(--accent-primary);
+		min-width: 2.2ch;
+		text-shadow: var(--glow-text);
+	}
+	.detail {
+		display: grid;
+		gap: 3px;
+	}
+	.name {
+		font-family: var(--font-display);
+		font-size: var(--type-base);
+		font-weight: 600;
+		letter-spacing: 0.01em;
+		text-transform: uppercase;
 	}
 	.meta,
 	.blurb {
-		font-size: 0.85rem;
-		color: var(--dim);
+		font-size: var(--type-xs);
+		color: var(--text-faint);
 	}
-	.meta {
-		font-family: var(--font-mono);
+	.arrow {
+		font-size: var(--type-lg);
+		color: var(--text-faint);
 	}
 	.fine {
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		color: var(--dim);
-		margin-top: var(--space-4);
+		font-size: var(--type-xs);
+		line-height: 1.6;
+		color: var(--text-faint);
+		margin: var(--space-4) 0 0;
 	}
 </style>

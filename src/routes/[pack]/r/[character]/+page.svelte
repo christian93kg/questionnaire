@@ -6,12 +6,14 @@
 	import { scoreQuiz } from '$lib/engine/score';
 	import { decodeResult } from '$lib/engine/share';
 	import { tap, REVEAL } from '$lib/haptics';
+	import { rarityOf, rarityLabel } from '$lib/engine/rarity';
 	import type { ScoreResult } from '$lib/engine/types';
 
 	let { data } = $props();
 	const { pack, character } = data;
 
 	let toast = $state('');
+	let isShared = $state(false);
 
 	// Prerender emits the static per-character OG page; the answer blob is a client-only
 	// concern, and reading searchParams during prerender is an error by design.
@@ -30,6 +32,21 @@
 	$effect(() => {
 		if (result) tap(REVEAL);
 	});
+
+	// A shared link and your own result land on the identical URL shape, so the only
+	// distinguisher is the marker set at finish(). Absent marker reads as shared, which
+	// is the safe default: it never tells a stranger "this is you".
+	$effect(() => {
+		if (!blob) return;
+		try {
+			isShared = sessionStorage.getItem('own-result') !== blob;
+		} catch {
+			isShared = true;
+		}
+	});
+
+	const rarity = $derived(rarityOf(pack, winner.id));
+	const rarityText = $derived(rarityLabel(pack, winner.id));
 
 	const shareText = $derived(
 		result
@@ -83,16 +100,16 @@
 </svelte:head>
 
 {#if decoded?.status === 'superseded'}
-	<p class="eyebrow">Archive mismatch</p>
-	<h1>This code can't be read</h1>
+	<p class="eyebrow warn">Archive mismatch</p>
+	<h1 class="err-head">This code can't be read</h1>
 	<p class="lede">
-		It was issued against Form {pack.formCode} revision {decoded.packVersion}. That revision has been
-		superseded, and these answers can't be honestly mapped onto the current one.
+		It was issued against Form {pack.formCode} revision {decoded.packVersion}. That revision has
+		been superseded, and these answers can't be honestly mapped onto the current one.
 	</p>
 	<a class="btn" href="{base}/{pack.id}/">Take it yourself</a>
 {:else if decoded?.status === 'malformed'}
-	<p class="eyebrow">Unreadable</p>
-	<h1>That link is damaged</h1>
+	<p class="eyebrow warn">Unreadable</p>
+	<h1 class="err-head">That link is damaged</h1>
 	<p class="lede">The answer code didn't survive the trip. It may have been truncated in a chat app.</p>
 	<a class="btn" href="{base}/{pack.id}/">Take it yourself</a>
 {:else}
@@ -100,71 +117,93 @@
 		<p class="notice">Form {pack.formCode} was revised since this was issued. Reconstructed from archive.</p>
 	{/if}
 
-	<p class="eyebrow">{result ? 'Assessment complete' : 'One of 48 results'}</p>
-	<h1 class="verdict">{winner.name}</h1>
-	<p class="epithet">{winner.epithet}</p>
-	<p class="body-copy">{winner.blurb}</p>
+	<div class="card">
+		<div class="card-head">
+			<span>Disposition</span>
+			{#if rarityText}
+				<span class="rarity" class:rare={rarity === 'rare'}>{rarityText}</span>
+			{:else}
+				<span>{result ? 'Assessment complete' : `One of ${pack.characters.length} results`}</span>
+			{/if}
+		</div>
 
-	<div class="facts">
-		<div>
-			<p class="k">What you're good at</p>
-			<p class="v">{winner.strength}</p>
+		{#if result && isShared}
+			<p class="filed-by">Filed by someone else. Scroll down to run your own.</p>
+		{/if}
+
+		<div class="card-body">
+			<h1 class="verdict">{winner.name}</h1>
+			<p class="epithet">{winner.epithet}</p>
+			<p class="body-copy">{winner.blurb}</p>
+
+			<div class="facts">
+				<div>
+					<p class="k">What you're good at</p>
+					<p class="v">{winner.strength}</p>
+				</div>
+				<div>
+					<p class="k accent">Where it costs you</p>
+					<p class="v">{winner.blindspot}</p>
+				</div>
+			</div>
 		</div>
-		<div>
-			<p class="k">Where it costs you</p>
-			<p class="v warn">{winner.blindspot}</p>
-		</div>
+
+		{#if result}
+			<section class="profile-panel">
+				<div class="section-head">
+					<span>Your profile</span><span class="dim">{pack.axes.length} axes</span>
+				</div>
+				<AxisProfile axes={pack.axes} z={result.z} />
+			</section>
+
+			<section>
+				<p class="k">Closest to you</p>
+				<ul class="plain">
+					{#each result.crew as id}
+						<li>{named(id)?.name} — <span class="dim">{named(id)?.epithet}</span></li>
+					{/each}
+				</ul>
+			</section>
+
+			{#if result.opposite}
+				<section>
+					<p class="k">Furthest from you</p>
+					<p class="v">{named(result.opposite)?.name}</p>
+				</section>
+			{:else}
+				<section>
+					<p class="k">Furthest from you</p>
+					<p class="v">No true opposite. You're legible to almost everyone in this file.</p>
+				</section>
+			{/if}
+
+			<section>
+				<p class="k">What decided it</p>
+				<ul class="plain">
+					{#each result.decisive as d}
+						<li>
+							Question {d.questionIndex + 1}{#if d.wouldFlip && d.counterfactualWinner}
+								— answer it differently and this reads {named(d.counterfactualWinner)?.name}{/if}
+						</li>
+					{/each}
+				</ul>
+			</section>
+
+			<section>
+				<p class="k">Confidence</p>
+				<p class="v">{CONFIDENCE_COPY[result.confidenceBand]}</p>
+			</section>
+
+			<div class="code-row">
+				<span>{result.code}</span><span>FORM {pack.formCode}</span>
+			</div>
+		{/if}
 	</div>
 
 	{#if result}
-		<section>
-			<p class="k">Your profile</p>
-			<AxisProfile axes={pack.axes} z={result.z} />
-		</section>
-
-		<section>
-			<p class="k">Closest to you</p>
-			<ul class="plain">
-				{#each result.crew as id}
-					<li>{named(id)?.name} — <span class="dim">{named(id)?.epithet}</span></li>
-				{/each}
-			</ul>
-		</section>
-
-		{#if result.opposite}
-			<section>
-				<p class="k">Furthest from you</p>
-				<p class="v">{named(result.opposite)?.name}</p>
-			</section>
-		{:else}
-			<section>
-				<p class="k">Furthest from you</p>
-				<p class="v">No true opposite. You're legible to almost everyone in this file.</p>
-			</section>
-		{/if}
-
-		<section>
-			<p class="k">What decided it</p>
-			<ul class="plain">
-				{#each result.decisive as d}
-					<li>
-						Question {d.questionIndex + 1}{#if d.wouldFlip && d.counterfactualWinner}
-							— answer it differently and this reads {named(d.counterfactualWinner)?.name}{/if}
-					</li>
-				{/each}
-			</ul>
-		</section>
-
-		<section>
-			<p class="k">Confidence</p>
-			<p class="v">{CONFIDENCE_COPY[result.confidenceBand]}</p>
-		</section>
-
-		<div class="code"><span>Answer code</span><b>{result.code}</b></div>
-
-		<div class="btn-row">
-			<button class="btn" onclick={copy}>Copy result</button>
-			<a class="btn ghost" href="{base}/{pack.id}/">Take it yourself</a>
+		<div class="action-row">
+			<button class="btn ghost" onclick={copy}>Copy result</button>
+			<a class="btn ghost" href="{base}/{pack.id}/">Retake</a>
 		</div>
 		<p class="toast">{toast}</p>
 	{:else}
@@ -176,125 +215,213 @@
 <style>
 	.eyebrow,
 	.k {
-		font-family: var(--font-mono);
-		font-size: 0.66rem;
-		letter-spacing: 0.22em;
+		font-size: var(--type-2xs);
+		letter-spacing: var(--track-label);
 		text-transform: uppercase;
-		color: var(--dim);
+		color: var(--text-faint);
 		margin: 0 0 0.4rem;
 	}
 	.eyebrow {
-		color: var(--accent);
-		margin-bottom: var(--space-2);
+		margin: var(--space-4) 0 var(--space-2);
 	}
-	h1,
-	.verdict {
-		font-family: var(--font-mono);
-		font-size: var(--step-3);
-		line-height: 1;
+	.eyebrow.warn {
+		color: var(--accent-secondary);
+	}
+	.k.accent {
+		color: var(--accent-secondary);
+	}
+	.err-head {
+		font-family: var(--font-display);
+		font-size: var(--type-2xl);
+		line-height: 1.05;
+		letter-spacing: var(--track-display);
+		font-weight: 700;
 		text-transform: uppercase;
-		margin: 0 0 0.4rem;
-	}
-	.epithet {
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		color: var(--accent);
-		margin: 0 0 var(--space-2);
-	}
-	.body-copy,
-	.lede {
 		margin: 0 0 var(--space-3);
 	}
 	.lede {
-		color: var(--dim);
+		font-size: var(--type-base);
+		line-height: 1.5;
+		color: var(--text-secondary);
+		margin: 0 0 var(--space-3);
+		text-wrap: pretty;
+	}
+	.notice {
+		font-size: var(--type-xs);
+		line-height: 1.6;
+		color: var(--text-faint);
+		border-left: 2px solid var(--accent-primary);
+		padding: 2px 0 2px var(--space-3);
+		margin: var(--space-4) 0 0;
+	}
+
+	.card {
+		margin-top: var(--space-4);
+		background: var(--surface-raised);
+		border: 1px solid var(--rule-hairline);
+		border-top: 2px solid var(--accent-primary);
+		border-radius: var(--radius);
+		box-shadow: var(--glow-soft);
+		overflow: hidden;
+	}
+	.rarity {
+		color: var(--accent-primary);
+	}
+	.rarity.rare {
+		color: var(--accent-secondary);
+		text-shadow: var(--glow-text);
+	}
+	.filed-by {
+		margin: 0;
+		padding: var(--space-2) var(--space-4);
+		border-bottom: 1px solid var(--rule-hairline);
+		font-size: var(--type-2xs);
+		letter-spacing: var(--track-label);
+		text-transform: uppercase;
+		color: var(--text-faint);
+	}
+	.card-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: var(--space-2) var(--space-4);
+		background: var(--surface-sunk);
+		border-bottom: 1px solid var(--rule-hairline);
+		font-size: var(--type-2xs);
+		letter-spacing: var(--track-label);
+		text-transform: uppercase;
+		color: var(--text-faint);
+	}
+	.card-body {
+		padding: var(--space-5) var(--space-4) var(--space-4);
+	}
+	.verdict {
+		font-family: var(--font-display);
+		font-size: var(--type-3xl);
+		line-height: 0.9;
+		letter-spacing: -0.03em;
+		font-weight: 700;
+		text-transform: uppercase;
+		margin: 0;
+		text-shadow: var(--glow-text);
+	}
+	.epithet {
+		font-family: var(--font-display);
+		font-size: var(--type-lg);
+		font-style: italic;
+		color: var(--accent-primary);
+		margin: var(--space-2) 0 0;
+	}
+	.body-copy {
+		font-size: var(--type-base);
+		line-height: 1.55;
+		color: var(--text-primary);
+		margin: var(--space-4) 0 0;
+		text-wrap: pretty;
 	}
 	.facts {
-		border-top: 1px solid var(--edge);
-		padding-top: var(--space-2);
 		display: grid;
-		gap: var(--space-2);
-	}
-	section {
-		border-top: 1px solid var(--edge);
-		margin-top: var(--space-3);
-		padding-top: var(--space-2);
+		gap: var(--space-3);
+		margin-top: var(--space-5);
+		padding-top: var(--space-4);
+		border-top: 1px solid var(--rule-hairline);
 	}
 	.v {
-		margin: 0;
+		font-size: var(--type-sm);
+		line-height: 1.5;
+		color: var(--text-primary);
+		margin: 3px 0 0;
 	}
-	.v.warn {
-		color: var(--warn);
+
+	section {
+		padding: var(--space-4);
+		border-top: 1px solid var(--rule-hairline);
+	}
+	.profile-panel {
+		background: var(--surface-sunk);
+	}
+	.section-head {
+		display: flex;
+		justify-content: space-between;
+		font-size: var(--type-2xs);
+		letter-spacing: var(--track-label);
+		text-transform: uppercase;
+		color: var(--accent-primary);
+		margin-bottom: var(--space-3);
+	}
+	.dim {
+		color: var(--text-faint);
 	}
 	.plain {
 		list-style: none;
 		padding: 0;
-		margin: 0;
+		margin: 0.2rem 0 0;
 		display: grid;
 		gap: 0.3rem;
+		font-size: var(--type-sm);
+		color: var(--text-primary);
 	}
-	.dim {
-		color: var(--dim);
-	}
-	.notice {
-		font-family: var(--font-mono);
-		font-size: 0.7rem;
-		color: var(--dim);
-		border-left: 2px solid var(--accent);
-		padding-left: 0.7rem;
-	}
-	.code {
-		margin-top: var(--space-3);
-		border: 1px dashed var(--edge);
-		border-radius: var(--radius);
-		padding: 0.7rem 0.9rem;
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		letter-spacing: 0.14em;
-		color: var(--dim);
+	.code-row {
 		display: flex;
 		justify-content: space-between;
-		gap: 0.7rem;
-		flex-wrap: wrap;
+		align-items: baseline;
+		gap: var(--space-3);
+		padding: var(--space-3) var(--space-4);
+		border-top: 1px solid var(--rule-hairline);
+		font-size: var(--type-2xs);
+		letter-spacing: 0.08em;
+		color: var(--text-faint);
 	}
-	.code b {
-		color: var(--accent);
-		font-weight: 400;
-	}
-	.btn-row {
+
+	.action-row {
 		display: flex;
-		gap: 0.6rem;
-		flex-wrap: wrap;
-		margin-top: var(--space-3);
+		gap: var(--space-2);
+		margin-top: var(--space-4);
 	}
 	.btn {
 		display: inline-block;
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.18em;
+		text-align: center;
+		padding: var(--space-4);
+		background: color-mix(in oklch, var(--accent-primary) 14%, var(--surface-raised));
+		border: 1px solid var(--accent-primary);
+		border-radius: var(--radius);
+		font-family: var(--font-display);
+		font-size: var(--type-base);
+		font-weight: 600;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		background: var(--accent);
-		color: var(--void);
-		border: none;
-		border-radius: 2px;
-		padding: 0.85rem 1.5rem;
-		cursor: pointer;
-		font-weight: 700;
+		color: var(--text-primary);
 		text-decoration: none;
-		margin-top: var(--space-2);
+		cursor: pointer;
+		font: inherit;
+		margin-top: var(--space-4);
+	}
+	.btn:hover {
+		background: color-mix(in oklch, var(--accent-primary) 22%, var(--surface-raised));
 	}
 	.btn.ghost {
-		background: transparent;
-		color: var(--bone);
-		border: 1px solid var(--edge);
+		flex: 1;
+		margin-top: 0;
+		padding: var(--space-3);
+		background: none;
+		border: 1px solid var(--rule-hairline);
+		font-family: var(--font-mono);
+		font-size: var(--type-xs);
+		font-weight: 400;
+		letter-spacing: var(--track-label);
+		color: var(--text-secondary);
+	}
+	.btn.ghost:hover {
+		background: none;
+		border-color: var(--accent-primary);
+		color: var(--text-primary);
 	}
 	.toast {
-		font-family: var(--font-mono);
-		font-size: 0.68rem;
-		letter-spacing: 0.14em;
+		font-size: var(--type-2xs);
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--accent);
+		color: var(--accent-primary);
 		min-height: 1rem;
+		margin: var(--space-2) 0 0;
 	}
 </style>

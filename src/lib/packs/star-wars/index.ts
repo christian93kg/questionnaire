@@ -6,7 +6,7 @@ import calibration from './calibration.json';
 
 export const starWars: QuizPack = {
 	id: 'star-wars',
-	version: 1,
+	version: 2,
 	title: 'Who would you be in Star Wars?',
 	formCode: 'R-77',
 	intro: {

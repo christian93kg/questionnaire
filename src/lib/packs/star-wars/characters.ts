@@ -34,7 +34,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Padmé Amidala',
 		epithet: 'The Builder',
 		region: 'architects',
-		desiredShare: 2.2,
+		desiredShare: 2.32,
 		era: ['prequel'],
 		vector: v(85, -40, 40, 40, 75, 55, -60),
 		blurb:
@@ -47,7 +47,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Mon Mothma',
 		epithet: 'The Public Face',
 		region: 'architects',
-		desiredShare: 1.4,
+		desiredShare: 1.81,
 		era: ['andor', 'ot'],
 		vector: v(95, -75, -15, 25, 30, 65, -85),
 		blurb:
@@ -60,7 +60,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Grand Admiral Thrawn',
 		epithet: 'The Student',
 		region: 'architects',
-		desiredShare: 0.55,
+		desiredShare: 0.73,
 		era: ['rebels'],
 		vector: v(95, -25, -85, -50, -25, -30, -95),
 		blurb:
@@ -73,7 +73,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Grand Moff Tarkin',
 		epithet: 'The Instrument',
 		region: 'architects',
-		desiredShare: 0.55,
+		desiredShare: 0.68,
 		era: ['ot'],
 		vector: v(90, 60, -80, -60, -40, 70, -60),
 		blurb:
@@ -86,7 +86,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Count Dooku',
 		epithet: 'The Disappointed',
 		region: 'architects',
-		desiredShare: 0.55,
+		desiredShare: 3.42,
 		era: ['prequel', 'clone-wars'],
 		vector: v(80, 20, -55, 75, -35, 60, -50),
 		blurb:
@@ -99,7 +99,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Emperor Palpatine',
 		epithet: 'The Long Game',
 		region: 'architects',
-		desiredShare: 1.4,
+		desiredShare: 2.91,
 		era: ['prequel', 'ot'],
 		vector: v(85, -75, -75, -45, -60, 95, -70),
 		blurb:
@@ -114,7 +114,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Obi-Wan Kenobi',
 		epithet: 'The Steady Hand',
 		region: 'institutionalists',
-		desiredShare: 2.2,
+		desiredShare: 2.15,
 		era: ['prequel', 'clone-wars', 'ot'],
 		vector: v(70, 40, 45, -35, 55, -50, -80),
 		blurb:
@@ -127,7 +127,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Captain Rex',
 		epithet: 'The Good Soldier',
 		region: 'institutionalists',
-		desiredShare: 1.4,
+		desiredShare: 1.3,
 		era: ['clone-wars', 'rebels'],
 		vector: v(85, 50, 70, -45, 25, -55, -20),
 		blurb:
@@ -140,7 +140,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Mace Windu',
 		epithet: 'The Verdict',
 		region: 'institutionalists',
-		desiredShare: 1.4,
+		desiredShare: 0.53,
 		era: ['prequel', 'clone-wars'],
 		vector: v(75, 85, -40, 45, 10, -40, -25),
 		blurb:
@@ -153,7 +153,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Dedra Meero',
 		epithet: 'The Diligent',
 		region: 'institutionalists',
-		desiredShare: 0.55,
+		desiredShare: 1.13,
 		era: ['andor'],
 		vector: v(95, 15, -70, -55, 25, 80, -30),
 		blurb:
@@ -166,7 +166,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Syril Karn',
 		epithet: 'The One Who Wanted To Be Useful',
 		region: 'institutionalists',
-		desiredShare: 0.55,
+		desiredShare: 0.57,
 		era: ['andor'],
 		vector: v(75, 45, -45, -60, 85, 55, 45),
 		blurb:
@@ -179,7 +179,7 @@ export const CHARACTERS: Character[] = [
 		name: 'C-3PO',
 		epithet: 'The Worrier',
 		region: 'institutionalists',
-		desiredShare: 0.55,
+		desiredShare: 0.56,
 		era: ['prequel', 'ot'],
 		vector: v(70, 90, 55, -75, 30, -70, 85),
 		blurb:
@@ -194,7 +194,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Han Solo',
 		epithet: 'The Reluctant',
 		region: 'improvisers',
-		desiredShare: 2.2,
+		desiredShare: 2.02,
 		era: ['ot'],
 		vector: v(-85, 60, 70, 70, -25, -45, 45),
 		blurb:
@@ -207,7 +207,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Poe Dameron',
 		epithet: 'The Hotshot',
 		region: 'improvisers',
-		desiredShare: 1.4,
+		desiredShare: 1.36,
 		era: ['st'],
 		vector: v(55, 80, 50, 70, -40, -40, 80),
 		blurb:
@@ -220,7 +220,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Ezra Bridger',
 		epithet: 'The Stray',
 		region: 'improvisers',
-		desiredShare: 1.4,
+		desiredShare: 1.32,
 		era: ['rebels'],
 		vector: v(-70, -40, 75, 65, 35, 55, 60),
 		blurb:
@@ -233,7 +233,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Hondo Ohnaka',
 		epithet: 'The Opportunity',
 		region: 'improvisers',
-		desiredShare: 0.55,
+		desiredShare: 0.51,
 		era: ['clone-wars', 'rebels'],
 		vector: v(-90, 50, -40, 55, 25, 65, 60),
 		blurb:
@@ -246,7 +246,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Lando Calrissian',
 		epithet: 'The Host',
 		region: 'improvisers',
-		desiredShare: 1.4,
+		desiredShare: 1.15,
 		era: ['ot'],
 		vector: v(-40, -50, 60, 30, 40, 55, -30),
 		blurb:
@@ -259,7 +259,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Jar Jar Binks',
 		epithet: 'The Well-Meaning Catastrophe',
 		region: 'improvisers',
-		desiredShare: 0.55,
+		desiredShare: 0.48,
 		era: ['prequel'],
 		vector: v(-90, 90, 80, -45, 80, -50, 85),
 		blurb:
@@ -274,7 +274,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Cassian Andor',
 		epithet: 'The One Who Pays',
 		region: 'operators',
-		desiredShare: 2.2,
+		desiredShare: 2.0,
 		era: ['andor'],
 		vector: v(45, -60, 40, 75, -70, -20, -25),
 		blurb:
@@ -287,7 +287,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Luthen Rael',
 		epithet: "The Sunrise He Won't See",
 		region: 'operators',
-		desiredShare: 0.55,
+		desiredShare: 1.17,
 		era: ['andor'],
 		vector: v(80, -95, -65, 85, -90, 20, -35),
 		blurb:
@@ -300,7 +300,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Fennec Shand',
 		epithet: 'The Professional',
 		region: 'operators',
-		desiredShare: 0.55,
+		desiredShare: 0.61,
 		era: ['mando'],
 		vector: v(60, 45, -60, 20, -55, 50, -80),
 		blurb:
@@ -313,7 +313,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Doctor Aphra',
 		epithet: 'The Enthusiast',
 		region: 'operators',
-		desiredShare: 0.55,
+		desiredShare: 0.56,
 		era: ['ot'],
 		vector: v(-55, -40, -45, 70, 40, 60, 70),
 		blurb:
@@ -326,7 +326,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Boba Fett',
 		epithet: 'The Contract',
 		region: 'operators',
-		desiredShare: 1.4,
+		desiredShare: 0.41,
 		era: ['ot', 'mando'],
 		vector: v(-35, -50, 25, 40, -45, -20, -50),
 		blurb:
@@ -339,7 +339,7 @@ export const CHARACTERS: Character[] = [
 		name: 'K-2SO',
 		epithet: 'The Odds',
 		region: 'operators',
-		desiredShare: 0.55,
+		desiredShare: 0.36,
 		era: ['andor'],
 		vector: v(65, 95, -50, -25, -55, -60, -15),
 		blurb:
@@ -354,7 +354,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Chewbacca',
 		epithet: 'The Anchor',
 		region: 'anchors',
-		desiredShare: 1.4,
+		desiredShare: 1.33,
 		era: ['ot'],
 		vector: v(-30, -45, 90, -30, 50, -80, -40),
 		blurb:
@@ -367,7 +367,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Din Djarin',
 		epithet: 'The Code',
 		region: 'anchors',
-		desiredShare: 2.2,
+		desiredShare: 2.11,
 		era: ['mando'],
 		vector: v(45, -40, 60, -30, 15, -85, -65),
 		blurb:
@@ -380,7 +380,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Hera Syndulla',
 		epithet: 'The Captain',
 		region: 'anchors',
-		desiredShare: 1.4,
+		desiredShare: 1.46,
 		era: ['rebels'],
 		vector: v(70, 40, 70, 45, 55, -45, -60),
 		blurb:
@@ -393,7 +393,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Chirrut Îmwe',
 		epithet: 'The Faith',
 		region: 'anchors',
-		desiredShare: 1.4,
+		desiredShare: 0.47,
 		era: ['andor'],
 		vector: v(-20, 55, -40, 25, 95, -80, -55),
 		blurb:
@@ -406,7 +406,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Grogu',
 		epithet: 'The Small Weight',
 		region: 'anchors',
-		desiredShare: 1.4,
+		desiredShare: 1.32,
 		era: ['mando'],
 		vector: v(-45, -55, 85, -20, 60, -70, 45),
 		blurb:
@@ -419,7 +419,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Bodhi Rook',
 		epithet: 'The Defector',
 		region: 'anchors',
-		desiredShare: 0.55,
+		desiredShare: 0.31,
 		era: ['andor'],
 		vector: v(60, -40, 45, 40, -40, -75, 90),
 		blurb:
@@ -434,7 +434,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Ahsoka Tano',
 		epithet: 'The One Who Walked',
 		region: 'walkers',
-		desiredShare: 2.2,
+		desiredShare: 2.18,
 		era: ['clone-wars', 'rebels', 'mando'],
 		vector: v(10, 20, 25, 90, 35, -45, -50),
 		blurb:
@@ -447,7 +447,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Kanan Jarrus',
 		epithet: 'The Reluctant Teacher',
 		region: 'walkers',
-		desiredShare: 1.4,
+		desiredShare: 1.33,
 		era: ['rebels'],
 		vector: v(15, -35, 55, 60, 30, -60, -20),
 		blurb:
@@ -460,7 +460,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Rey',
 		epithet: 'The Scavenger',
 		region: 'walkers',
-		desiredShare: 2.2,
+		desiredShare: 2.07,
 		era: ['st'],
 		vector: v(40, -45, 60, 45, 75, -40, 55),
 		blurb:
@@ -473,7 +473,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Bo-Katan Kryze',
 		epithet: 'The Claim',
 		region: 'walkers',
-		desiredShare: 1.4,
+		desiredShare: 1.78,
 		era: ['clone-wars', 'mando'],
 		vector: v(75, 60, -35, 70, -40, 80, 30),
 		blurb:
@@ -488,7 +488,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Luke Skywalker',
 		epithet: 'The True Believer',
 		region: 'believers',
-		desiredShare: 2.2,
+		desiredShare: 2.18,
 		era: ['ot'],
 		vector: v(-45, 75, 85, 30, 95, -55, -30),
 		blurb:
@@ -501,7 +501,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Finn',
 		epithet: 'The One Who Ran First',
 		region: 'believers',
-		desiredShare: 1.4,
+		desiredShare: 1.33,
 		era: ['st'],
 		vector: v(-40, 85, 85, 20, -40, -60, 85),
 		blurb:
@@ -514,7 +514,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Qui-Gon Jinn',
 		epithet: 'The One Who Said No',
 		region: 'believers',
-		desiredShare: 1.4,
+		desiredShare: 0.33,
 		era: ['prequel'],
 		vector: v(40, 45, 30, 70, 80, -70, -70),
 		blurb:
@@ -529,7 +529,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Maul',
 		epithet: 'The Grudge',
 		region: 'burners',
-		desiredShare: 0.55,
+		desiredShare: 0.87,
 		era: ['prequel', 'clone-wars', 'rebels'],
 		vector: v(-40, -50, -60, 80, -75, 75, 90),
 		blurb:
@@ -542,7 +542,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Kylo Ren',
 		epithet: 'The Unfinished',
 		region: 'burners',
-		desiredShare: 0.55,
+		desiredShare: 0.67,
 		era: ['st'],
 		vector: v(-50, 55, 45, 85, -35, 85, 95),
 		blurb:
@@ -555,7 +555,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Saw Gerrera',
 		epithet: 'The One Who Went Too Far',
 		region: 'burners',
-		desiredShare: 0.55,
+		desiredShare: 0.59,
 		era: ['andor'],
 		vector: v(-25, 70, -40, 95, -60, 25, 90),
 		blurb:
@@ -568,7 +568,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Jyn Erso',
 		epithet: 'The Loose End',
 		region: 'burners',
-		desiredShare: 1.4,
+		desiredShare: 1.1,
 		era: ['andor'],
 		vector: v(-60, -55, 35, 70, -50, -25, 30),
 		blurb:
@@ -581,7 +581,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Asajj Ventress',
 		epithet: 'The Discarded',
 		region: 'burners',
-		desiredShare: 0.55,
+		desiredShare: 2.23,
 		era: ['clone-wars'],
 		vector: v(40, -55, 20, 50, -40, 25, -30),
 		blurb:
@@ -594,7 +594,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Darth Vader',
 		epithet: 'The Weight',
 		region: 'burners',
-		desiredShare: 2.2,
+		desiredShare: 2.02,
 		era: ['ot'],
 		vector: v(55, 50, 25, -60, -45, 45, 60),
 		blurb:
@@ -609,7 +609,7 @@ export const CHARACTERS: Character[] = [
 		name: 'R2-D2',
 		epithet: 'The Fixer',
 		region: 'fixers',
-		desiredShare: 1.4,
+		desiredShare: 1.22,
 		era: ['prequel', 'ot'],
 		vector: v(-55, -70, 60, 55, 45, -50, -25),
 		blurb:
@@ -635,7 +635,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Orson Krennic',
 		epithet: 'The One Who Wanted Credit',
 		region: 'fixers',
-		desiredShare: 0.55,
+		desiredShare: 0.68,
 		era: ['andor'],
 		vector: v(70, -40, -60, 45, 55, 95, 70),
 		blurb:
@@ -650,7 +650,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Leia Organa',
 		epithet: 'The One Who Holds the Line',
 		region: 'line-holders',
-		desiredShare: 2.2,
+		desiredShare: 0.25,
 		era: ['ot'],
 		vector: v(-45, 90, 60, 75, -40, 70, -60),
 		blurb:
@@ -663,7 +663,7 @@ export const CHARACTERS: Character[] = [
 		name: 'Yoda',
 		epithet: 'The Long View',
 		region: 'line-holders',
-		desiredShare: 2.2,
+		desiredShare: 1.4,
 		era: ['prequel', 'clone-wars', 'ot'],
 		vector: v(25, -65, -55, -15, 60, -70, -80),
 		blurb:

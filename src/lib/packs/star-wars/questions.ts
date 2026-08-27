@@ -80,25 +80,25 @@ export const QUESTIONS: Question[] = [
 		['Starts improvising before your brain catches up.', { volatility: 75, order: -65, hope: 25 }]
 	]),
 
-	q('natural-job', 'short', 'order', 'Your natural job on a team.', [
-		['The one with the plan.', { order: 75, ambition: 55 }],
-		['The one who fixes it when the plan dies.', { order: -70, volatility: 45, candor: -5 }],
-		['The one who brings everyone else up.', { warmth: 55, ambition: -40, hope: 45 }],
-		['The one who takes the hit.', { warmth: 30, ambition: -35, defiance: -40, candor: -20 }]
+	q('two-days-before-deadline', 'short', 'order', 'The plan falls apart two days before the deadline, mid-sprint. Someone still has to fill the gap.', [
+		['Draft the plan.', { order: 75, ambition: 55 }],
+		['Find what’s broken and patch it fast.', { order: -70, volatility: 45, candor: -5 }],
+		['Check on whoever looks like they’re about to crack.', { warmth: 55, ambition: -40, hope: 45 }],
+		['Take the worst piece. Don’t mention it.', { warmth: 30, ambition: -35, defiance: -40, candor: -20 }]
 	]),
 
-	q('rule-covering-themselves', 'short', 'defiance', 'A rule you’ve followed for years turns out to have been invented by someone covering themselves.', [
-		['Say so out loud, even though it’ll cost you.', { defiance: 95, candor: 55 }],
-		['Keep following it. Rules hold things together.', { defiance: -95, order: 50, hope: 40 }],
-		['Quietly stop, and mention it to nobody.', { candor: -45, defiance: 55, order: -45 }],
-		['Work out who benefited. Keep that.', { candor: -30, ambition: 55, hope: -65, order: 30 }]
+	q('name-comes-off-the-project', 'short', 'defiance', 'Your name comes off the project, quietly, with no explanation.', [
+		['Ask why, right there, in the chat.', { defiance: 85, candor: 60, volatility: 35 }],
+		['Let it go. It’s not worth the scene.', { defiance: -90, order: 30, volatility: -40 }],
+		['Do the work anyway. Make sure it shows.', { defiance: 20, ambition: 55, order: 35, candor: -20 }],
+		['Start looking for a project that won’t do this.', { defiance: 55, ambition: -20, hope: -40, candor: -25 }]
 	]),
 
-	q('under-everything', 'short', 'ambition', 'What you actually want, under everything else.', [
-		['To matter to the people I love.', { warmth: 70, ambition: -40, hope: 40 }],
-		['To be left alone with the few I choose.', { warmth: 15, ambition: -80, candor: -30, defiance: 45 }],
-		['To fix something bigger than me.', { ambition: 50, order: 50, hope: 80 }],
-		['To never be powerless again.', { ambition: 75, hope: -95, warmth: -40, volatility: 45 }]
+	q('sell-off-tomorrow', 'short', 'ambition', 'You can keep exactly one part of the life you’re building. Everything else is sold off tomorrow.', [
+		['Keep the people.', { warmth: 70, ambition: -40, hope: 40 }],
+		['Hold onto the ones you’d actually choose.', { warmth: 15, ambition: -80, candor: -30, defiance: 45 }],
+		['Finish the thing you’re building.', { ambition: 50, order: 50, hope: 80 }],
+		['Get the leverage. Never be caught short again.', { ambition: 75, hope: -95, warmth: -40, volatility: 45 }]
 	]),
 
 	// =========================================================== MEDIUM (10)
@@ -109,18 +109,18 @@ export const QUESTIONS: Question[] = [
 		['Refuse. Bad plans get people killed.', { order: 50, defiance: 80, candor: 30, hope: -65 }]
 	]),
 
-	q('hardest-to-forgive', 'medium', 'warmth', 'Hardest thing for you to forgive.', [
-		['Cowardice at the moment it mattered.', { warmth: -30, hope: -40, candor: 20 }],
-		['Cruelty to someone who couldn’t fight back.', { warmth: 65, defiance: 45, volatility: 40 }],
-		['Being lied to by someone who taught you.', { defiance: 75, candor: 20, warmth: 20, hope: -25 }],
-		['Wasting something rare.', { warmth: -50, ambition: 45, order: 30, hope: -10 }]
+	q('never-once-let-you-down', 'medium', 'warmth', 'Someone who’s never once let you down does, this time.', [
+		['Say it hurt, and stay anyway.', { warmth: 60, candor: 35, hope: 30 }],
+		['Go quiet. See if they notice.', { warmth: -30, candor: -40, volatility: -30 }],
+		['Cut it off, cleanly, and don’t explain why.', { warmth: -70, defiance: 40, candor: -30 }],
+		['Forgive it, and never bring it up again.', { warmth: 40, candor: -45, hope: 20 }]
 	]),
 
-	q('what-makes-it-out-loud', 'medium', 'candor', 'How much of what you’re actually thinking makes it out loud?', [
-		['All of it. People can handle it.', { candor: 55, volatility: 55 }],
-		['Most of it, edited for who’s in the room.', { candor: 25, order: 25 }],
-		['The conclusion. Not the working.', { candor: -30, order: 30, warmth: -25 }],
-		['Almost none of it. It isn’t everyone’s business.', { candor: -50, warmth: -10, volatility: -55 }]
+	q('about-to-vote-for-it-anyway', 'medium', 'candor', 'The plan is bad and everyone is about to vote for it anyway.', [
+		['Say nothing. Vote with the room.', { candor: -50, warmth: -10, volatility: -55 }],
+		['Say exactly what’s wrong with it, now.', { candor: 55, volatility: 55 }],
+		['Catch the two people after who’d actually listen.', { candor: -30, order: 30, warmth: -25 }],
+		['Flag the one part you’re sure is wrong.', { candor: 25, order: 25 }]
 	]),
 
 	q('already-decided', 'medium', 'defiance', 'You’re told the decision has already been made.', [
@@ -133,7 +133,7 @@ export const QUESTIONS: Question[] = [
 	q('junior-does-it-better', 'medium', 'ambition', 'Someone junior does something better than you would have.', [
 		['Hand them more, publicly.', { ambition: -45, warmth: 55, candor: 35 }],
 		['Note it. Watch how they handle the next one.', { ambition: 25, order: 35, candor: -35, volatility: -50 }],
-		['Feel it land, then get past it.', { candor: 25, volatility: 50, warmth: 20, hope: 25 }],
+		['Feel it land, and keep it to yourself.', { volatility: 45, warmth: 15, hope: 15 }],
 		['Work out what they know that you don’t. Learn it.', { ambition: 50, order: 30, warmth: -40 }]
 	]),
 
@@ -187,25 +187,25 @@ export const QUESTIONS: Question[] = [
 		['Assume they’re wrong about something, and find it.', { defiance: 70, ambition: 40, warmth: -35, candor: -20 }]
 	]),
 
-	q('wrong-in-public', 'long', 'candor', 'How you handle being wrong in public.', [
-		['Correct it immediately, in the same room.', { candor: 45, volatility: 15 }],
-		['Go to the people affected, one at a time.', { candor: -20, warmth: 45, order: 25 }],
-		['Let it stand. Fix the outcome without the announcement.', { candor: -50, order: 30, ambition: 25 }],
-		['Argue it out until you’re sure which of you is wrong.', { candor: 35, volatility: 55, defiance: 65 }]
+	q('wrong-number-in-the-room', 'long', 'candor', 'You give the client the wrong number, out loud, with everyone listening.', [
+		['Correct it now, in front of everyone.', { candor: 45, volatility: 15 }],
+		['Let the meeting end, then fix the number quietly.', { candor: -50, order: 30, ambition: 25 }],
+		['Pull the client aside after, and own it one-on-one.', { candor: -20, warmth: 45, order: 25 }],
+		['Argue your number was right until someone proves otherwise.', { candor: 35, volatility: 55, defiance: 65 }]
 	]),
 
 	q('not-your-business', 'long', 'warmth', 'A stranger is being treated badly and it’s genuinely not your business.', [
-		['Make it your business, immediately.', { defiance: 80, warmth: 45, volatility: 80 }],
-		['Get close enough that they know someone’s watching.', { warmth: 35, candor: -25, volatility: -40 }],
+		['Make it your business, immediately.', { defiance: 80, volatility: 80, candor: 20 }],
+		['Get close enough that they know someone’s watching.', { defiance: 20, candor: -25, volatility: -40 }],
 		['Find who’s responsible and go to them instead.', { order: 45, candor: 25, defiance: 35 }],
 		['Nothing. You’d be making it about you.', { warmth: -50, volatility: -65, candor: -20, hope: -30 }]
 	]),
 
-	q('secret-not-yours', 'long', 'candor', 'What you do with a secret that isn’t yours.', [
-		['Keep it. Forever.', { candor: -40, warmth: 35, volatility: -45 }],
-		['Keep it unless keeping it starts costing someone.', { candor: -10, order: 30, hope: 30 }],
+	q('not-theirs-to-tell', 'long', 'candor', 'Someone hands you something that was never theirs to tell — about someone who has no idea.', [
 		['Tell the person it’s about.', { candor: 55, warmth: 30, defiance: 60 }],
-		['Never mention it. Account for it in everything you do.', { candor: -30, order: 40, ambition: 35, warmth: -30 }]
+		['Keep it. It was never yours to pass on.', { candor: -40, warmth: 35, volatility: -45 }],
+		['Sit on it, unless staying quiet starts costing someone.', { candor: -10, order: 30, hope: 30 }],
+		['Never mention it. Just treat them differently now.', { candor: -30, order: 40, ambition: 35, warmth: -30 }]
 	]),
 
 	q('credit-not-yours', 'long', 'ambition', 'Somebody hands you the credit for work that was mostly someone else’s.', [
@@ -215,11 +215,11 @@ export const QUESTIONS: Question[] = [
 		['Split it publicly, whatever that costs you.', { warmth: 55, candor: 35, ambition: -45 }]
 	]),
 
-	q('stupid-rule', 'long', 'defiance', 'The rule is stupid and following it will make things worse.', [
-		['Follow it, and document exactly how it failed.', { order: 50, defiance: -95, candor: 25 }],
-		['Break it and tell no one.', { defiance: 50, candor: -50, order: -50 }],
-		['Break it and say you broke it.', { defiance: 90, candor: 45, volatility: 45 }],
-		['Get it changed, however long that takes.', { order: 45, ambition: 40, defiance: 35, hope: 55 }]
+	q('panel-about-to-reject-them', 'long', 'defiance', 'The interview panel is about to reject a candidate for a reason that has nothing to do with the job.', [
+		['Say it, right there, now.', { defiance: 80, candor: 40, volatility: 40 }],
+		['Say nothing. It’s not your call to make.', { defiance: -85, order: 35, candor: -30 }],
+		['Flag it to whoever can actually overrule it.', { defiance: 30, order: 45, ambition: 20, candor: -15 }],
+		['Vote your own way. Let the record show it.', { defiance: 60, candor: 20, order: -30 }]
 	]),
 
 	q('unexpected-hour', 'long', 'volatility', 'You get an hour back that you didn’t expect.', [
@@ -229,11 +229,11 @@ export const QUESTIONS: Question[] = [
 		['Start the thing you’ve been circling.', { order: -45, ambition: 50, hope: 60, volatility: 65 }]
 	]),
 
-	q('trust-quickly', 'long', 'hope', 'What gets someone past your guard fast.', [
-		['They said a true thing that cost them something.', { candor: 40, hope: 45, warmth: 10 }],
-		['They did what they said they’d do, twice.', { order: 50, candor: -20, hope: -30 }],
-		['They were kind when nobody was counting.', { warmth: 60, hope: 70, ambition: -30 }],
-		['Nothing does. Speed is the problem.', { hope: -90, candor: -25, order: 25, volatility: -45 }]
+	q('three-weeks-in', 'long', 'hope', 'Someone new asks to run point on something that matters. It’s been three weeks.', [
+		['Say yes — they told a costly truth.', { candor: 40, hope: 45, warmth: 10 }],
+		['Say yes. They’ve delivered, twice, exactly as promised.', { order: 50, candor: -20, hope: -30 }],
+		['Say yes. They were kind when it counted.', { warmth: 60, hope: 70, ambition: -30 }],
+		['Refuse. Speed alone proves nothing.', { hope: -90, candor: -25, order: 25, volatility: -45 }]
 	]),
 
 	q('explain-the-instinct', 'long', 'candor', 'You’re asked to explain a decision you made on instinct.', [
@@ -257,11 +257,11 @@ export const QUESTIONS: Question[] = [
 		['Only with the people who matter to you.', { candor: 25, warmth: 55, ambition: -30 }]
 	]),
 
-	q('trusted-or-effective', 'long', 'hope', 'You have to choose between being trusted and being effective.', [
-		['Trusted. Everything else is downstream of that.', { candor: 50, warmth: 45, ambition: -55 }],
-		['Effective. Results are what people actually needed.', { ambition: 55, candor: -35, hope: -40 }],
-		['Effective now, and spend years earning the trust back.', { ambition: 40, candor: -25, order: 40, hope: -60 }],
-		['Refuse the choice. It’s a false one.', { defiance: 85, hope: 90, order: 25 }]
+	q('the-follow-up-question', 'long', 'hope', 'You’re presenting the numbers. They only look good if nobody asks the follow-up question.', [
+		['Answer the follow-up before anyone asks it.', { candor: 55, hope: -30, ambition: -25 }],
+		['Let the good numbers carry the room today.', { ambition: 45, candor: -35, hope: 40 }],
+		['Answer it, but only if someone actually asks.', { candor: 15, order: 30, hope: -10 }],
+		['Push it to next quarter.', { order: 40, ambition: 30, hope: -50 }]
 	]),
 
 	q('thirty-years-from-now', 'long', 'hope', 'Thirty years from now, the thing you’d be least comfortable having someone find out.', [

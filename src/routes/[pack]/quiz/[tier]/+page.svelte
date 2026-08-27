@@ -13,6 +13,9 @@
 	let index = $state(0);
 
 	const current = $derived(questions[index]);
+	// Same rule the design applies to the stem: long stems drop a size to keep the question
+	// legible without pushing the options off-screen.
+	const long = $derived(current.text.length > 90);
 
 	function choose(option: number) {
 		tap(SELECT);
@@ -34,6 +37,14 @@
 	function finish() {
 		const result = scoreQuiz(pack, tier.id as TierId, answers);
 		const blob = encodeResult(pack, tier.id as TierId, answers, result.winner);
+		// Mark this blob as self-authored. A shared link lands on the identical URL shape,
+		// so without a marker the result page can't tell "you just finished" from
+		// "someone sent you theirs" — and those want different copy.
+		try {
+			sessionStorage.setItem('own-result', blob);
+		} catch {
+			// private mode / storage disabled: falls back to the shared-link reading
+		}
 		goto(`${base}/${pack.id}/r/${result.winner}/?a=${blob}`);
 	}
 
@@ -51,116 +62,156 @@
 <svelte:window onkeydown={onKey} />
 <svelte:head><title>{tier.label} · {pack.title}</title></svelte:head>
 
-<div class="strip" aria-hidden="true">
-	{#each questions as _, i}
-		<span class="cell" class:done={i < answers.length} class:now={i === index}></span>
-	{/each}
+<div class="progress" aria-hidden="true">
+	<div class="ticks">
+		{#each questions as _, i}
+			<span class="tick" class:done={i < index} class:now={i === index}></span>
+		{/each}
+	</div>
+	<span class="count">{String(index + 1).padStart(2, '0')} / {questions.length}</span>
 </div>
 
-<p class="qnum">
-	Question {String(index + 1).padStart(2, '0')} of {questions.length}
-</p>
-<h1 class="qtext">{current.text}</h1>
+<div class="qbody">
+	<div class="stem-wrap">
+		<p class="stem" class:long>{current.text}</p>
+	</div>
 
-<div class="opts">
-	{#each current.options as opt, n}
-		<button class="opt" onclick={() => choose(n)}>
-			<span class="key">{n + 1}</span>
-			<span>{opt.text}</span>
-		</button>
-	{/each}
+	<div class="opts">
+		{#each current.options as opt, n}
+			<button class="opt" onclick={() => choose(n)}>
+				<span class="key">{n + 1}</span>
+				<span class="text">{opt.text}</span>
+			</button>
+		{/each}
+	</div>
 </div>
 
 <div class="nav">
 	{#if index > 0}
-		<button class="back" onclick={back}>&larr; Previous</button>
+		<button class="back" onclick={back}>&larr; Back</button>
 	{:else}
-		<a class="back" href="{base}/{pack.id}/">&larr; Start over</a>
+		<a class="back" href="{base}/{pack.id}/">&larr; Back</a>
 	{/if}
-	<span class="hint">Keys 1&ndash;4</span>
+	<span class="hint">Keys 1&ndash;4 · Backspace back</span>
 </div>
 
 <style>
-	.strip {
+	.progress {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		padding: var(--space-4) 0 var(--space-2);
+	}
+	.ticks {
+		flex: 1;
 		display: flex;
 		gap: 3px;
-		margin-bottom: var(--space-3);
 	}
-	.cell {
+	.tick {
 		flex: 1;
-		height: 5px;
-		background: var(--panel-hi);
-		transition: background var(--motion-fast) var(--ease);
+		height: 3px;
+		background: color-mix(in oklch, var(--accent-primary) 18%, transparent);
+		transition: background var(--dur-fast) var(--ease);
 	}
-	.cell.done,
-	.cell.now {
-		background: var(--accent);
+	.tick.done {
+		background: var(--accent-primary);
 	}
-	.qnum {
-		font-family: var(--font-mono);
-		font-size: 0.7rem;
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
-		color: var(--dim);
-		margin: 0 0 var(--space-1);
+	.tick.now {
+		background: var(--text-primary);
 	}
-	.qtext {
-		font-size: var(--step-2);
-		line-height: 1.3;
+	.count {
+		font-size: var(--type-2xs);
+		letter-spacing: 0.1em;
+		color: var(--text-faint);
+		white-space: nowrap;
+	}
+	.qbody {
+		min-height: 52vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+	}
+	.stem-wrap {
+		padding-top: var(--space-4);
+	}
+	.stem {
+		font-family: var(--font-display);
 		font-weight: 600;
-		margin: 0 0 var(--space-3);
+		letter-spacing: var(--track-display);
+		color: var(--text-primary);
+		margin: 0;
+		text-wrap: pretty;
+		font-size: var(--type-xl);
+		line-height: 1.18;
+	}
+	.stem.long {
+		font-size: var(--type-lg);
+		line-height: 1.28;
 	}
 	.opts {
 		display: grid;
-		gap: 0.6rem;
+		gap: var(--space-2);
+		margin-top: var(--space-5);
 	}
 	.opt {
-		display: flex;
-		gap: 0.9rem;
-		align-items: flex-start;
-		text-align: left;
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: var(--space-3);
+		align-items: start;
 		width: 100%;
-		background: var(--panel-hi);
-		border: 1px solid transparent;
-		border-left: 2px solid var(--edge);
+		padding: var(--space-3) var(--space-4);
+		min-height: 52px;
+		background: var(--surface-raised);
+		border: 1px solid var(--rule-hairline);
+		border-left: 2px solid var(--accent-primary-dim);
 		border-radius: var(--radius);
-		color: var(--bone);
-		font: inherit;
-		padding: 0.9rem 1rem;
-		cursor: pointer;
-		transition: border-color var(--motion-fast) var(--ease);
+		transition:
+			background var(--dur-fast) var(--ease),
+			border-left-color var(--dur-fast) var(--ease);
 	}
 	.opt:hover {
-		border-left-color: var(--accent);
+		background: var(--surface-raised-2);
+		border-left-color: var(--accent-primary);
+	}
+	.opt:active {
+		background: color-mix(in oklch, var(--accent-primary) 16%, var(--surface-raised));
 	}
 	.key {
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		color: var(--dim);
-		padding-top: 0.2rem;
+		font-size: var(--type-2xs);
+		color: var(--text-faint);
+		line-height: 1.75;
+		min-width: 1ch;
+	}
+	.text {
+		font-family: var(--font-display);
+		font-size: var(--type-base);
+		line-height: 1.35;
+		color: var(--text-primary);
+		text-wrap: pretty;
 	}
 	.nav {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-top: var(--space-2);
-	}
-	.back,
-	.hint {
-		font-family: var(--font-mono);
-		font-size: 0.7rem;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: var(--dim);
+		margin-top: var(--space-5);
+		padding-top: var(--space-3);
+		border-top: 1px solid var(--rule-hairline);
 	}
 	.back {
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 0.4rem 0;
-		text-decoration: none;
+		font-size: var(--type-xs);
+		letter-spacing: var(--track-label);
+		text-transform: uppercase;
+		color: var(--text-faint);
+		padding: var(--space-2) 0;
+		border-bottom: none;
 	}
 	.back:hover {
-		color: var(--accent);
+		color: var(--text-primary);
+	}
+	.hint {
+		font-size: var(--type-2xs);
+		letter-spacing: 0.08em;
+		color: var(--text-faint);
+		white-space: nowrap;
 	}
 </style>
