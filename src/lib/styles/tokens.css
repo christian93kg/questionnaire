@@ -1,0 +1,67 @@
+/*
+ * PLACEHOLDER TOKENS — awaiting the frontend-design pass.
+ *
+ * Seeded from the original prototype so the skeleton is legible. Every value here is
+ * expected to be replaced wholesale. Components must reference these custom properties
+ * and never hardcode a colour, size, or timing, so the design drop-in touches only this
+ * file plus component markup.
+ */
+:root {
+	--void: #14181d;
+	--panel: #1e242b;
+	--panel-hi: #2b333c;
+	--edge: #39424d;
+	--bone: #e2dcce;
+	--dim: #828b95;
+	--accent: #f0a93b;
+	--warn: #e8b9b0;
+
+	--font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+	--font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+	--step-0: 1rem;
+	--step-1: 1.25rem;
+	--step-2: 1.75rem;
+	--step-3: 2.5rem;
+
+	--space-1: 0.5rem;
+	--space-2: 1rem;
+	--space-3: 1.75rem;
+	--space-4: 2.75rem;
+
+	--radius: 3px;
+	--measure: 42rem;
+
+	--motion-fast: 140ms;
+	--motion-slow: 500ms;
+	--ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background: var(--void);
+	color: var(--bone);
+	font-family: var(--font-sans);
+	font-size: var(--step-0);
+	line-height: 1.55;
+	-webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+}

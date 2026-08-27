@@ -1,0 +1,18 @@
+{
+	// The build tooling and the packs are plain TypeScript and must typecheck without a
+	// `svelte-kit sync` having run. The app itself stays on ./tsconfig.json.
+	"compilerOptions": {
+		"strict": true,
+		"module": "esnext",
+		"target": "es2022",
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"noEmit": true,
+		"types": ["node"],
+		"verbatimModuleSyntax": true,
+		// Mirrors the $lib alias SvelteKit injects, so packs can import either way.
+		"paths": { "$lib": ["./src/lib"], "$lib/*": ["./src/lib/*"] }
+	},
+	"include": ["scripts/**/*.ts", "src/lib/engine/**/*.ts", "src/lib/packs/**/*.ts", "vitest.config.ts"]
+}

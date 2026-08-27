@@ -1,0 +1,64 @@
+{
+	"mean": {
+		"resolve": -14.166666666666666,
+		"candor": -26.25,
+		"order": -15.833333333333334,
+		"warmth": -25.833333333333332,
+		"risk": -24.166666666666668
+	},
+	"sd": {
+		"resolve": 54.95579031265849,
+		"candor": 50.04685304791901,
+		"order": 59.365861869895866,
+		"warmth": 45.72714972772983,
+		"risk": 59.7854961972848
+	},
+	"axisWeight": {
+		"resolve": 1,
+		"candor": 1,
+		"order": 1,
+		"warmth": 1,
+		"risk": 1
+	},
+	"gravity": {
+		"sentinel": 1.60284,
+		"archivist": 1.195099,
+		"auditor": 0.69028,
+		"drifter": 1.391233,
+		"hearthkeeper": 1.314613,
+		"quartermaster": 0.827905,
+		"ghost": 1.269397,
+		"freelancer": 1.49687,
+		"provocateur": 0.887421,
+		"confessor": 0.749877,
+		"understudy": 1.803778,
+		"champion": 0.667467
+	},
+	"marginScale": {
+		"short": 0.058631,
+		"medium": 0.056756,
+		"long": 0.05445
+	},
+	"simulations": 200000,
+	"generatedAt": "2026-08-27T22:12:43.062Z",
+	"audit": {
+		"winRate": {
+			"sentinel": 0.080555,
+			"archivist": 0.079375,
+			"auditor": 0.056435,
+			"drifter": 0.112455,
+			"hearthkeeper": 0.08052,
+			"quartermaster": 0.064715,
+			"ghost": 0.04707,
+			"freelancer": 0.080905,
+			"provocateur": 0.096635,
+			"confessor": 0.08089,
+			"understudy": 0.05925,
+			"champion": 0.161195
+		},
+		"unreachable": [],
+		"maxAxisCorrelation": 0.184443,
+		"effectiveDimensions": 4.79712,
+		"twins": []
+	}
+}
