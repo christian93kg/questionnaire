@@ -24,8 +24,11 @@ const ROUNDS = 16;
 const ETA = 0.18;
 /** Geometric mean of the last TAIL rounds. This is what kills the residual oscillation. */
 const TAIL = 5;
-const GRAVITY_MIN = 0.65;
-const GRAVITY_MAX = 1.9;
+// Overridable for clamp sweeps only. The committed defaults are the tuned values;
+// GRAVITY_MIN/GRAVITY_MAX env vars exist so the bounds can be swept against a real
+// roster without editing constants, since these were tuned on a synthetic one.
+const GRAVITY_MIN = Number(process.env.GRAVITY_MIN ?? 0.65);
+const GRAVITY_MAX = Number(process.env.GRAVITY_MAX ?? 1.9);
 const DEFAULT_N = 200_000;
 const QUICK_N = 20_000;
 /** Gravity is solved against the full question set; short/medium are reported, not fitted. */
