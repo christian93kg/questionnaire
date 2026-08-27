@@ -14,5 +14,20 @@ import { PUBLIC_SITE_ORIGIN } from '$env/static/public';
  */
 export const SITE_ORIGIN = PUBLIC_SITE_ORIGIN;
 
-/** Build an absolute, shareable URL for a site-relative path (e.g. `/star-wars/r/vader/`). */
-export const absolute = (path: string) => `${SITE_ORIGIN}${base}${path}`;
+/**
+ * Build an absolute, shareable URL for a site-relative path (e.g. `/star-wars/r/vader/`).
+ *
+ * Guard: SvelteKit's `paths.relative` defaults to true, which makes `base` render as
+ * `../..` in prerendered output — fine for navigation, catastrophic here, because it
+ * yields `https://host../../../og/x.png` and every social card 404s with nothing in the
+ * build log. `vite.config.ts` sets `relative: false`; this fails loudly if that regresses,
+ * rather than shipping links that only break once they're in someone else's chat.
+ */
+export function absolute(path: string): string {
+	if (base.includes('..')) {
+		throw new Error(
+			`absolute() needs an absolute base, got "${base}". Set kit.paths.relative = false.`
+		);
+	}
+	return `${SITE_ORIGIN}${base}${path}`;
+}
