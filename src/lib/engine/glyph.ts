@@ -118,11 +118,26 @@ const FRACTURE_GLYPHS: readonly string[] = ['┼', '├', '┤', '┬', '┴'];
 // ---------------------------------------------------------------------------
 
 /**
- * Monospace glyphs render roughly twice as tall as wide, so a vertical step is
- * downweighted by this factor when measuring distance -- otherwise every "circular"
- * ripple would render as a tall ellipse.
+ * Visual height of one row, in units of one column's width. A row's distance is
+ * MULTIPLIED by this when measuring, so a shape that is circular on screen is squat in
+ * cell coordinates -- otherwise every "circular" ripple renders as a tall ellipse.
+ *
+ * Measured, not guessed: JetBrains Mono is 1000 units/em with a 600-unit advance, so a
+ * cell is 0.6em wide, and scripts/og.ts renders the panel at `lineHeight: 1.3`. Hence
+ * 1.3 / 0.6 = 2.1667.
+ *
+ * WAS 0.5, WHICH WAS THIS VALUE INVERTED (and then some -- 4.33x off). The prose above
+ * it was right and the number contradicted it: 0.5 models a cell twice as WIDE as tall.
+ * The damage was at `baseRadius = MARGIN * Math.min(cx, cy)` below -- with rows scaled
+ * DOWN, `cy` was always the smaller term, so on the shipping 22x14 panel the radius was
+ * pinned to 2.67 and only 7 of 22 columns could ever be inked. Every card rendered the
+ * contour field as a narrow vertical smear instead of a topographic readout. Nothing
+ * caught it because the glyphs stayed deterministic and distinct -- `npm run audit`'s
+ * `glyph-uniqueness` passed throughout -- so the failure was purely visual.
+ *
+ * If the og card's `fontSize`/`lineHeight` pair ever changes, this has to change with it.
  */
-const ROW_ASPECT = 0.5;
+const ROW_ASPECT = 1.3 / 0.6;
 /** Fraction of the limiting half-dimension the base polygon radius is allowed to use. */
 const MARGIN = 0.82;
 /** Cosine cycles packed across the base radius, before per-axis wavenumber jitter. */
