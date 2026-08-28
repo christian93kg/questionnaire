@@ -14,12 +14,12 @@ export const starWars: QuizPack = {
 	title: 'Who would you be in Star Wars?',
 	formCode: 'R-77',
 	intro: {
-		eyebrow: 'Personnel assessment',
+		eyebrow: 'Standing intake',
 		lede: [
-			'Questions about how you actually behave under pressure — not which lightsaber colour you like.',
-			'Forty-eight possible results, from the one who holds the line to the one playing a much longer game than you are.'
+			'Standing unit. Active before the war, still active now -- it does not say who the file goes to.',
+			"It records what you do under pressure, not what you'd claim about it after. Forty-eight dispositions on file, from the one who holds the line to the one playing a longer game than you are."
 		],
-		fine: 'No sign-in · Nothing leaves your device · Send the link to anyone'
+		fine: 'No sign-in · Nothing leaves this device · Forward the file to anyone'
 	},
 	axes: AXES,
 	characters: CHARACTERS,
@@ -37,37 +37,39 @@ export const starWars: QuizPack = {
 		{
 			id: 'obligation',
 			label: 'Obligation',
-			blurb: 'What you actually owe, and who you owe it to, when a plan comes apart.'
+			blurb:
+				'What you actually owe, and who collects, when a plan comes apart. State it as it happened, not as you would have wanted it to.'
 		},
 		{
 			id: 'disclosure',
 			label: 'Disclosure',
-			blurb: 'What you say, what you sit on, and who gets to decide which.'
+			blurb: 'What you say, what you sit on, and who you let decide which. The record only keeps what you choose to give it.'
 		},
 		{
 			id: 'attachment',
 			label: 'Attachment',
-			blurb: 'Who you would stay for, and what that costs everyone else.'
+			blurb: 'Who you would stay for, and what that costs everyone else. Names are not required. The pattern is enough.'
 		},
 		{
 			id: 'authority',
 			label: 'Authority',
-			blurb: 'What you do when the people over you are wrong, or lying.'
+			blurb: 'What you do when the people over you are wrong, or lying. Rank does not change what gets logged.'
 		},
 		{
 			id: 'outlook',
 			label: 'Outlook',
-			blurb: 'Whether you think it comes out well, and what you do while you wait to find out.'
+			blurb: 'Whether you think it comes out well, and what you do while you wait to find out. Answer for the waiting, not the ending.'
 		},
 		{
 			id: 'appetite',
 			label: 'Appetite',
-			blurb: 'What you actually want, once nobody is watching you say so.'
+			blurb: 'What you actually want, once nobody is watching you say so. Nobody else reads this part before you do.'
 		},
 		{
 			id: 'temper',
 			label: 'Temper',
-			blurb: 'What gets out of you before you have decided to let it.'
+			blurb:
+				"What gets out of you before you have decided to let it. The unit has seen the fast answer before. Take your time, or don't."
 		}
 	],
 	tiers: [

@@ -10,8 +10,10 @@
 //       say"), filter-word ("you feel"), trait-name (loyal / principled /
 //       leader), hedge-option (maybe / try to), option-asymmetry (111 chars vs
 //       34 next-longest — the answer key leaking as length)
-//   b2  fandom-noun (lightsaber), fandom-noun-soft (Empire), option-monotony
-//       (8/8/7/8 words), duplicate-vector (a and d score identically)
+//   b2  deny-noun (beskar — DENY tier, re-pointed 2026-08-27 from the old
+//       blanket fandom ban; "Empire" stays as harmless ALLOW-tier flavour and
+//       fires nothing under the new scheme), option-monotony (8/8/7/8 words),
+//       duplicate-vector (a and d score identically)
 //   b3  biography ("You have always"), intensifier ("absolutely"),
 //       negation-list, trait-name (brave / ruthless), repeat-in-beat 1/3
 //   b4  filter-word ("you notice"), so-much-as, repeat-in-beat 2/3
@@ -45,7 +47,7 @@ export const QUESTIONS_BAD: Question[] = [
 	{
 		id: 'b2',
 		text:
-			'A smuggler friend asks you to move cargo past the Empire checkpoint with a lightsaber in the crate.',
+			'A smuggler friend asks you to move cargo past the Empire checkpoint with beskar in the crate.',
 		tier: 'short',
 		primaryAxis: 'defiance',
 		options: [

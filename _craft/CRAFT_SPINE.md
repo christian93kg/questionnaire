@@ -17,7 +17,7 @@ Always-on. The through-lines are the craft. The ship tests are the checks the th
 - **Restraint under pressure** — flatter and terser as the stakes rise. No intensifiers; the situation carries it.
 - **Hand back on a want-at-risk** — the prompt stops before the outcome, with the wanted thing still in doubt.
 - **Every option costs something** — a free option is the obviously-correct one, and it collapses the unit.
-- **Zero fandom in the questions** — mundane-but-loaded situations only. All the source material lives in the results.
+- **Diegetic, not costumed** — the world is delivered by pressure and register, not proper nouns. Inverted 2026-08-27 (zero-fandom read as a generic quiz with a skin). Noun-swapping ("car" → "speeder") is worse than neutral — it reads as fake. Target: a dilemma a rule of *this* world generates. Categories, tests: `quiz-question.card.md`.
 
 ## Before you ship a unit
 
@@ -26,3 +26,5 @@ Always-on. The through-lines are the craft. The ship tests are the checks the th
 - Read the four options aloud: if all four scan the same length, vary one.
 - Name each option's cost in one phrase before you write it. If you cannot, that option is dead.
 - Strip the abstract noun from the prompt. If the situation stops being legible, it was never a situation.
+- Delete every capitalised word from the prompt — collapses, it was referential; survives, diegetic.
+- World budget goes in the stem. A proper noun in an option compares affinity, not behaviour.

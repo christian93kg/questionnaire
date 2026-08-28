@@ -27,9 +27,12 @@
 #   not a repeated string — `template-shape` catches only the literal case),
 #   whether an option genuinely costs the taker something, whether two options
 #   differ in *downstream state* when their vectors differ, telegraphing that
-#   uses no gloss-clause, and the soft fandom case (a mundane-looking situation
-#   only legible to fans). All five are judgment calls across units. On the
-#   record: none of them regex.
+#   uses no gloss-clause, and the costumed/referential judgment calls the
+#   capitals and substitution tests can't fully mechanise: a mundane dilemma
+#   with nouns swapped that reads fake even though no single word is banned,
+#   and a lowercase term that still can't be answered without outside
+#   knowledge. All five are judgment calls across units. On the record: none of
+#   them regex.
 #
 # TWO GOTCHAS INHERITED FROM THE SOURCE, BOTH DELIBERATELY REVERSED — see
 # `parse_markdown` (GOTCHA 1) and `Scope` (GOTCHA 2) below.
@@ -155,12 +158,25 @@ class Scope:
 # TRIPWIRE: if the CRAFT rules below ever exceed ~15 entries, that is the signal
 # the bank has become over-managed and the answer is a reset, not entry #16.
 #
-# CURRENTLY AT 15 — the tripwire, exactly. 12 regex rules in PATTERNS plus three
-# non-regex craft rules in tier_a() (repeat-in-beat, option-asymmetry,
-# option-monotony). The two structural checks (option-count, duplicate-vector)
-# are schema, not craft, and are counted separately. There is no room for a rule
-# #16: the next candidate either replaces one of these or goes to the reviewer
-# agent. Say so out loud rather than quietly widening the budget.
+# CURRENTLY AT 16 — one over, and that is correct, not drift. Doctrine inversion
+# 2026-08-27 removed the blanket fandom ban (fandom-noun, fandom-noun-soft: 2
+# rules) and replaced it with three rules that each do work the blanket ban
+# never did: deny-noun (the precision successor — DENY-tier vocabulary only,
+# not every SW noun), role-preemption (granting the taker a ship/side/power,
+# never checked before at all), and capitalised-option (general proper-noun
+# leakage into an OPTION, not just SW nouns — the old rule never looked at
+# capitalisation). 15 - 2 + 3 = 16. Collapsing any of the three into another
+# blurs a distinct doctrine concern for the sake of a round number, so 16 stands
+# until the next entry forces an actual reset.
+#
+# Exact accounting: PATTERNS (Tier A regex, scope-tagged) = gloss-clause,
+# so-much-as, appositive-verdict, filter-word, negation-list, trait-name,
+# hedge-option, displacement, intensifier, biography, deny-noun,
+# role-preemption = 12. Non-regex Tier A craft checks in tier_a() = repeat-in-
+# beat, option-asymmetry, option-monotony, capitalised-option = 4. 12 + 4 = 16.
+# The two structural checks (option-count, duplicate-vector) are schema, not
+# craft, and are not counted. WARN-tier and skinned-question are Tier B
+# advisory and do not count toward this budget at all.
 # --------------------------------------------------------------------------
 
 # --- ported unchanged from prose-lint.py (all six catch real quiz tics) ---
@@ -258,36 +274,110 @@ PATTERNS.append(
     )
 )
 
-# Zero fandom in the questions; all of it lives in the results. Split in two:
-# HARD terms are unambiguous in any casing. SOFT terms are ordinary English
-# words that are fandom nouns only when capitalised mid-sentence, so they are
-# matched case-sensitively to keep "the force of it" and "a republic" clean.
-FANDOM_HARD = r"""
-jedi sith lightsaber lightsabre padawan wookiee wookie droid droids hyperspace
-hyperdrive blaster blasters stormtrooper stormtroopers coruscant tatooine alderaan
-naboo endor hoth dagobah mandalorian mandalore holocron kyber bacta ewok ewoks
-hutt hutts starfighter x-wing tie-fighter deathstar "death star" "millennium falcon"
-"moisture farm" "clone trooper" "bounty hunter" "the force" "dark side" "light side"
-midichlorian midi-chlorian carbonite tauntaun bantha nerf-herder womp-rat
+# --------------------------------------------------------------------------
+# Doctrine inversion, 2026-08-27: in-world is now the standard, not zero-
+# fandom. The old FANDOM_HARD / FANDOM_SOFT pair banned every Star Wars noun
+# outright. That is gone. In its place, three tiers, all matched case-
+# INSENSITIVE — the historical bug in this file was FANDOM_SOFT's comment
+# claiming lowercase "force" stayed clean while `"the force"` sat inside
+# FANDOM_HARD under re.I, so "the force of it" fired anyway. There is no
+# analogous trap here: ALLOW fires no rule at all regardless of case, so there
+# is nothing for a casing mismatch to break.
+#
+#   ALLOW — unlimited. Ordinary Star Wars vocabulary; this is the register the
+#     card now asks for. Never checked by any rule below; listed here so
+#     skinned-question has something to detect the *presence* of.
+#   WARN  — advisory (Tier B), max one per question, and each one should
+#     survive being deleted from the sentence (if the dilemma needs it to
+#     parse, it has drifted into referential territory and belongs on ALLOW
+#     only after the capitals/substitution tests clear it, or off the bank).
+#   DENY  — hard fail (Tier A). Vocabulary that is either trivia-only (a
+#     reader needs the film to know what it means) or collapses the roster
+#     the way a role grant does.
+#
+# Two rulings that look wrong and are not — commented here so nobody "fixes"
+# them later:
+#   - "sith" is DENY, not ALLOW, even though it reads like core vocabulary. It
+#     is never spoken in the original trilogy: it is prequel vocabulary
+#     fandom retro-applies to Vader. A once-through viewer knows "the dark
+#     side," not "Sith" — putting it on ALLOW would be trivia dressed as
+#     register.
+#   - "mandalorian" is DENY, not a costume swap-in. It is a demonym for a
+#     culture whose ethics are the point of naming it, not flavour text — using
+#     it as scenery is the referential failure, not a fix for it.
+#   - "grogu" is DENY as a QUESTION noun even though he is a roster character:
+#     results may name him, questions may not. A question built around a named
+#     character is referential by construction.
+ALLOW_WORDS = r"""
+jedi "the force" lightsaber droid empire imperial stormtrooper rebellion rebel
+"dark side" "bounty hunter" smuggler blaster cantina starship garrison checkpoint
+credits salvage manifest transport comm hangar freighter spaceport "docking bay"
 """
-FANDOM_SOFT = r"Empire|Imperial|Rebellion|Rebel Alliance|Republic|Senate|Separatist|Force"
+WARN_WORDS = r"""
+wookiee x-wing "tie fighter" hyperspace astromech resistance "first order"
+"outer rim" speeder "moisture farm" hutt "imperial officer"
+"""
+DENY_WORDS = r"""
+sith padawan mandalorian beskar grogu coruscant naboo alderaan endor jakku
+scarif kamino dagobah twi'lek togruta gungan "jedi council" youngling
+separatist "order 66" "clone wars" "kessel run" parsec kyber holocron
+midi-chlorian moff inquisitor bantha "womp rat" tauntaun sarlacc corellian
+"""
+# Vocabulary the card calls out as register that carries the world without
+# being a Star Wars proper noun at all — ordinary words a checkpoint, a supply
+# run, or a debt collector would use in any setting. Used only by
+# skinned-question below, never a fail condition on its own.
+REGISTER_WORDS = r"""
+requisition papers "shift supervisor" "salvage rights" "three days out"
+"answering the comm"
+"""
+
+
+def _tier_terms(block):
+    return [t.strip('"') for t in re.findall(r'"[^"]+"|\S+', block)]
+
+
+def _tier_pattern(block):
+    return re.compile(r"\b(?:%s)\b" % "|".join(re.escape(t) for t in _tier_terms(block)), re.I)
+
+
+WARN_RX = _tier_pattern(WARN_WORDS)
+DENY_RX = _tier_pattern(DENY_WORDS)
+SKINNED_RX = re.compile(
+    r"\b(?:%s)\b"
+    % "|".join(
+        re.escape(t)
+        for t in _tier_terms(ALLOW_WORDS) + _tier_terms(WARN_WORDS)
+        + _tier_terms(DENY_WORDS) + _tier_terms(REGISTER_WORDS)
+    ),
+    re.I,
+)
+
 PATTERNS.append(
     dict(
-        id="fandom-noun",
-        rx=re.compile(
-            r"\b(?:%s)\b" % "|".join(t.strip('"') for t in re.findall(r'"[^"]+"|\S+', FANDOM_HARD)),
-            re.I,
-        ),
-        owner="quiz-question Tests: fandom test — zero fandom trivia in the questions",
+        id="deny-noun",
+        rx=DENY_RX,
+        owner="quiz-question card: Categories — Trivia/Referential kill list, DENY tier",
+        note="trivia-only or roster-collapsing vocabulary; never belongs in a question",
         scope=Scope.BOTH,
     )
 )
+
+# role-preemption: granting the taker a ship, a squadron, a weapon, a side, or
+# an intuitive power collapses the result space. If a question implies the
+# taker is Force-sensitive, Han, Leia and Cassian all become incoherent
+# results — the roster stops being a roster of *people*, and becomes a roster
+# gated by a power most of it doesn't have.
 PATTERNS.append(
     dict(
-        id="fandom-noun-soft",
-        rx=re.compile(r"\b(?:%s)\b" % FANDOM_SOFT),  # case-SENSITIVE on purpose
-        owner="quiz-question Tests: fandom test — zero fandom trivia in the questions",
-        note="capitalised mid-sentence only; lowercase 'force'/'republic' are ordinary words",
+        id="role-preemption",
+        rx=re.compile(
+            r"\byour ship\b|\byour squadron\b|\byour lightsaber\b"
+            r"|\byou feel the force\b|\byou sense\b",
+            re.I,
+        ),
+        owner="quiz-question card: Standing rules — second person is situation, "
+        "never role, never power, never side",
         scope=Scope.BOTH,
     )
 )
@@ -343,9 +433,33 @@ PATTERNS.append(
 )
 
 # Craft rules that are not a single regex live in tier_a() below:
-#   repeat-in-beat (ported), option-asymmetry, option-monotony.
+#   repeat-in-beat (ported), option-asymmetry, option-monotony, capitalised-option.
 # Structural (schema, not craft):
 #   option-count, duplicate-vector.
+
+# capitalised-option: a capitalised token inside an option that is not the
+# option's own first word and does not follow sentence-ending punctuation. "I"
+# and its contractions are exempt — English capitalises the first-person
+# pronoun regardless of position, which is not a world-budget leak. Everything
+# else capitalised mid-option is a proper noun spending the world budget where
+# the card says it must not go: the stem, never the options.
+_WORD_RE = re.compile(r"[A-Za-z']+")
+_I_FORMS = {"I", "I'll", "I'm", "I've", "I'd"}
+
+
+def capitalised_option_hits(text):
+    hits = []
+    for m in _WORD_RE.finditer(text):
+        w = m.group(0)
+        if not w[0].isupper() or w in _I_FORMS:
+            continue
+        j = m.start() - 1
+        while j >= 0 and text[j] == " ":
+            j -= 1
+        if j < 0 or text[j] in ".!?":
+            continue  # sentence-initial (including option-initial) — allowed
+        hits.append(w)
+    return hits
 
 STOPWORDS = set(
     """a an the and or but if of to in on at by for with from as is was are were be been being
@@ -730,6 +844,17 @@ def tier_a(units, skip):
                 "length, vary one",
             )
 
+        # --- capitalised-option: the world budget belongs to the stem ---
+        for o in opts:
+            for w in capitalised_option_hits(o["text"]):
+                add(
+                    "capitalised-option",
+                    o["line"],
+                    f'{u["qid"]} option: "{snippet(o["text"])}" ← {w!r}',
+                    "quiz-question card: Standing rules — world budget goes in the "
+                    "stem, not the options",
+                )
+
     # --- repeat-in-beat (ported). The source's unit is the beat; the analogue
     # here is the BANK, not one question: a 4-gram cannot repeat three times
     # inside forty words of options, and a template repeated across units is
@@ -793,6 +918,42 @@ def tier_b(units, skip):
             if len(flat) >= 3 and len(set(flat)) == 1:
                 adv.append(
                     dict(id="option-shape", quote=f'{u["qid"]}: all options open "{flat[0]}…"')
+                )
+
+    # warn-noun: WARN-tier vocabulary is fine in moderation — the cap is one
+    # per question, and each one should be droppable without breaking the
+    # sentence. Advisory because WARN terms are legitimate register, not a
+    # ban; the message flags the count so a unit that leans on two or more
+    # gets a second look, not an automatic rewrite.
+    if "warn-noun" not in skip:
+        for u in units:
+            for text, where in [(u["prompt"], "prompt")] + [
+                (o["text"], "option") for o in u["options"]
+            ]:
+                hits = WARN_RX.findall(text)
+                if hits:
+                    over = " — exceeds the 1-per-question guideline" if len(hits) > 1 else ""
+                    adv.append(
+                        dict(
+                            id="warn-noun",
+                            quote=f'{u["qid"]} {where}: {hits} in "{snippet(text)}"{over}',
+                        )
+                    )
+
+    # skinned-question: a stem with zero ALLOW/WARN/DENY/register vocabulary
+    # is generic — the target register in moderation (the card caps this
+    # around 10 of 34 in the bank), so advisory, not a fail. This is the
+    # inverse of the old zero-fandom rule: it flags too LITTLE world, not too
+    # much.
+    if "skinned-question" not in skip:
+        for u in units:
+            if not SKINNED_RX.search(u["prompt"]):
+                adv.append(
+                    dict(
+                        id="skinned-question",
+                        quote=f'{u["qid"]}: no world vocabulary in the stem — '
+                        f'"{snippet(u["prompt"])}"',
+                    )
                 )
     return adv
 
@@ -900,7 +1061,7 @@ def selftest():
         if want_fail:
             # Named rules, not just a count: a bad fixture that fails for the
             # wrong reason proves nothing about the rules it was built to trip.
-            must = ["trait-name", "hedge-option", "option-asymmetry", "fandom-noun",
+            must = ["trait-name", "hedge-option", "option-asymmetry", "deny-noun",
                     "displacement", "gloss-clause", "filter-word", "duplicate-vector",
                     "option-monotony", "repeat-in-beat"]
             missing = [r for r in must if ids.get(r, 0) < 1]

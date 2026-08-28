@@ -40,7 +40,7 @@ const MANIFEST_PATH = join(OG_ROOT, '.manifest.json');
  * even though no character field, palette value, or font changed (e.g. a layout tweak).
  * Folded into the content hash below.
  */
-const CARD_LAYOUT_VERSION = 3;
+const CARD_LAYOUT_VERSION = 5;
 
 // --- optional glyph.ts integration point -------------------------------------------------
 //
@@ -176,34 +176,44 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 					}
 				},
 				{
+					// Epithet leads: it reads even to someone who doesn't know the name
+					// underneath it. Same treatment the live card's headline uses --
+					// bright, glowing, and given the display-weight slot the name used to
+					// hold. truncateWords is a guard rail, not a live constraint -- the
+					// longest epithet on the roster today is well under this cap; it just
+					// keeps a future long one from overrunning the fixed 630px canvas.
 					type: 'div',
 					props: {
 						style: {
 							display: 'flex',
 							fontFamily: 'JetBrains Mono',
 							fontWeight: 800,
-							fontSize: 96,
+							fontSize: 72,
 							lineHeight: 0.98,
 							letterSpacing: -2,
 							textTransform: 'uppercase',
-							color: PALETTE.textPrimary
+							color: PALETTE.textPrimary,
+							textShadow: `0 0 30px ${PALETTE.glowText}`
 						},
-						children: character.name
+						children: truncateWords(character.epithet, 70)
 					}
 				},
 				{
+					// Name drops to a filed-under line -- small, faint, monospace, the way
+					// the rest of this card treats metadata (see eyebrowRow, footerRow).
 					type: 'div',
 					props: {
 						style: {
 							display: 'flex',
 							fontFamily: 'JetBrains Mono',
-							fontWeight: 800,
-							fontSize: 44,
+							fontWeight: 700,
+							fontSize: 28,
+							letterSpacing: 3,
+							textTransform: 'uppercase',
 							marginTop: 18,
-							color: PALETTE.accentPrimary,
-							textShadow: `0 0 30px ${PALETTE.glowText}`
+							color: PALETTE.textFaint
 						},
-						children: character.epithet
+						children: character.name
 					}
 				}
 			]
@@ -239,7 +249,7 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 						// Truncates with an ellipsis instead of wrapping onto a second line and
 						// colliding with the URL column — `strength` runs up to ~80 chars.
 						style: { flex: 1, minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap' },
-						children: truncateWords(character.strength, 46)
+						children: truncateWords(character.strength, 34)
 					}
 				},
 				{ type: 'span', props: { style: { flexShrink: 0, whiteSpace: 'nowrap' }, children: SITE_LABEL } }

@@ -32,7 +32,7 @@ something in the batch contradicts what you were given.
 ## What you are looking for
 
 The linter already caught the greppable tics. Do not re-report anything in its findings.
-Your job is the six things no regex can see:
+Your job is the seven things no regex can see:
 
 1. **Voice uniformity across the whole bank.** Read every prompt in the bank together,
    then every option set together. Does the same rhetorical template recur — the same
@@ -53,10 +53,22 @@ Your job is the six things no regex can see:
    has that), the same *outcome*: two different-sounding options that land the taker in
    the identical position afterwards. Those are one option wearing two coats and they
    should be cut or merged.
-6. **Fandom trivia leaking in.** The hard case is a proper noun. The soft case, which is
-   the one that actually gets through: a situation only legible to fans — a scenario whose
-   stakes, roles or vocabulary assume the source material even when no name appears. A
-   reader who has never seen it must be able to answer truthfully.
+6. **Costumed or referential drift.** In-world is the standard now (inverted 2026-08-27) —
+   the linter enforces the DENY list and the literal role-preemption phrases, but the two
+   failure modes it can't fully catch are judgment calls. Costumed: a mundane dilemma with
+   Star Wars nouns swapped in and nothing else changed — run the substitution test
+   yourself; put the real-world noun back, and if the question is unchanged, it was
+   costumed, not diegetic. Referential: the dilemma can't be answered without already
+   knowing who or what a named thing is — run the capitals test; delete every capitalised
+   word, and if the situation collapses, it was referential even if no DENY-tier word
+   fired. Also watch for role-preemption the linter's fixed phrase list can't catch:
+   granting the taker a side, a power, or a possession in paraphrase, not just the literal
+   "your ship" / "you sense" strings.
+7. **Generic-with-a-skin, the opposite failure.** A prompt that could be dropped into any
+   personality quiz unchanged — no register, no world-pressure, nothing but a mundane
+   dilemma — is a defect too, though a mild one (the linter's `skinned-question` is
+   advisory and the card caps this around 10 of 34 units). Flag it if a batch is trending
+   that way, especially if the same batch is also thin on register elsewhere in lens 1.
 
 Also flag: a prompt that resolves before it hands back (the outcome is already settled and
 the options only react), a biographical prompt that tells the taker who they are, and an

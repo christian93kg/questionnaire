@@ -154,12 +154,12 @@
 		It was issued against Form {pack.formCode} revision {decoded.packVersion}. That revision has
 		been superseded, and these answers can't be honestly mapped onto the current one.
 	</p>
-	<a class="btn" href="{base}/{pack.id}/">Take it yourself</a>
+	<a class="btn" href="{base}/{pack.id}/">Begin the assessment</a>
 {:else if decoded?.status === 'malformed'}
 	<p class="eyebrow warn">Unreadable</p>
 	<h1 class="err-head">That link is damaged</h1>
 	<p class="lede">The answer code didn't survive the trip. It may have been truncated in a chat app.</p>
-	<a class="btn" href="{base}/{pack.id}/">Take it yourself</a>
+	<a class="btn" href="{base}/{pack.id}/">Begin the assessment</a>
 {:else}
 	{#if decoded?.status === 'migrated'}
 		<p class="notice">Form {pack.formCode} was revised since this was issued. Reconstructed from archive.</p>
@@ -171,7 +171,7 @@
 			{#if rarityText}
 				<span class="rarity" class:rare={rarity === 'rare'}>{rarityText}</span>
 			{:else}
-				<span>{result ? 'Assessment complete' : `One of ${pack.characters.length} results`}</span>
+				<span>{result ? 'Assessment complete' : `One of ${pack.characters.length} on file`}</span>
 			{/if}
 		</div>
 
@@ -182,8 +182,8 @@
 		<pre class="glyph" aria-hidden="true">{glyph}</pre>
 
 		<div class="card-body">
-			<h1 class="verdict">{winner.name}</h1>
-			<p class="epithet">{winner.epithet}</p>
+			<h1 class="verdict">{winner.epithet}</h1>
+			<p class="subname">{winner.name}</p>
 
 			<p class="meta-row">
 				{#if winner.debut}
@@ -273,8 +273,11 @@
 		</div>
 		<p class="toast">{toast}</p>
 	{:else}
-		<p class="lede">This is one of the possible results. Take it and find out which one is yours.</p>
-		<a class="btn" href="{base}/{pack.id}/">Take the questionnaire</a>
+		<p class="lede">
+			This is one of {pack.characters.length} on file. Sit for the assessment and find out which one is
+			yours.
+		</p>
+		<a class="btn" href="{base}/{pack.id}/">Begin the assessment</a>
 	{/if}
 {/if}
 
@@ -431,21 +434,27 @@
 	.card-body {
 		padding: var(--space-5) var(--space-4) var(--space-4);
 	}
+	/* Holds the epithet -- the disposition itself, and the thing that reads even if you
+	   don't know the name underneath it. Longer than a name on average, so it gets more
+	   wrap room than the tight name-heading this class used to size. */
 	.verdict {
 		font-family: var(--font-display);
 		font-size: var(--type-3xl);
-		line-height: 0.9;
+		line-height: 0.98;
 		letter-spacing: -0.03em;
 		font-weight: 700;
 		text-transform: uppercase;
 		margin: 0;
 		text-shadow: var(--glow-text);
+		text-wrap: pretty;
 	}
-	.epithet {
-		font-family: var(--font-display);
-		font-size: var(--type-lg);
-		font-style: italic;
-		color: var(--accent-primary);
+	/* Holds the character's proper name -- now the filed-under line, not the headline. */
+	.subname {
+		font-family: var(--font-mono);
+		font-size: var(--type-sm);
+		letter-spacing: var(--track-label);
+		text-transform: uppercase;
+		color: var(--text-faint);
 		margin: var(--space-2) 0 0;
 	}
 	.body-copy {

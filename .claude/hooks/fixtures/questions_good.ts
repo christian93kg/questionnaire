@@ -9,19 +9,33 @@
 // edit this file to make a rule pass. Editing it to widen coverage is fine —
 // re-run --selftest afterwards and it must still report zero FAIL.
 //
+// Re-registered 2026-08-27 for the in-world doctrine inversion: each stem now
+// carries exactly one ALLOW-tier register noun (manifest / transport / hangar),
+// added by editing the STEM only — proof of the card's "world budget goes in
+// the stem, not the options" rule: the reflavour needed almost no option edits.
+// One exception: g4's option c named "Thursday," a capitalised day-name that
+// pre-dates this file's inversion and only became a finding once
+// capitalised-option shipped — genuinely new coverage catching something that
+// was always a minor world-budget leak, not a regression from re-registering.
+// Reworded to "that day" rather than left as an unexplained skip-ok.
+//
 // Deliberately exercised here, so the rules are proven not to over-fire:
 //   - options of 1-8 words in the same unit (asymmetry must not fire on spread alone)
 //   - "you know is wrong" (near-miss on filter-word, which owns see/feel/notice)
-//   - "The person who trained you" (near-miss on gloss-clause, which needs a comma)
+//   - "The one who trained you" (near-miss on gloss-clause, which needs a comma)
 //   - "never", "ever" (near-miss on the intensifier list)
-//   - four units whose options open on a shared verb pair (near-miss on option-shape)
+//   - four options across two units opening "Take it…" (near-miss on option-shape,
+//     which only fires within a single unit, and on repeat-in-beat, which needs a
+//     4-gram, not a 2-word open)
+//   - one ALLOW-tier noun per stem, so skinned-question does not fire on this
+//     fixture either — it is the target register, not a generic one wearing a skin
 
 import type { Question } from '$lib/engine/types';
 
 export const QUESTIONS_GOOD: Question[] = [
 	{
 		id: 'g1',
-		text: "Your name is on a report you didn't write and can't fully defend.",
+		text: "Your name is on a manifest you didn't file and can't fully defend.",
 		tier: 'short',
 		primaryAxis: 'candor',
 		options: [
@@ -33,7 +47,7 @@ export const QUESTIONS_GOOD: Question[] = [
 	},
 	{
 		id: 'g2',
-		text: 'The person who trained you is now the one holding the work up.',
+		text: 'The one who trained you is now the one holding the transport up.',
 		tier: 'short',
 		primaryAxis: 'warmth',
 		options: [
@@ -45,7 +59,7 @@ export const QUESTIONS_GOOD: Question[] = [
 	},
 	{
 		id: 'g3',
-		text: 'Two hours before the deadline, the shortcut appears and nobody would ever check.',
+		text: 'Two hours before the manifest closes, the shortcut appears and nobody would ever check.',
 		tier: 'medium',
 		primaryAxis: 'order',
 		options: [
@@ -57,19 +71,19 @@ export const QUESTIONS_GOOD: Question[] = [
 	},
 	{
 		id: 'g4',
-		text: 'A friend asks you to say you were with them on Thursday.',
+		text: 'A crewmate asks you to say you were in the hangar with them on Thursday.',
 		tier: 'medium',
 		primaryAxis: 'warmth',
 		options: [
 			{ id: 'a', text: 'No.', v: { warmth: -3, candor: 2 } },
 			{ id: 'b', text: 'Yes, and never mention it again.', v: { warmth: 2, candor: -3 } },
-			{ id: 'c', text: 'Ask what happened Thursday first.', v: { order: 2, warmth: 1 } },
+			{ id: 'c', text: 'Ask what happened that day first.', v: { order: 2, warmth: 1 } },
 			{ id: 'd', text: "Yes. Then tell them that's the last one.", v: { warmth: 1, candor: 3 } }
 		]
 	},
 	{
 		id: 'g5',
-		text: 'The team is celebrating a number you know is wrong by a third.',
+		text: 'The crew is celebrating a manifest count you know is wrong by a third.',
 		tier: 'long',
 		primaryAxis: 'candor',
 		options: [
@@ -81,7 +95,7 @@ export const QUESTIONS_GOOD: Question[] = [
 	},
 	{
 		id: 'g6',
-		text: "You're offered the job you wanted, on a team you'd have to break up first.",
+		text: "You're offered the transport you wanted, on a crew you'd have to break up first.",
 		tier: 'long',
 		primaryAxis: 'ambition',
 		options: [
