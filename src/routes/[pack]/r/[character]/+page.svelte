@@ -189,7 +189,8 @@
 				{#if winner.debut}
 					<span>Introduced in {winner.debut.title} ({winner.debut.year})</span>
 				{/if}
-				{#if share !== null}
+				<!-- Suppressed when the rarity badge is showing, which already states the share. -->
+				{#if share !== null && !rarityText}
 					<span>{share < 1 ? share.toFixed(1) : Math.round(share)}% land here</span>
 				{/if}
 			</p>

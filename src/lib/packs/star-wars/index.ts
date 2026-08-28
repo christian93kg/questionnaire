@@ -16,7 +16,7 @@ export const starWars: QuizPack = {
 	intro: {
 		eyebrow: 'Standing intake',
 		lede: [
-			'Standing unit. Active before the war, still active now -- it does not say who the file goes to.',
+			'Standing unit. Active before the war, still active now — it does not say who the file goes to.',
 			"It records what you do under pressure, not what you'd claim about it after. Forty-eight dispositions on file, from the one who holds the line to the one playing a longer game than you are."
 		],
 		fine: 'No sign-in · Nothing leaves this device · Forward the file to anyone'
