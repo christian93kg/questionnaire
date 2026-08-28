@@ -1,6 +1,31 @@
 import { describe, expect, it } from 'vitest';
-import { PACKS, getPack } from '../packs';
+import { PACKS, SITE_THEME, getPack } from '../packs';
 import { themeCss, themeVars, type PackTheme } from './theme';
+
+/** Every custom property a component references by name. */
+const REQUIRED_VARS = [
+	'bg-base',
+	'surface-sunk',
+	'surface-raised',
+	'surface-raised-2',
+	'rule-hairline',
+	'rule-strong',
+	'text-primary',
+	'text-secondary',
+	'text-faint',
+	'accent-primary',
+	'accent-secondary',
+	'accent-primary-dim',
+	'accent-secondary-dim',
+	'glow-soft',
+	'glow-text',
+	'glow-text-color',
+	'scanline',
+	'font-display',
+	'font-mono',
+	'anim-enter',
+	'anim-idle'
+] as const;
 
 describe('themeCss', () => {
 	/**
@@ -69,32 +94,41 @@ describe('every registered pack', () => {
 		const vars = themeVars(pack.theme);
 		// Components reference these by name; a missing one renders as an invalid value and
 		// the element silently falls back to its initial colour.
-		for (const key of [
-			'bg-base',
-			'surface-sunk',
-			'surface-raised',
-			'surface-raised-2',
-			'rule-hairline',
-			'rule-strong',
-			'text-primary',
-			'text-secondary',
-			'text-faint',
-			'accent-primary',
-			'accent-secondary',
-			'accent-primary-dim',
-			'accent-secondary-dim',
-			'glow-soft',
-			'glow-text',
-			'glow-text-color',
-			'scanline',
-			'font-display',
-			'font-mono',
-			'anim-enter',
-			'anim-idle'
-		]) {
+		for (const key of REQUIRED_VARS) {
 			expect(vars[key], `${pack.id} is missing --${key}`).toBeTruthy();
 		}
 		expect(() => themeCss(pack.theme)).not.toThrow();
+	});
+
+	/**
+	 * SITE_THEME paints `/` and is not a pack, so `npm run audit`'s theme gates — which
+	 * iterate packs — never see it. It still ships, so it gets the same checks here.
+	 */
+	it('SITE_THEME renders and stays out of both packs’ hues', () => {
+		const vars = themeVars(SITE_THEME);
+		for (const key of REQUIRED_VARS) {
+			expect(vars[key], `SITE_THEME is missing --${key}`).toBeTruthy();
+		}
+		expect(() => themeCss(SITE_THEME)).not.toThrow();
+
+		// The whole point of the hallway theme is that it commits to no world. Every packed
+		// hue sits well above this; if a future edit gives the landing page a real colour,
+		// this is what catches it.
+		for (const c of [
+			SITE_THEME.accentPrimary,
+			SITE_THEME.accentSecondary,
+			SITE_THEME.textPrimary,
+			SITE_THEME.textSecondary,
+			SITE_THEME.textFaint
+		]) {
+			expect(c[1], `chroma ${c[1]} reads as a hue`).toBeLessThanOrEqual(0.012);
+		}
+		for (const pack of PACKS) {
+			expect(
+				pack.theme.accentPrimary[1],
+				`${pack.id} should be more saturated than the hallway`
+			).toBeGreaterThan(SITE_THEME.accentPrimary[1]);
+		}
 	});
 
 	it.each(PACKS.map((p) => [p.id, p] as const))('%s declares chrome strings', (_id, pack) => {

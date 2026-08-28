@@ -91,6 +91,29 @@
 	}
 }
 
+/* --- the hallway (no pack) --- */
+
+/* A plain fade. The landing page asserts no character, so its entrance asserts none. */
+@keyframes site-rise {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* Deliberately inert: the hallway has no idle motion, and `--anim-idle` must still
+   resolve to a real keyframe or the rule using it is silently dropped. */
+@keyframes site-still {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,

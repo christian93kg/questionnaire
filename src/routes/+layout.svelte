@@ -4,16 +4,17 @@
 	import '$lib/styles/tokens.css';
 	import '$lib/styles/animations.css';
 	import { themeCss } from '$lib/engine/theme';
-	import { DEFAULT_PACK_ID, SITE_CHROME, getPack } from '$lib/packs';
+	import { SITE_CHROME, SITE_THEME } from '$lib/packs';
 	import type { QuizPack } from '$lib/engine/types';
 
 	let { children } = $props();
 
 	// `page.data` is every matched node's data merged, so the ROOT layout reads what
 	// [pack]/+layout.ts loaded without matching on the route shape itself. `/` matches no
-	// pack, and falls back to the default pack's palette with neutral chrome.
+	// pack, and gets the hallway's OWN neutral palette — not the first pack's, which would
+	// hand the landing page whichever quiz happened to ship first.
 	const pack = $derived(page.data.pack as QuizPack | undefined);
-	const theme = $derived((pack ?? getPack(DEFAULT_PACK_ID)!).theme);
+	const theme = $derived(pack?.theme ?? SITE_THEME);
 	const chrome = $derived(pack?.chrome ?? SITE_CHROME);
 
 	// Chrome status line. Which of the three states is still derived from the route shape
@@ -41,7 +42,7 @@
 		for the component's own scoped style block. `themeCss()` throws on any value that
 		could close the tag or the rule.
 	-->
-	{@html `<style data-theme="${pack?.id ?? DEFAULT_PACK_ID}">${themeCss(theme)}</style>`}
+	{@html `<style data-theme="${pack?.id ?? 'site'}">${themeCss(theme)}</style>`}
 </svelte:head>
 
 <div class="shell">
