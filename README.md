@@ -88,16 +88,21 @@ A roster this data-driven can silently degrade — two characters becoming indis
 
 ## Adding a fandom pack
 
-The engine (`src/lib/engine/`) has no fandom awareness. A pack (`src/lib/packs/<pack-id>/`) is four files:
+The engine (`src/lib/engine/`) has no fandom awareness. A pack (`src/lib/packs/<pack-id>/`) is five files:
 
 | File | Declares |
 |---|---|
 | `axes.ts` | The trait axes for this fandom — pick your own set, your own count, your own poles. Nothing forces seven. |
 | `characters.ts` | Each character's `vector` across those axes, plus `blurb`, `strength`, `blindspot`, and roster-QA metadata. |
 | `questions.ts` | Options that move axes, tagged with the smallest `tier` (`short`/`medium`/`long`) that includes them. |
+| `theme.ts` | Colour, type and animation as numbers (`PackTheme`), plus the shell chrome strings. One source, rendered twice — to CSS custom properties by the root layout, and to sRGB for the OG card by `scripts/og/palette.ts`. |
 | `index.ts` | Wires the above into a `QuizPack`, plus `calibration.json` (roster mean/sd, per-axis weights, per-character gravity — solved, not hand-tuned, by `npm run calibrate -- <pack-id>`). |
 
-Register it in `src/lib/packs/index.ts`'s `PACKS` array and it's live at `/<pack-id>`. Run `npm run audit -- <pack-id>` before shipping it — same five gates, new roster. A Harry Potter pack is the planned second instance of this.
+Register it in `src/lib/packs/index.ts`'s `PACKS` array and it's live at `/<pack-id>`, listed on the landing page, and covered by the theme and OG-palette tests — all three iterate `PACKS`, so a pack cannot ship half-wired. Run `npm run audit -- <pack-id>` before shipping it: same gates, new roster.
+
+Two things a pack does **not** own. `@keyframes` live in `src/lib/styles/animations.css` — a keyframe cannot be parameterised by a custom property, and a pack module that imports CSS breaks `tsx` in `scripts/og.ts`, so a pack selects an animation by name instead. And the type scale, spacing and timing stay in `src/lib/styles/tokens.css`: a quiz is a different theme, not a different type scale. Nothing colour-shaped goes back into `tokens.css` — it would sit in a second `:root {}` block at equal specificity with the generated one, so which one won would depend on head order.
+
+The question bank has its own per-pack layer under `_craft/packs/<pack-id>/` — vocabulary tiers, world-pressures and exemplars. See `_craft/packs/_FORMAT.md`.
 
 ---
 

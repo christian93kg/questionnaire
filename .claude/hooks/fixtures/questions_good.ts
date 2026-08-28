@@ -1,4 +1,5 @@
-// KNOWN-GOOD FIXTURE — six units written to the standard in _craft/_exemplars.md.
+// lint-pack: star-wars
+// KNOWN-GOOD FIXTURE — six units written to the standard in _craft/packs/star-wars/exemplars.md.
 //
 // Its rule, inherited from the source repo's calibration log (five candidate
 // rules there had to be loosened because they fired on good prose):

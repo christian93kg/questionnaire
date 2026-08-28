@@ -555,7 +555,42 @@ export const fixturePack: QuizPack = {
 		{ id: 'long', label: 'Full', blurb: 'All twelve.', questionCount: 12, estMinutes: 6 }
 	],
 	signatureWeight: 0.1,
-	calibration: calibrationJson as unknown as PackCalibration
+	calibration: calibrationJson as unknown as PackCalibration,
+	/**
+	 * Deliberately NOT a copy of star-wars. The fixture is never routed or rendered, so the
+	 * only job this theme has is to be structurally valid and visibly distinct — if a
+	 * regression ever makes the fixture's theme reach a page, magenta-on-black says so
+	 * immediately, where a second holo-blue would hide it.
+	 */
+	theme: {
+		accentPrimary: [0.75, 0.14, 350],
+		accentSecondary: [0.75, 0.14, 150],
+		textPrimary: [0.95, 0.01, 350],
+		textSecondary: [0.75, 0.02, 350],
+		textFaint: [0.55, 0.02, 350],
+		bgBase: '#0b070a',
+		surfaceSunk: '#070406',
+		surfaceRaised: '#160d14',
+		surfaceRaised2: '#1e131b',
+		mix: {
+			ruleHairline: 22,
+			ruleStrong: 45,
+			accentPrimaryDim: 30,
+			accentSecondaryDim: 40,
+			glowSoft: 18,
+			glowText: 35,
+			scanline: 5
+		},
+		glow: { softBlurPx: 28, textBlurPx: 18 },
+		scanline: { stripePx: 1, periodPx: 3 },
+		fontDisplay: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+		fontMono: 'ui-monospace, Menlo, Consolas, monospace',
+		anim: { enter: 'holo-rise', idle: 'holo-flicker' }
+	},
+	chrome: {
+		label: 'Fixture · synthetic',
+		status: { idle: 'FIXTURE', inProgress: 'FIXTURE', sealed: 'FIXTURE' }
+	}
 };
 
 export default fixturePack;

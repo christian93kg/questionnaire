@@ -25,14 +25,13 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import type { Character, QuizPack } from '../src/lib/engine/types';
 import { PACKS } from '../src/lib/packs';
-import { PALETTE } from './og/palette';
+import { paletteFor, type Palette } from './og/palette';
 import { REPO_ROOT } from './lib/pack';
 
 const WIDTH = 1200;
 const HEIGHT = 630;
 const OG_ROOT = join(REPO_ROOT, 'static', 'og');
 const FONTS_DIR = join(dirname(fileURLToPath(import.meta.url)), 'og', 'fonts');
-const PALETTE_PATH = join(dirname(fileURLToPath(import.meta.url)), 'og', 'palette.ts');
 const MANIFEST_PATH = join(OG_ROOT, '.manifest.json');
 
 /**
@@ -109,7 +108,12 @@ function truncateWords(text: string, max: number): string {
 	return `${cut.slice(0, lastSpace > 0 ? lastSpace : max).replace(/[.,;:]$/, '')}\u2026`;
 }
 
-function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | null): Node {
+function buildCard(
+	pack: QuizPack,
+	character: Character,
+	glyphLines: string[] | null,
+	palette: Palette
+): Node {
 	const eyebrowRow: Node = {
 		type: 'div',
 		props: {
@@ -120,7 +124,7 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 				fontSize: 20,
 				letterSpacing: 4,
 				textTransform: 'uppercase',
-				color: PALETTE.textFaint
+				color: palette.textFaint
 			},
 			children: [
 				{ type: 'span', props: { children: pack.title } },
@@ -132,7 +136,7 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 	const rule: Node = {
 		type: 'div',
 		props: {
-			style: { display: 'flex', height: 1, width: '100%', background: PALETTE.ruleStrong, marginTop: 28 }
+			style: { display: 'flex', height: 1, width: '100%', background: palette.ruleStrong, marginTop: 28 }
 		}
 	};
 
@@ -146,7 +150,7 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 						fontSize: 16,
 						lineHeight: 1.3,
 						// accentPrimaryDim vanished against the near-black field at this size.
-						color: PALETTE.accentPrimary,
+						color: palette.accentPrimary,
 						opacity: 0.55,
 						whiteSpace: 'pre',
 						marginLeft: 40
@@ -169,7 +173,7 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 							fontSize: 40,
 							letterSpacing: 3,
 							textTransform: 'uppercase',
-							color: PALETTE.textFaint,
+							color: palette.textFaint,
 							marginBottom: 8
 						},
 						children: 'Disposition'
@@ -192,8 +196,8 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 							lineHeight: 0.98,
 							letterSpacing: -2,
 							textTransform: 'uppercase',
-							color: PALETTE.textPrimary,
-							textShadow: `0 0 30px ${PALETTE.glowText}`
+							color: palette.textPrimary,
+							textShadow: `0 0 30px ${palette.glowText}`
 						},
 						children: truncateWords(character.epithet, 70)
 					}
@@ -211,7 +215,7 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 							letterSpacing: 3,
 							textTransform: 'uppercase',
 							marginTop: 18,
-							color: PALETTE.textFaint
+							color: palette.textFaint
 						},
 						children: character.name
 					}
@@ -238,8 +242,8 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 				gap: 32,
 				fontSize: 20,
 				letterSpacing: 2,
-				color: PALETTE.textFaint,
-				borderTop: `1px solid ${PALETTE.ruleHairline}`,
+				color: palette.textFaint,
+				borderTop: `1px solid ${palette.ruleHairline}`,
 				paddingTop: 20
 			},
 			children: [
@@ -266,12 +270,12 @@ function buildCard(pack: QuizPack, character: Character, glyphLines: string[] | 
 				width: WIDTH,
 				height: HEIGHT,
 				padding: '56px 64px',
-				background: PALETTE.bgBase,
-				backgroundImage: `repeating-linear-gradient(180deg, ${PALETTE.scanlineStripe} 0px, ${PALETTE.scanlineStripe} 1px, transparent 1px, transparent 3px)`,
+				background: palette.bgBase,
+				backgroundImage: `repeating-linear-gradient(180deg, ${palette.scanlineStripe} 0px, ${palette.scanlineStripe} 1px, transparent 1px, transparent 3px)`,
 				fontFamily: 'JetBrains Mono',
-				color: PALETTE.textPrimary,
-				border: `1px solid ${PALETTE.ruleHairline}`,
-				borderTop: `4px solid ${PALETTE.accentPrimary}`
+				color: palette.textPrimary,
+				border: `1px solid ${palette.ruleHairline}`,
+				borderTop: `4px solid ${palette.accentPrimary}`
 			},
 			children: [eyebrowRow, rule, contentRow, footerRow]
 		}
@@ -298,7 +302,7 @@ function writeManifest(manifest: Manifest) {
 	writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
 }
 
-/** character fields + palette source + font mtimes (+ glyph.ts presence/mtime, if any). */
+/** character fields + this pack's resolved palette + font mtimes (+ glyph.ts, if any). */
 function contentHash(
 	pack: QuizPack,
 	character: Character,
@@ -339,10 +343,11 @@ async function renderPng(
 	pack: QuizPack,
 	character: Character,
 	fonts: ReturnType<typeof loadFonts>,
-	glyphFor: GlyphFor | null
+	glyphFor: GlyphFor | null,
+	palette: Palette
 ): Promise<Buffer> {
 	const glyphLines = glyphFor ? glyphFor(pack, character.id, 22, 14) : null;
-	const element = buildCard(pack, character, glyphLines);
+	const element = buildCard(pack, character, glyphLines, palette);
 	const svg = await satori(element, { width: WIDTH, height: HEIGHT, fonts: fonts.options });
 	const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: WIDTH } });
 	return resvg.render().asPng();
@@ -354,7 +359,11 @@ async function generatePack(pack: QuizPack, fonts: ReturnType<typeof loadFonts>,
 	const dir = join(OG_ROOT, pack.id);
 	mkdirSync(dir, { recursive: true });
 
-	const paletteSource = readFileSync(PALETTE_PATH, 'utf8');
+	// Was the SOURCE TEXT of palette.ts, which meant editing a comment there regenerated
+	// every card in every pack. The resolved palette is both narrower and per-pack: a
+	// star-wars colour change no longer busts harry-potter's cache.
+	const palette = paletteFor(pack.theme);
+	const paletteSource = JSON.stringify(palette);
 	const fontMtimes = `${statSync(FONT_REGULAR_PATH).mtimeMs}:${statSync(FONT_BOLD_PATH).mtimeMs}`;
 	const glyph = glyphState();
 	const packManifest = (manifest[pack.id] ??= {});
@@ -372,7 +381,7 @@ async function generatePack(pack: QuizPack, fonts: ReturnType<typeof loadFonts>,
 			continue;
 		}
 
-		const png = await renderPng(pack, character, fonts, glyphFor);
+		const png = await renderPng(pack, character, fonts, glyphFor, palette);
 		writeFileSync(outPath, png);
 		packManifest[character.id] = hash;
 		generated++;

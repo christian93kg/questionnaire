@@ -1,50 +1,67 @@
 /**
- * sRGB colours for the OG card renderer.
+ * sRGB colours for the OG card renderer — the satori half of a pack's theme.
  *
- * `src/lib/styles/tokens.css` defines the design system in oklch()/color-mix(), which is
- * correct for browsers but unusable here: satori's CSS parser (`parse-css-color`) only
- * understands hex/rgb/hsl, and neither librsvg nor resvg implement oklch or color-mix at
- * all. Every value below is a verified sRGB conversion of the matching token, computed
- * once and pinned as a literal so this file has no runtime dependency on a colour-math
- * library. `palette.test.ts` re-derives each one from its oklch triple (Oklab -> linear
- * sRGB -> sRGB, D65) and fails the moment this file and tokens.css drift apart.
+ * A pack's theme is stored as NUMBERS in `src/lib/engine/theme.ts`, and rendered twice:
+ * `themeVars()` builds oklch()/color-mix() strings for the browser, and `paletteFor()`
+ * below runs the same triples through Oklab -> linear sRGB -> sRGB (D65) for satori, whose
+ * CSS parser (`parse-css-color`) understands only hex/rgb/hsl — and neither librsvg nor
+ * resvg implement oklch or color-mix at all.
  *
- * Token -> value mapping (see tokens.css for the source declarations):
- *   accent-primary      oklch(0.8 0.075 225)
- *   accent-secondary    oklch(0.8 0.075 320)
- *   text-primary        oklch(0.94 0.018 222)
- *   text-secondary      oklch(0.74 0.024 224)
- *   text-faint          oklch(0.55 0.022 226)
- *   accent-primary-dim  color-mix(in oklch, oklch(0.8 0.075 225) 30%, bg-base)
- *   bg-base             already hex in tokens.css
- *   surface-raised      already hex in tokens.css
- *   rule-hairline       color-mix(in oklch, accent-primary 22%, transparent) -> rgba alpha
- *   rule-strong         color-mix(in oklch, accent-primary 45%, transparent) -> rgba alpha
- *   glow-text           color-mix(in oklch, accent-primary 35%, transparent) -> rgba alpha
- *   scanline stripe     color-mix(in oklch, accent-primary 5%,  transparent) -> rgba alpha
+ * This used to be a frozen object of hand-pinned hexes, with `palette.test.ts` re-deriving
+ * each one from an oklch triple RETYPED IN THE TEST. That made three independent copies of
+ * the same twelve colours (tokens.css, here, the test) of which only two were ever
+ * compared — tokens.css could drift and nothing failed. Deriving from PackTheme collapses
+ * that to one source; the test now closes the loop by parsing the CSS the site actually
+ * ships and checking this mirror against it.
  */
+import type { Oklch, PackTheme } from '../../src/lib/engine/theme';
 
-export const PALETTE = {
-	accentPrimary: '#88c9e2',
-	accentSecondary: '#d4afdc',
-	textPrimary: '#dfeef4',
-	textSecondary: '#9baeb6',
-	textFaint: '#64757c',
-	accentPrimaryDim: '#2a3c45',
-	bgBase: '#080b0f',
-	surfaceRaised: '#0e151d',
-
+export interface Palette {
+	accentPrimary: string;
+	accentSecondary: string;
+	textPrimary: string;
+	textSecondary: string;
+	textFaint: string;
+	accentPrimaryDim: string;
+	bgBase: string;
+	surfaceRaised: string;
 	/** color-mix(..., transparent) collapses to plain alpha on the accent-primary channel. */
-	ruleHairline: 'rgba(136,201,226,0.22)',
-	ruleStrong: 'rgba(136,201,226,0.45)',
-	glowText: 'rgba(136,201,226,0.35)',
-	scanlineStripe: 'rgba(136,201,226,0.05)'
-} as const;
+	ruleHairline: string;
+	ruleStrong: string;
+	glowText: string;
+	scanlineStripe: string;
+}
+
+export function paletteFor(t: PackTheme): Palette {
+	const rgba = (c: Oklch, pct: number) => {
+		const hex = oklchToHex(...c);
+		const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+		return `rgba(${r},${g},${b},${pct / 100})`;
+	};
+	return {
+		accentPrimary: oklchToHex(...t.accentPrimary),
+		accentSecondary: oklchToHex(...t.accentSecondary),
+		textPrimary: oklchToHex(...t.textPrimary),
+		textSecondary: oklchToHex(...t.textSecondary),
+		textFaint: oklchToHex(...t.textFaint),
+		accentPrimaryDim: mixOklchOverHex(
+			...t.accentPrimary,
+			t.mix.accentPrimaryDim / 100,
+			t.bgBase
+		),
+		bgBase: t.bgBase,
+		surfaceRaised: t.surfaceRaised,
+		ruleHairline: rgba(t.accentPrimary, t.mix.ruleHairline),
+		ruleStrong: rgba(t.accentPrimary, t.mix.ruleStrong),
+		glowText: rgba(t.accentPrimary, t.mix.glowText),
+		scanlineStripe: rgba(t.accentPrimary, t.mix.scanline)
+	};
+}
 
 // --- oklch -> sRGB, D65 (Björn Ottosson's reference matrices) ---------------------------
 //
-// Exported so the test can re-derive PALETTE independently. Not used by og.ts at
-// render time — satori gets the literals above.
+// Also exported so palette.test.ts can resolve a shipped CSS string back to sRGB by an
+// independent path and compare the two.
 
 export function oklchToHex(L: number, C: number, hueDeg: number): string {
 	const hRad = (hueDeg * Math.PI) / 180;

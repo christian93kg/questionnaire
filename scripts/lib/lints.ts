@@ -274,6 +274,121 @@ export function structuralIssues(pack: QuizPack): StructuralIssue[] {
 		}
 	}
 
+	// theme: the numbers must be in range before anything renders them.
+	//
+	// Checked here rather than at render time because the failure is otherwise invisible.
+	// An out-of-gamut oklch value does not throw, it clamps — so a mistyped theme ships a
+	// plausible-looking wrong colour, and the sRGB mirror in scripts/og/palette.ts agrees
+	// with it, because both derive from the same wrong number. The audit is the last place
+	// that can say so.
+	const theme = pack.theme;
+	if (!theme) {
+		push('theme-missing', 'pack declares no theme');
+	} else {
+		const hex = /^#[0-9a-f]{6}$/i;
+		for (const [k, v] of Object.entries({
+			bgBase: theme.bgBase,
+			surfaceSunk: theme.surfaceSunk,
+			surfaceRaised: theme.surfaceRaised,
+			surfaceRaised2: theme.surfaceRaised2
+		})) {
+			if (!hex.test(v)) {
+				push('theme-surface-not-hex', `${k} = "${v}" (expected #rrggbb)`);
+				continue;
+			}
+			const lin = [1, 3, 5]
+				.map((i) => parseInt(v.slice(i, i + 2), 16) / 255)
+				.map((c) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)));
+			const luminance = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+			if (luminance > 0.15)
+				push('theme-surface-too-light', `${k} = "${v}" has luminance ${luminance.toFixed(3)} — there is no light mode`);
+		}
+		for (const [k, c] of Object.entries({
+			accentPrimary: theme.accentPrimary,
+			accentSecondary: theme.accentSecondary,
+			textPrimary: theme.textPrimary,
+			textSecondary: theme.textSecondary,
+			textFaint: theme.textFaint
+		})) {
+			const [l, chroma, hue] = c;
+			if (!(l >= 0 && l <= 1)) push('theme-oklch-lightness', `${k}: L=${l} outside 0..1`);
+			if (!(chroma >= 0 && chroma <= 0.5))
+				push('theme-oklch-chroma', `${k}: C=${chroma} outside 0..0.5`);
+			if (!(hue >= 0 && hue < 360)) push('theme-oklch-hue', `${k}: h=${hue} outside 0..360`);
+		}
+		for (const [k, pct] of Object.entries(theme.mix)) {
+			if (!(pct >= 0 && pct <= 100))
+				push('theme-mix-percent', `mix.${k} = ${pct} outside 0..100`);
+		}
+		// An empty animation name renders `animation: <duration> <ease>` with no keyframes —
+		// legal CSS that simply never animates. Silent, so it gets a rule.
+		if (!theme.anim?.enter) push('theme-anim-enter', 'anim.enter is empty');
+		if (!theme.anim?.idle) push('theme-anim-idle', 'anim.idle is empty');
+		if (!theme.fontDisplay) push('theme-font-display', 'fontDisplay is empty');
+		if (!theme.fontMono) push('theme-font-mono', 'fontMono is empty');
+	}
+
+	if (!pack.chrome?.label) push('chrome-label', 'chrome.label is empty');
+	for (const k of ['idle', 'inProgress', 'sealed'] as const) {
+		if (!pack.chrome?.status?.[k]) push('chrome-status', `chrome.status.${k} is empty`);
+	}
+
+	// amplitude by tier: the short tier must hit harder on its primary axis than the long one.
+	//
+	// Both packs' questions.ts headers state this as a hard band (short ±70..90, medium
+	// ±50..70, long ±30..55). Measured, NEITHER pack honours it — star-wars is outside that
+	// band in 10 of 34 units and harry-potter in 12 — so gating on the band would fail
+	// working, calibrated content, and by this repo's own doctrine a rule that fires on
+	// known-good material is the thing that is wrong.
+	//
+	// What IS true, and what the band was reaching for, is the ordering: median amplitude
+	// falls across the tiers in both packs (star-wars 90/60/50, harry-potter 85/80/55). That
+	// is the property that matters — it is what stops a ten-question tier producing mush,
+	// and its failure mode is a long tier less decisive than the short one.
+	const peaks: Record<string, number[]> = { short: [], medium: [], long: [] };
+	for (const q of pack.questions) {
+		const peak = Math.max(...q.options.map((o) => Math.abs(o.v[q.primaryAxis] ?? 0)));
+		peaks[q.tier]?.push(peak);
+	}
+	const median = (a: number[]) => (a.length ? [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)] : NaN);
+	const [ms, mm, ml] = [median(peaks.short), median(peaks.medium), median(peaks.long)];
+	// End to end, not adjacent: adjacent tiers may legitimately tie (the synthetic _fixture
+	// pack ties medium and long at 65), and the defect this guards against is a LONG tier
+	// that is no more decisive than the short one.
+	if (Number.isFinite(ms) && Number.isFinite(ml) && ms <= ml)
+		push('tier-amplitude', `short median ${ms} is not above long ${ml} — the tiers are not graded`);
+	if (Number.isFinite(ms) && ms < 70)
+		push('tier-amplitude', `short median ${ms} is under 70 — too little signal for a 10-question tier`);
+
+	// signature polarity: a `sig` hint must not name a character the option scores AGAINST.
+	//
+	// `sig` is hand-placed character affinity, and nothing else checks it against the roster.
+	// A hint on an option whose axis value is the opposite sign to that character's own
+	// vector pulls the taker toward a result the very same answer scores them away from.
+	//
+	// Skipped for `_fixture`: its character vectors were SOLVED numerically to hit the audit's
+	// correlation, twin and reachability targets, not authored to mean anything, so semantic
+	// agreement between an option and a character is not a property it was ever built to have.
+	// Its two flagged hints are also asserted by score.test.ts as engine coverage.
+	for (const q of pack.id === '_fixture' ? [] : pack.questions) {
+		for (const o of q.options) {
+			for (const cid of Object.keys(o.sig ?? {})) {
+				const c = pack.characters.find((x) => x.id === cid);
+				if (!c) continue;
+				for (const [axis, val] of Object.entries(o.v) as [string, number][]) {
+					const cv = c.vector[axis] ?? 0;
+					if (Math.abs(val) >= 40 && Math.abs(cv) >= 40 && Math.sign(val) !== Math.sign(cv)) {
+						push(
+							'sig-polarity',
+							`${q.id}.${o.id} hints "${cid}" but scores ${axis}=${val} while ${cid} is ${cv}`
+						);
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	// tiers: declared once each, nested, and counts matching the question bank
 	const declared = pack.tiers.map((t) => t.id);
 	for (const t of TIERS) {

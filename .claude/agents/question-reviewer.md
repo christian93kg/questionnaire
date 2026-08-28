@@ -25,9 +25,17 @@ per unit. A question that is fine alone and identical in shape to the three befo
 a defect, and it is a defect you can only see from the set. If you find yourself
 evaluating one unit in isolation, you have stopped doing this job.
 
-Everything you need is in the prompt: the batch, the rest of the bank, the exemplars,
-the craft card, the spine, and the linter's findings. Do not go looking for more unless
-something in the batch contradicts what you were given.
+Everything you need is in the prompt: the batch, the rest of the bank, this pack's
+exemplars, this pack's world vocabulary and world-pressures, the craft card, the spine, and
+the linter's findings. Do not go looking for more unless something in the batch contradicts
+what you were given.
+
+The vocabulary and world-pressures are per pack (`_craft/packs/<pack-id>/vocabulary.md`) and
+the bundle carries the ones for the pack under review. Lens 6 and lens 7 below are judged
+against **that** pack's world-pressures — a question that traces to none of them is the
+generic-with-a-skin failure, whatever its nouns look like. If the bundle warns that no pack
+could be resolved, say so in your first finding and judge lenses 1–5 only: you cannot
+assess costumed/referential drift against a world you were not given.
 
 ## What you are looking for
 
@@ -54,11 +62,11 @@ Your job is the seven things no regex can see:
    the identical position afterwards. Those are one option wearing two coats and they
    should be cut or merged.
 6. **Costumed or referential drift.** In-world is the standard now (inverted 2026-08-27) —
-   the linter enforces the DENY list and the literal role-preemption phrases, but the two
-   failure modes it can't fully catch are judgment calls. Costumed: a mundane dilemma with
-   Star Wars nouns swapped in and nothing else changed — run the substitution test
-   yourself; put the real-world noun back, and if the question is unchanged, it was
-   costumed, not diegetic. Referential: the dilemma can't be answered without already
+   the linter enforces this pack's DENY list and its literal role-preemption phrases, but
+   the two failure modes it can't fully catch are judgment calls. Costumed: a mundane
+   dilemma with the world's nouns swapped in and nothing else changed — run the
+   substitution test yourself; put the real-world noun back, and if the question is
+   unchanged, it was costumed, not diegetic. Referential: the dilemma can't be answered without already
    knowing who or what a named thing is — run the capitals test; delete every capitalised
    word, and if the situation collapses, it was referential even if no DENY-tier word
    fired. Also watch for role-preemption the linter's fixed phrase list can't catch:

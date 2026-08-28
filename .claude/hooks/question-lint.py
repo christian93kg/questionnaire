@@ -19,7 +19,13 @@
 # CONTRACT (inherited verbatim from craft-gate.sh / prose-lint.py):
 #   - degrade LOUDLY, never silently: a missing input warns and keeps going
 #   - a crash must never block writing — errors exit 0
-#   - constants here are the single source of truth; the card points, never restates
+#   - constants here are the single source of truth for THRESHOLDS and the
+#     UNIVERSAL rules. As of the second pack the WORLD vocabulary is NOT: it
+#     lives in _craft/packs/<id>/vocabulary.md. A module-level word list was an
+#     incomplete answer with one pack and a WRONG one with two — pointed at a
+#     Harry Potter bank it FAILed on `sith` in prose containing none, waved
+#     `horcrux` through, and fired skinned-question on every stem. The card
+#     still points and never restates; it points at the pack file now.
 #
 # WHAT IT PROVABLY CANNOT DO — do not add rules for these, they belong to the
 # question reviewer (.claude/agents/question-reviewer.md):
@@ -38,7 +44,7 @@
 # `parse_markdown` (GOTCHA 1) and `Scope` (GOTCHA 2) below.
 #
 # Modes:
-#   question-lint.py <questions.ts|_exemplars.md>   report to stdout, exit 0
+#   question-lint.py <questions.ts|exemplars.md>   report to stdout, exit 0
 #   question-lint.py --hook          PostToolUse: hook JSON on stdin
 #   question-lint.py --brief <file>  emit the question-reviewer context bundle
 #   question-lint.py --selftest      fixtures + bank regression
@@ -56,9 +62,19 @@ from collections import Counter, defaultdict
 VAULT = os.environ.get("CLAUDE_PROJECT_DIR", ".")
 CARD = os.path.join(VAULT, "_craft", "quiz-question.card.md")
 SPINE = os.path.join(VAULT, "_craft", "CRAFT_SPINE.md")
-EXEMPLARS = os.path.join(VAULT, "_craft", "_exemplars.md")
 FIXTURES = os.path.join(VAULT, ".claude", "hooks", "fixtures")
 BANK_GLOB = os.path.join(VAULT, "src", "lib", "packs", "*", "questions.ts")
+
+# The per-pack craft layer. A directory counts as a pack only if it holds a
+# vocabulary.md, so _FORMAT.md at the top level is never mistaken for one.
+CRAFT_PACKS = os.path.join(VAULT, "_craft", "packs")
+VOCAB_NAME = "vocabulary.md"
+EXEMPLARS_NAME = "exemplars.md"
+
+# Rules built from a pack's vocabulary rather than from constants here. Named so
+# the degradation message can list exactly what did NOT run: "clean" must never
+# quietly mean "clean, minus four rules I skipped without saying so."
+WORLD_RULE_IDS = ("deny-noun", "role-preemption", "warn-noun", "skinned-question")
 
 # The gate's trigger. The source keyed on the `_draft.md` suffix; questions are
 # not drafts, they are TypeScript, so this keys on the questions-file basename
@@ -70,7 +86,7 @@ BANK_GLOB = os.path.join(VAULT, "src", "lib", "packs", "*", "questions.ts")
 # where they should have been.
 QUESTIONS_PATH_RE = re.compile(
     r"(?:^|/)(?:[\w.-]*_)?questions?(?:[_-][\w.-]+)?\.(?:ts|js|mjs|md)$"
-    r"|(?:^|/)_craft/_exemplars\.md$",
+    r"|(?:^|/)_craft/packs/[^/]+/exemplars\.md$",
     re.I,
 )
 CONVENTIONAL_PATH = "src/lib/packs/<pack>/questions.ts"
@@ -83,7 +99,7 @@ MAX_PROMPT_WORDS = 30
 # option-asymmetry thresholds. The leak signature is ONE option standing clear
 # of its three siblings, so the comparison is longest vs. SECOND-longest, not
 # vs. the mean — a mean is dragged up by the outlier it is meant to catch.
-# Calibrated against _craft/_exemplars.md, whose worst spread is 54 vs 45 chars
+# Calibrated against _craft/packs/<id>/exemplars.md, whose worst spread is 54 vs 45 chars
 # (ratio 1.20, delta 9). Both conditions must hold, so a naturally long-but-
 # balanced option set never fires. A rule that fires on the exemplars is wrong.
 ASYM_RATIO = 1.6
@@ -94,6 +110,36 @@ ASYM_DELTA_CHARS = 18
 # — four three-word options that match are terse, not monotonous.
 MONOTONY_SPREAD = 1
 MONOTONY_MIN_WORDS = 6
+
+# opener-repeat: how many DISTINCT units may share an option's opening two words
+# before it reads as a tic rather than a coincidence. Two is the spine's ship
+# test. Counting units (not occurrences) is what lets three-weeks-in keep its
+# deliberate "Say yes" x3 — that is one unit, and the parallelism is the design.
+OPENER_REPEAT_UNITS = 2
+
+# ...and the smallest file the count means anything on. The rule reads a BANK;
+# on a handful of units "3 units share an opener" is a small-sample artifact,
+# not a tic. Both known-good fixtures sit below this floor (questions_good.ts is
+# 6 units and opens three options "Take it"; _exemplars.md is 5), and the rule
+# fired on the first before this floor existed — which, by the doctrine this
+# file is governed by, made the rule wrong rather than the fixture. 12 is under
+# the smallest shipped tier (short = 10) and well under the bank (34).
+OPENER_REPEAT_MIN_BANK = 12
+
+# narrator-certification: the bare copula certifying what a situation MEANS
+# about the taker, as opposed to stating what is happening. Kept narrow on
+# purpose — an anchored "it's/that's + (clear|obvious|...)" or an intensifier
+# heading a possessive verdict ("genuinely not your business"). A general
+# "it is <adjective>" would fire on ordinary flat statement, which the register
+# is built from ("The plan is bad"), and a rule that fires on good prose is
+# wrong. Verified clean on _craft/packs/<id>/exemplars.md and the good fixture.
+CERTIFY_RX = re.compile(
+    r"\b(?:it|that|this)(?:'s|’s| is| was)\s+"
+    r"(?:clear|obvious|plain|telling|revealing|significant|no accident)\b"
+    r"|\b(?:genuinely|really|truly|honestly)\s+(?:not|none of)\s+your\b"
+    r"|\bwhich says something about\b",
+    re.I,
+)
 
 # Output-hygiene caps on the rendered report, so a 40-unit bank cannot blow the
 # hook-output budget. Unlike craft-gate.sh's MAX_BYTES these are not empirically
@@ -169,14 +215,30 @@ class Scope:
 # blurs a distinct doctrine concern for the sake of a round number, so 16 stands
 # until the next entry forces an actual reset.
 #
-# Exact accounting: PATTERNS (Tier A regex, scope-tagged) = gloss-clause,
-# so-much-as, appositive-verdict, filter-word, negation-list, trait-name,
-# hedge-option, displacement, intensifier, biography, deny-noun,
-# role-preemption = 12. Non-regex Tier A craft checks in tier_a() = repeat-in-
-# beat, option-asymmetry, option-monotony, capitalised-option = 4. 12 + 4 = 16.
+# Exact accounting: PATTERNS (Tier A regex, scope-tagged, UNIVERSAL) = gloss-
+# clause, so-much-as, appositive-verdict, filter-word, negation-list, trait-name,
+# hedge-option, displacement, intensifier, biography = 10. Tier A regex built
+# PER PACK by world_rules() = deny-noun, role-preemption = 2. Non-regex Tier A
+# craft checks in tier_a() = repeat-in-beat, option-asymmetry, option-monotony,
+# capitalised-option = 4. 10 + 2 + 4 = 16.
+#
+# STILL 16 after the per-pack split, which moved four rules (deny-noun,
+# role-preemption, warn-noun, skinned-question) from module constants to pack
+# data. It added no rule and removed none — a rule counts against this budget
+# wherever its words live. Do NOT read the shorter PATTERNS list as headroom.
 # The two structural checks (option-count, duplicate-vector) are schema, not
 # craft, and are not counted. WARN-tier and skinned-question are Tier B
 # advisory and do not count toward this budget at all.
+#
+# 2026-08-28 added narrator-certification and opener-repeat, both Tier B, when
+# the spine took on story-loop's "narrator stays out." Tier B deliberately: the
+# budget above is at its tripwire, and neither is a binary — "it's clear" can
+# head a legitimate flat statement, and an opener repeat is a distribution over
+# the bank, not a defect in one unit. They sit with prompt-shape, template-shape
+# and option-shape, the other three shape checks, and are calibrated the same
+# way: silent on the shipped bank and on _craft/packs/<id>/exemplars.md, firing on the
+# pre-2026-08-28 bank's five real tics ("it's clear" x2, "genuinely not your
+# business", "Say nothing" x6 units, "Say it" x3 units).
 # --------------------------------------------------------------------------
 
 # --- ported unchanged from prose-lint.py (all six catch real quiz tics) ---
@@ -275,112 +337,198 @@ PATTERNS.append(
 )
 
 # --------------------------------------------------------------------------
-# Doctrine inversion, 2026-08-27: in-world is now the standard, not zero-
-# fandom. The old FANDOM_HARD / FANDOM_SOFT pair banned every Star Wars noun
-# outright. That is gone. In its place, three tiers, all matched case-
-# INSENSITIVE — the historical bug in this file was FANDOM_SOFT's comment
-# claiming lowercase "force" stayed clean while `"the force"` sat inside
-# FANDOM_HARD under re.I, so "the force of it" fired anyway. There is no
-# analogous trap here: ALLOW fires no rule at all regardless of case, so there
-# is nothing for a casing mismatch to break.
+# World vocabulary — per pack, loaded from _craft/packs/<id>/vocabulary.md.
 #
-#   ALLOW — unlimited. Ordinary Star Wars vocabulary; this is the register the
-#     card now asks for. Never checked by any rule below; listed here so
-#     skinned-question has something to detect the *presence* of.
-#   WARN  — advisory (Tier B), max one per question, and each one should
-#     survive being deleted from the sentence (if the dilemma needs it to
-#     parse, it has drifted into referential territory and belongs on ALLOW
-#     only after the capitals/substitution tests clear it, or off the bank).
-#   DENY  — hard fail (Tier A). Vocabulary that is either trivia-only (a
-#     reader needs the film to know what it means) or collapses the roster
-#     the way a role grant does.
+# Doctrine inversion, 2026-08-27, still stands: in-world is the standard, not
+# zero-fandom, and the tiers are ALLOW (fires nothing) / WARN (Tier B) / DENY
+# (Tier A), all matched case-INSENSITIVELY. What changed with the second pack is
+# only WHERE the words live. The rulings that used to be commented here — why
+# `sith` is DENY, why `mandalorian` is not a costume swap-in, why `grogu` may
+# name a result but never a question — moved WITH the words into the pack file,
+# deliberately: a word list without its rulings gets "fixed" by the next author.
 #
-# Two rulings that look wrong and are not — commented here so nobody "fixes"
-# them later:
-#   - "sith" is DENY, not ALLOW, even though it reads like core vocabulary. It
-#     is never spoken in the original trilogy: it is prequel vocabulary
-#     fandom retro-applies to Vader. A once-through viewer knows "the dark
-#     side," not "Sith" — putting it on ALLOW would be trivia dressed as
-#     register.
-#   - "mandalorian" is DENY, not a costume swap-in. It is a demonym for a
-#     culture whose ethics are the point of naming it, not flavour text — using
-#     it as scenery is the referential failure, not a fix for it.
-#   - "grogu" is DENY as a QUESTION noun even though he is a roster character:
-#     results may name him, questions may not. A question built around a named
-#     character is referential by construction.
-ALLOW_WORDS = r"""
-jedi "the force" lightsaber droid empire imperial stormtrooper rebellion rebel
-"dark side" "bounty hunter" smuggler blaster cantina starship garrison checkpoint
-credits salvage manifest transport comm hangar freighter spaceport "docking bay"
-"""
-WARN_WORDS = r"""
-wookiee x-wing "tie fighter" hyperspace astromech resistance "first order"
-"outer rim" speeder "moisture farm" hutt "imperial officer"
-"""
-DENY_WORDS = r"""
-sith padawan mandalorian beskar grogu coruscant naboo alderaan endor jakku
-scarif kamino dagobah twi'lek togruta gungan "jedi council" youngling
-separatist "order 66" "clone wars" "kessel run" parsec kyber holocron
-midi-chlorian moff inquisitor bantha "womp rat" tauntaun sarlacc corellian
-"""
-# Vocabulary the card calls out as register that carries the world without
-# being a Star Wars proper noun at all — ordinary words a checkpoint, a supply
-# run, or a debt collector would use in any setting. Used only by
-# skinned-question below, never a fail condition on its own.
-REGISTER_WORDS = r"""
-requisition papers "shift supervisor" "salvage rights" "three days out"
-"answering the comm"
-"""
+# See _craft/packs/_FORMAT.md for the file format and the selftest's guarantees.
+# --------------------------------------------------------------------------
+
+_VOCAB_SECTIONS = ("allow", "warn", "deny", "register", "role-preemption", "world-pressures")
 
 
 def _tier_terms(block):
     return [t.strip('"') for t in re.findall(r'"[^"]+"|\S+', block)]
 
 
-def _tier_pattern(block):
-    return re.compile(r"\b(?:%s)\b" % "|".join(re.escape(t) for t in _tier_terms(block)), re.I)
+def _tier_pattern(terms):
+    """Terms are always re.escape()d, so a data file can never inject a regex —
+    it could crash the hook (forbidden by contract) or, worse, silently match
+    nothing and let the bank report clean."""
+    if not terms:
+        return None
+    return re.compile(r"\b(?:%s)\b" % "|".join(re.escape(t) for t in terms), re.I)
 
 
-WARN_RX = _tier_pattern(WARN_WORDS)
-DENY_RX = _tier_pattern(DENY_WORDS)
-SKINNED_RX = re.compile(
-    r"\b(?:%s)\b"
-    % "|".join(
-        re.escape(t)
-        for t in _tier_terms(ALLOW_WORDS) + _tier_terms(WARN_WORDS)
-        + _tier_terms(DENY_WORDS) + _tier_terms(REGISTER_WORDS)
-    ),
-    re.I,
-)
+def _sections(raw):
+    """Split a vocabulary file into `## name` -> body. Fenced blocks hold terms;
+    everything outside them is prose (the rulings) and is never parsed."""
+    out, name, buf = {}, None, []
+    for line in raw.split("\n"):
+        m = re.match(r"^##\s+(\S+)", line)
+        if m:
+            if name:
+                out[name] = "\n".join(buf)
+            name, buf = m.group(1).strip().lower(), []
+        elif name:
+            buf.append(line)
+    if name:
+        out[name] = "\n".join(buf)
+    return out
 
-PATTERNS.append(
-    dict(
-        id="deny-noun",
-        rx=DENY_RX,
-        owner="quiz-question card: Categories — Trivia/Referential kill list, DENY tier",
-        note="trivia-only or roster-collapsing vocabulary; never belongs in a question",
-        scope=Scope.BOTH,
+
+def _fenced(body):
+    return "\n".join(re.findall(r"^```[^\n]*\n(.*?)^```", body, re.S | re.M))
+
+
+def installed_packs():
+    return sorted(
+        os.path.basename(os.path.dirname(p))
+        for p in glob.glob(os.path.join(CRAFT_PACKS, "*", VOCAB_NAME))
     )
-)
 
-# role-preemption: granting the taker a ship, a squadron, a weapon, a side, or
-# an intuitive power collapses the result space. If a question implies the
-# taker is Force-sensitive, Han, Leia and Cassian all become incoherent
-# results — the roster stops being a roster of *people*, and becomes a roster
-# gated by a power most of it doesn't have.
-PATTERNS.append(
-    dict(
-        id="role-preemption",
-        rx=re.compile(
-            r"\byour ship\b|\byour squadron\b|\byour lightsaber\b"
-            r"|\byou feel the force\b|\byou sense\b",
-            re.I,
-        ),
-        owner="quiz-question card: Standing rules — second person is situation, "
-        "never role, never power, never side",
-        scope=Scope.BOTH,
+
+def load_vocab(pack_id):
+    """One pack's world vocabulary, or None. Never substitutes another pack's."""
+    if not pack_id:
+        return None
+    path = os.path.join(CRAFT_PACKS, pack_id, VOCAB_NAME)
+    if not os.path.isfile(path):
+        warn(f"no vocabulary at {path} — {', '.join(WORLD_RULE_IDS)} did NOT run.")
+        return None
+    try:
+        raw = open(path).read()
+    except OSError as e:
+        warn(f"could not read {path} ({e}) — {', '.join(WORLD_RULE_IDS)} did NOT run.")
+        return None
+
+    sec = _sections(raw)
+    missing = [s for s in _VOCAB_SECTIONS if s not in sec]
+    if missing:
+        warn(f"{path}: missing section(s) {', '.join(missing)}")
+
+    v = {"pack": pack_id, "path": path}
+    for tier in ("allow", "warn", "deny", "register"):
+        v[tier] = _tier_terms(_fenced(sec.get(tier, "")))
+    v["preempt"] = [
+        ln.strip() for ln in _fenced(sec.get("role-preemption", "")).split("\n") if ln.strip()
+    ]
+    v["pressures"] = [
+        ln.strip()[2:].strip()
+        for ln in sec.get("world-pressures", "").split("\n")
+        if ln.strip().startswith("- ")
+    ]
+
+    if not v["deny"]:
+        warn(f"{path}: DENY tier is empty — deny-noun will never fire for this pack.")
+    return v
+
+
+def world_rules(vocab):
+    """Tier-A regex rules built from one pack's vocabulary.
+
+    Returns [] when vocab is None. The caller has already warned; a rule that
+    cannot be built must be ABSENT AND ANNOUNCED, never faked and never borrowed
+    from another pack — borrowing is what turns a miss into a wrong answer."""
+    if not vocab:
+        return []
+    out = []
+    deny_rx = _tier_pattern(vocab["deny"])
+    if deny_rx:
+        out.append(
+            dict(
+                id="deny-noun",
+                rx=deny_rx,
+                owner="quiz-question card: Categories — Trivia/Referential kill list, DENY tier",
+                note=f"trivia-only or roster-collapsing vocabulary ({vocab['pack']})",
+                scope=Scope.BOTH,
+            )
+        )
+    # role-preemption: granting the taker a role, a side, a possession or an
+    # intuitive power collapses the result space. If a Star Wars question implies
+    # the taker is Force-sensitive, Han, Leia and Cassian all become incoherent
+    # results — the roster stops being a roster of *people* and becomes one gated
+    # by a power most of it doesn't have. Every world has its own version.
+    preempt_rx = _tier_pattern(vocab["preempt"])
+    if preempt_rx:
+        out.append(
+            dict(
+                id="role-preemption",
+                rx=preempt_rx,
+                owner="quiz-question card: Standing rules — second person is situation, "
+                "never role, never power, never side",
+                scope=Scope.BOTH,
+            )
+        )
+    return out
+
+
+def warn_rx(vocab):
+    return _tier_pattern(vocab["warn"]) if vocab else None
+
+
+def skinned_rx(vocab):
+    """Presence of ANY world vocabulary — the inverse of the old zero-fandom rule.
+    Flags too LITTLE world, not too much, so every tier counts including DENY."""
+    if not vocab:
+        return None
+    return _tier_pattern(vocab["allow"] + vocab["warn"] + vocab["deny"] + vocab["register"])
+
+
+# --------------------------------------------------------------------------
+# Which pack's world applies to the file under test.
+#
+# There is deliberately NO default and NO fallback pack. Linting a Harry Potter
+# bank against Star Wars words is not a partial answer, it is a wrong one: it
+# FAILs on `sith` in prose containing none, and passes `dementor`, `horcrux` and
+# every real trivia noun unchecked. Under this file's contract a wrong answer is
+# worse than a loud miss.
+# --------------------------------------------------------------------------
+LINT_PACK_RE = re.compile(r"(?:<!--|//|/\*)\s*lint-pack:\s*([\w.-]+)")
+PACK_PATH_RE = re.compile(r"(?:^|/)src/lib/packs/([^/]+)/")
+CRAFT_PATH_RE = re.compile(r"(?:^|/)_craft/packs/([^/]+)/")
+
+
+def resolve_pack(path, raw):
+    """-> (pack_id or None, why). Most explicit signal first."""
+    norm = (path or "").replace("\\", "/")
+    directive = LINT_PACK_RE.search(raw or "")
+    from_path = next(
+        (m.group(1) for rx in (PACK_PATH_RE, CRAFT_PATH_RE) for m in [rx.search(norm)] if m),
+        None,
     )
-)
+
+    if directive:
+        # The directive wins — the fixtures and any off-convention draft have no
+        # other signal. But a directive disagreeing with its path is a mistake
+        # worth saying out loud rather than silently honouring.
+        if from_path and from_path != directive.group(1):
+            warn(
+                f"{norm}: `lint-pack: {directive.group(1)}` disagrees with its path "
+                f"(packs/{from_path}/) — using the directive."
+            )
+        return directive.group(1), "lint-pack: directive"
+    if from_path:
+        return from_path, "path"
+
+    installed = installed_packs()
+    if len(installed) == 1:
+        # Unambiguous, so not a warning — but named, so a second pack changes it.
+        return installed[0], f"only pack installed ({installed[0]})"
+
+    warn(
+        f"could not tell which pack {norm or '<stdin>'} belongs to "
+        f"(installed: {', '.join(installed) or 'none'}) — "
+        f"{', '.join(WORLD_RULE_IDS)} did NOT run. Add `// lint-pack: <id>` to the file, "
+        f"or move it to {CONVENTIONAL_PATH}."
+    )
+    return None, "unresolved"
 
 # The displacement test: if the abstract noun is in the prompt, the answer key is
 # in the question. Prompt-scoped only — an option may legitimately land on a
@@ -758,8 +906,9 @@ def snippet(s, limit=88):
     return s if len(s) <= limit else s[: limit - 1] + "…"
 
 
-def tier_a(units, skip):
+def tier_a(units, skip, vocab):
     fails = []
+    rules = PATTERNS + world_rules(vocab)
 
     def add(rid, line, quote, owner):
         if rid not in skip:
@@ -767,7 +916,7 @@ def tier_a(units, skip):
 
     for u in units:
         # --- regex rules, scoped (GOTCHA 2: options are linted, not blanked) ---
-        for rule in PATTERNS:
+        for rule in rules:
             if rule["id"] in skip:
                 continue
             targets = []
@@ -881,8 +1030,10 @@ def tier_a(units, skip):
     return fails
 
 
-def tier_b(units, skip):
+def tier_b(units, skip, vocab):
     adv = []
+    WARN_RX = warn_rx(vocab)
+    SKINNED_RX = skinned_rx(vocab)
 
     for u in units:
         if "prompt-shape" in skip:
@@ -925,7 +1076,11 @@ def tier_b(units, skip):
     # sentence. Advisory because WARN terms are legitimate register, not a
     # ban; the message flags the count so a unit that leans on two or more
     # gets a second look, not an automatic rewrite.
-    if "warn-noun" not in skip:
+    # Both world-vocabulary advisories are SKIPPED, not degraded, when the pack
+    # could not be resolved. Firing skinned-question with no vocabulary would
+    # flag every stem in the bank — a rule that is wrong on every unit trains the
+    # advisory tier to be ignored, which costs it the one time it is real.
+    if "warn-noun" not in skip and WARN_RX:
         for u in units:
             for text, where in [(u["prompt"], "prompt")] + [
                 (o["text"], "option") for o in u["options"]
@@ -945,7 +1100,7 @@ def tier_b(units, skip):
     # around 10 of 34 in the bank), so advisory, not a fail. This is the
     # inverse of the old zero-fandom rule: it flags too LITTLE world, not too
     # much.
-    if "skinned-question" not in skip:
+    if "skinned-question" not in skip and SKINNED_RX:
         for u in units:
             if not SKINNED_RX.search(u["prompt"]):
                 adv.append(
@@ -953,6 +1108,51 @@ def tier_b(units, skip):
                         id="skinned-question",
                         quote=f'{u["qid"]}: no world vocabulary in the stem — '
                         f'"{snippet(u["prompt"])}"',
+                    )
+                )
+
+    # narrator-certification: a clause telling the taker what the situation
+    # MEANS about them, rather than stating what is happening. The spine's
+    # "narrator stays out," ported from story-loop 2026-08-28 and mechanised
+    # for the stem. PATTERNS already catches the source repo's three narration
+    # tics (gloss-clause, so-much-as, appositive-verdict); none of them fires
+    # on the bare copula form this catches, which is what the bank actually
+    # shipped: "and it's genuinely not your business", "it's clear it still
+    # won't fly", "it's clear everyone else has flown this route for years".
+    # Advisory, not Tier A: "it's clear" can head a legitimate flat statement,
+    # and the fix is always a judgment about which fact to substitute.
+    if "narrator-certification" not in skip:
+        for u in units:
+            for m in CERTIFY_RX.finditer(u["prompt"]):
+                adv.append(
+                    dict(
+                        id="narrator-certification",
+                        quote=f'{u["qid"]}: "{m.group(0)}" certifies the situation\'s '
+                        f"meaning — state the fact that forces it instead",
+                    )
+                )
+
+    # opener-repeat: the Tier C dossier lists repeated option openings and
+    # returns no verdict; this is the verdict. Counted over DISTINCT UNITS, not
+    # raw occurrences, because a repeat inside one unit is often the design —
+    # three-weeks-in runs "Say yes" x3 so its options differ only in which
+    # basis the taker trusts. Across units it is a tic: the bank shipped
+    # "Say nothing" x6 and "Do it" x4 on 2026-08-27, cleared 2026-08-28.
+    # Threshold is >2 units, matching the spine's ship test.
+    if "opener-repeat" not in skip and len(units) >= OPENER_REPEAT_MIN_BANK:
+        openers = {}
+        for u in units:
+            for o in u["options"]:
+                w = words(o["text"])[:2]
+                if len(w) == 2:
+                    openers.setdefault(" ".join(w), set()).add(u["qid"])
+        for opener, qids in sorted(openers.items()):
+            if len(qids) > OPENER_REPEAT_UNITS:
+                adv.append(
+                    dict(
+                        id="opener-repeat",
+                        quote=f'"{opener}…" opens an option in {len(qids)} units '
+                        f"({', '.join(sorted(qids))}) — vary all but two",
                     )
                 )
     return adv
@@ -990,20 +1190,31 @@ def tier_c(units):
 def lint(path, want_c=True, path_hint=""):
     raw, units = parse(path, path_hint=path_hint or path)
     skip = suppressed(raw)
-    fails = tier_a(units, skip)
-    adv = tier_b(units, skip)
+    pack_id, _why = resolve_pack(path_hint or path, raw)
+    vocab = load_vocab(pack_id)
+    fails = tier_a(units, skip, vocab)
+    adv = tier_b(units, skip, vocab)
     cee = tier_c(units) if want_c else []
-    return units, fails, adv, cee, skip
+    return units, fails, adv, cee, skip, vocab, pack_id
 
 
-def render(units, fails, adv, cee, skip):
+def render(units, fails, adv, cee, skip, vocab=None, pack_id=None):
     out = []
     for w in warnings:
         out.append(f"!! QUESTION LINT WARNING: {w}")
     nopt = sum(len(u["options"]) for u in units)
+    # The scope suffix is the anti-silent-pass mechanism. Without it, a bank whose
+    # pack could not be resolved reports the same word — "clean" — as a bank that
+    # passed every rule, and the four world rules that never ran are invisible.
+    scope = (
+        f"pack {vocab['pack']}"
+        if vocab
+        else f"UNIVERSAL RULES ONLY — no world vocabulary; {', '.join(WORLD_RULE_IDS)} skipped"
+    )
     if not fails and not adv:
-        out.append(f"QUESTION LINT: clean — {len(units)} units, {nopt} options.")
+        out.append(f"QUESTION LINT: clean — {len(units)} units, {nopt} options [{scope}].")
     else:
+        out.append(f"QUESTION LINT [{scope}]")
         for f in fails:
             loc = f"L{f['line']}" if f["line"] else "  "
             out.append(f"{loc} FAIL {f['id']}  {f['quote']}")
@@ -1024,13 +1235,29 @@ def render(units, fails, adv, cee, skip):
 # Question-reviewer bundle
 # --------------------------------------------------------------------------
 def brief(path):
-    units, fails, adv, _, skip = lint(path, want_c=False)
+    units, fails, adv, _, skip, vocab, pack_id = lint(path, want_c=False)
     parts = ["=== QUESTION BANK UNDER REVIEW ==="]
     for u in units:
         parts.append(f'[{u["qid"]}] {u["prompt"]}')
         parts += [f'   - {o["text"]}' for o in u["options"]]
-    for p, label in ((EXEMPLARS, "EXEMPLARS — the target voice"), (CARD, "CRAFT CARD"),
-                     (SPINE, "CRAFT SPINE")):
+
+    # The reviewer's costumed/referential lens needs this pack's world-pressures
+    # and vocabulary, not just the card. No byte budget here — this is a subagent
+    # prompt, not hook output.
+    if not pack_id:
+        parts.append(
+            "\n!! QUESTION LINT WARNING: could not resolve a pack — the reviewer has no "
+            "world-pressures or vocabulary and cannot judge costumed/referential drift."
+        )
+    sources = []
+    if pack_id:
+        sources = [
+            (os.path.join(CRAFT_PACKS, pack_id, EXEMPLARS_NAME),
+             f"EXEMPLARS ({pack_id}) — the target voice"),
+            (os.path.join(CRAFT_PACKS, pack_id, VOCAB_NAME),
+             f"WORLD VOCABULARY ({pack_id}) — tiers and world-pressures"),
+        ]
+    for p, label in sources + [(CARD, "CRAFT CARD"), (SPINE, "CRAFT SPINE")]:
         if os.path.isfile(p):
             parts += [f"\n=== {label} ===", open(p).read().strip()]
         else:
@@ -1038,7 +1265,7 @@ def brief(path):
             # this material must be handed over explicitly or the reviewer works blind.
             parts.append(f"\n!! QUESTION LINT WARNING: {p} missing — reviewer working without it.")
     parts += ["\n=== LINTER ALREADY FOUND (do not re-report) ===",
-              render(units, fails, adv, [], skip)]
+              render(units, fails, adv, [], skip, vocab, pack_id)]
     return "\n".join(parts)
 
 
@@ -1053,14 +1280,114 @@ def selftest():
         print("SELFTEST: fixtures missing — build both before trusting this hook", file=sys.stderr)
         return False
 
+    packs = installed_packs()
+    vocabs = {pid: load_vocab(pid) for pid in packs}
+
+    # --- 1. pack resolution ------------------------------------------------
+    #
+    # The last case is the one that matters: with two packs installed and no
+    # signal, resolution must FAIL LOUDLY and the rendered report must SAY the
+    # world rules did not run. If that assertion ever goes green while the report
+    # says plain "clean", the silent-pass door has reopened.
+    warnings.clear()
+    cases = [
+        ("src/lib/packs/star-wars/questions.ts", "", "star-wars"),
+        ("src/lib/packs/harry-potter/questions.ts", "", "harry-potter"),
+        ("_craft/packs/harry-potter/exemplars.md", "", "harry-potter"),
+        ("/tmp/anywhere/draft.md", "// lint-pack: star-wars\n", "star-wars"),
+        ("src/lib/packs/star-wars/questions.ts", "// lint-pack: harry-potter\n", "harry-potter"),
+    ]
+    if len(packs) >= 2:
+        cases.append(("/tmp/anywhere/draft.md", "", None))
+    res_ok = True
+    for path, raw, want in cases:
+        got, _why = resolve_pack(path, raw)
+        if got != want:
+            print(f"   resolve MISMATCH: {path!r} -> {got!r}, expected {want!r}")
+            res_ok = False
+    if len(packs) >= 2:
+        report = render([], [], [], [], set(), None, None)
+        if "UNIVERSAL RULES ONLY" not in report:
+            print("   unresolved pack did NOT announce itself in the report — silent pass")
+            res_ok = False
+    print(f"SELFTEST resolve: {len(cases)} case(s) -> {'PASS' if res_ok else 'FAIL'}")
+    ok &= res_ok
+    warnings.clear()
+
+    # --- 2. vocabulary sanity ----------------------------------------------
+    vocab_ok = True
+    if not packs:
+        print(f"!! SELFTEST WARNING: no packs under {CRAFT_PACKS} — world rules cannot run at all")
+        vocab_ok = False
+    for pid in packs:
+        v = vocabs[pid]
+        if not v:
+            print(f"   {pid}: vocabulary failed to load")
+            vocab_ok = False
+            continue
+        if not v["deny"]:
+            print(f"   {pid}: DENY tier empty")
+            vocab_ok = False
+        # A term in two tiers is silent by construction: the tiers are not checked
+        # in priority order, so a word on both ALLOW and DENY still FAILs.
+        seen = {}
+        for tier in ("allow", "warn", "deny", "register"):
+            for t in v[tier]:
+                key = t.lower()
+                if key in seen and seen[key] != tier:
+                    print(f'   {pid}: "{t}" is in both {seen[key]} and {tier}')
+                    vocab_ok = False
+                seen[key] = tier
+        for line in v["preempt"]:
+            if re.search(r"[\\^$.|?*+()\[\]{}]", line):
+                print(f'   {pid}: role-preemption line has regex metacharacters: "{line}"')
+                vocab_ok = False
+        if not v["pressures"]:
+            print(f"   {pid}: no world-pressures — craft-gate has nothing to inject")
+            vocab_ok = False
+    # Every ROUTED pack must have a craft directory. A shipped bank with no
+    # vocabulary is worse than an unlinted one: it reports clean.
+    for b in sorted(glob.glob(BANK_GLOB)):
+        pid = os.path.basename(os.path.dirname(b))
+        if pid == "_fixture":
+            continue
+        if pid not in packs:
+            print(f"   {pid} ships a bank but has no _craft/packs/{pid}/{VOCAB_NAME} — under-linted")
+            vocab_ok = False
+    print(f"SELFTEST vocab: {len(packs)} pack(s) {packs} -> {'PASS' if vocab_ok else 'FAIL'}")
+    ok &= vocab_ok
+
+    # --- 3. cross-pack isolation -------------------------------------------
+    #
+    # The headline regression, asserted directly: pack A's DENY list must not
+    # fire on pack B's own vocabulary. This is "`sith` FAILs a Potter bank."
+    iso_ok = True
+    for a in packs:
+        rx = _tier_pattern((vocabs[a] or {}).get("deny", []))
+        if not rx:
+            continue
+        for b in packs:
+            if a == b or not vocabs[b]:
+                continue
+            hay = " ".join(vocabs[b]["allow"] + vocabs[b]["register"])
+            m = rx.search(hay)
+            if m:
+                print(f"   {a} DENY fires on {b} vocabulary: {m.group(0)!r}")
+                iso_ok = False
+    print(f"SELFTEST isolation: {len(packs)} pack(s) -> {'PASS' if iso_ok else 'FAIL'}")
+    ok &= iso_ok
+
+    # --- 4. fixtures --------------------------------------------------------
     for label, path, want_fail in (("bad ", bad, True), ("good", good, False)):
         warnings.clear()
-        units, fails, adv, _, _ = lint(path, want_c=False)
+        units, fails, adv, _, _, _, _ = lint(path, want_c=False)
         ids = Counter(f["id"] for f in fails)
         n = sum(ids.values())
         if want_fail:
             # Named rules, not just a count: a bad fixture that fails for the
             # wrong reason proves nothing about the rules it was built to trip.
+            # `deny-noun` now fires only because questions_bad.ts carries a
+            # `lint-pack:` line — if that is ever dropped, this is what catches it.
             must = ["trait-name", "hedge-option", "option-asymmetry", "deny-noun",
                     "displacement", "gloss-clause", "filter-word", "duplicate-vector",
                     "option-monotony", "repeat-in-beat"]
@@ -1079,23 +1406,30 @@ def selftest():
                 print(f"   unexpected: {f['id']}  {f['quote'][:80]}")
             ok &= verdict
 
-    # The exemplars are sworn to lint clean (_craft/_exemplars.md says so). If
-    # they ever do not, the rule is wrong and the exemplar is right.
+    # --- 5. exemplars, per pack ---------------------------------------------
+    #
+    # Each pack's exemplars are sworn to lint clean UNDER THAT PACK'S OWN
+    # vocabulary. If one ever does not, the rule is wrong and the exemplar is
+    # right — that doctrine is unchanged, it is now just held five-per-pack.
     warnings.clear()
-    if os.path.isfile(EXEMPLARS):
-        units, fails, adv, _, _ = lint(EXEMPLARS, want_c=False)
+    ex_paths = sorted(glob.glob(os.path.join(CRAFT_PACKS, "*", EXEMPLARS_NAME)))
+    if not ex_paths:
+        print(f"!! SELFTEST WARNING: no {EXEMPLARS_NAME} under {CRAFT_PACKS} — voice not checked")
+    for ex in ex_paths:
+        pid = os.path.basename(os.path.dirname(ex))
+        units, fails, _, _, _, _, _ = lint(ex, want_c=False)
         verdict = not fails
-        print(f"SELFTEST exemplars: {len(fails)} FAIL over {len(units)} units "
+        print(f"SELFTEST exemplars[{pid}]: {len(fails)} FAIL over {len(units)} units "
               f"-> {'PASS' if verdict else 'FAIL'}")
         for f in fails:
             print(f"   exemplar violation: {f['id']}  {f['quote'][:80]}")
         ok &= verdict
-    else:
-        print(f"!! SELFTEST WARNING: {EXEMPLARS} missing — target voice not checked")
 
-    # Bank regression. Over zero units this is not a pass — saying PASS would
-    # tell the reader a check ran that did not. SKIP, and stay exit 0, so a bank
-    # that does not exist yet is not a red install.
+    # --- 6. bank regression -------------------------------------------------
+    #
+    # BASELINE_BANK_FAILS stays a single scalar across every pack, deliberately.
+    # A per-pack dict would exist only to let one pack carry debt, which is the
+    # exact thing this number prevents. It is 0.
     warnings.clear()
     banks = sorted(glob.glob(BANK_GLOB))
     if not banks:
@@ -1103,11 +1437,15 @@ def selftest():
     else:
         total, nunits = 0, 0
         for b in banks:
-            units, fails, _, _, _ = lint(b, want_c=False)
+            units, fails, _, _, _, vocab, pack_id = lint(b, want_c=False)
             nunits += len(units)
             total += len(fails)
+            if pack_id is None or vocab is None:
+                # An under-linted bank reports clean, so it cannot be a warning.
+                print(f"   bank {b}: unresolved pack — world rules did not run")
+                ok = False
             for f in fails[:8]:
-                print(f"   bank {os.path.basename(b)}: {f['id']}  {f['quote'][:70]}")
+                print(f"   bank {os.path.basename(b)}[{pack_id}]: {f['id']}  {f['quote'][:70]}")
         verdict = total <= BASELINE_BANK_FAILS
         print(f"SELFTEST bank: {total} FAIL across {nunits} units in {len(banks)} file(s) "
               f"vs baseline {BASELINE_BANK_FAILS} -> {'PASS' if verdict else 'FAIL'}")
@@ -1145,8 +1483,8 @@ def main():
         p = (payload.get("tool_input") or {}).get("file_path", "")
         if not p or not QUESTIONS_PATH_RE.search(p) or not os.path.isfile(p):
             sys.exit(0)
-        units, fails, adv, cee, skip = lint(p)
-        report = render(units, fails, adv, cee, skip)
+        units, fails, adv, cee, skip, vocab, pack_id = lint(p)
+        report = render(units, fails, adv, cee, skip, vocab, pack_id)
         # Linted either way, but say so when the bank is off-convention —
         # otherwise the next one lands somewhere this hook may not see. The
         # exemplars and the fixtures are linted on purpose and are not the bank,
@@ -1154,7 +1492,7 @@ def main():
         # advisory to be ignored, which costs it the one time it is real.
         norm = p.replace("\\", "/")
         if not re.search(
-            r"(?:_craft/_exemplars\.md|\.claude/hooks/fixtures/[^/]+"
+            r"(?:_craft/packs/[^/]+/exemplars\.md|\.claude/hooks/fixtures/[^/]+"
             r"|src/lib/packs/[^/]+/questions\.ts)$",
             norm,
         ):
@@ -1177,8 +1515,8 @@ def main():
         print(brief(a.target))
         sys.exit(0)
 
-    units, fails, adv, cee, skip = lint(a.target)
-    print(render(units, fails, adv, cee, skip))
+    units, fails, adv, cee, skip, vocab, pack_id = lint(a.target)
+    print(render(units, fails, adv, cee, skip, vocab, pack_id))
     sys.exit(0)
 
 

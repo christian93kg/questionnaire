@@ -79,7 +79,14 @@ function miniPack(): QuizPack {
 		generatedAt: '',
 		audit: { winRate: {}, unreachable: [], maxAxisCorrelation: 0, effectiveDimensions: 0, twins: [] }
 	};
-	return { ...partial, calibration } as QuizPack;
+	// theme/chrome are required on QuizPack but irrelevant to scoring; borrowing the
+	// fixture's keeps these doubles honest without a second literal to maintain.
+	return {
+		...partial,
+		calibration,
+		theme: fixturePack.theme,
+		chrome: fixturePack.chrome
+	} as QuizPack;
 }
 
 /** A pack where one axis is asked 20x and another only once, same option magnitude. */
@@ -138,7 +145,14 @@ function coveragePack(manyCount: number): QuizPack {
 		generatedAt: '',
 		audit: { winRate: {}, unreachable: [], maxAxisCorrelation: 0, effectiveDimensions: 0, twins: [] }
 	};
-	return { ...partial, calibration } as QuizPack;
+	// theme/chrome are required on QuizPack but irrelevant to scoring; borrowing the
+	// fixture's keeps these doubles honest without a second literal to maintain.
+	return {
+		...partial,
+		calibration,
+		theme: fixturePack.theme,
+		chrome: fixturePack.chrome
+	} as QuizPack;
 }
 
 describe('scoreQuiz answer-count contract', () => {

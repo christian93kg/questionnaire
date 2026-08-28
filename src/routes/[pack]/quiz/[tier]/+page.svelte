@@ -229,7 +229,7 @@
 		padding: var(--space-6) var(--space-4);
 		text-align: center;
 		background: none;
-		animation: holo-rise var(--dur-slow) var(--ease);
+		animation: var(--anim-enter) var(--dur-slow) var(--ease);
 	}
 	.part-label {
 		font-family: var(--font-mono);

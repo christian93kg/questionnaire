@@ -348,7 +348,7 @@
 		text-shadow: var(--glow-text);
 		background-image: var(--scanline);
 		border-bottom: 1px solid var(--rule-hairline);
-		animation: holo-flicker 6s var(--ease) infinite;
+		animation: var(--anim-idle) 6s var(--ease) infinite;
 	}
 	.meta-row {
 		display: flex;

@@ -1,26 +1,15 @@
 ---
 type: exemplars
+pack: star-wars
 mode: quiz-question
 tags: [system, craft]
 last_updated: "2026-08-27"
 ---
 
-# Exemplars — quiz questions
+# Exemplars — star-wars
 
-> **These five units are the highest-fidelity statement of the target voice.** Not
-> illustrations of the card — the thing the card is trying to describe, and they outrank
-> any prose description of the register, including the card's own tests. When the card and
-> an exemplar disagree, the exemplar is right and the card needs work.
->
-> **Cap: five entries.** Sworn: a new unit that beats one of these is **swapped in for the
-> weakest, never appended**. A growing exemplars file is a style guide, read once; five
-> units are re-read every session. The cap is the feature.
->
-> Also the known-good fixture in prose form: `.claude/hooks/question-lint.py` must run
-> clean on this file. A rule that fires here is wrong; the unit is not.
->
-> **Doctrine inverted 2026-08-27** — in-world is standard now, not zero-fandom. Four below
-> are diegetic; #5 is world-tinted (register only), so the spectrum stays visible.
+Doctrine: `quiz-question.card.md` → `## Exemplars`. Four below are diegetic; #5 is
+world-tinted (register only), so the spectrum stays visible.
 
 ---
 

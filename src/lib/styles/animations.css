@@ -1,0 +1,86 @@
+/*
+ * Keyframes registry — every pack's animations, in one global stylesheet.
+ *
+ * A pack selects an animation by NAME (`PackTheme.anim.enter` / `.idle`, surfaced as
+ * `--anim-enter` / `--anim-idle`), it does not describe one. That is forced: `@keyframes`
+ * cannot be parameterised by a custom property, so there is nowhere for per-pack keyframes
+ * to live except a stylesheet both packs load. An unused `@keyframes` rule is inert, so
+ * the cost of carrying every pack's is a few hundred bytes and nothing else.
+ *
+ * This file must NOT move into a pack directory. Pack modules are loaded by `tsx` in
+ * scripts/og.ts and scripts/audit.ts, which cannot import CSS — a pack that imports a
+ * stylesheet breaks the OG render and the audit gate.
+ *
+ * Components reference these through `var(--anim-enter)`, never by name. Svelte only
+ * rewrites `animation-name` when the name matches a `@keyframes` in the *same* component's
+ * style block; a `var()` matches nothing, so it passes through and resolves against these
+ * global declarations. That is the mechanism, not an accident — do not inline a literal
+ * keyframe name into a component or it will be scoped and stop resolving.
+ */
+
+/* --- star-wars --- */
+
+@keyframes holo-rise {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes holo-flicker {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	48% {
+		opacity: 0.86;
+	}
+	52% {
+		opacity: 1;
+	}
+}
+
+/* --- harry-potter --- */
+
+/* Slower and shorter than holo-rise: a page settling, not a projection snapping on. */
+@keyframes ink-settle {
+	from {
+		opacity: 0;
+		transform: translateY(3px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* A candle, not a failing tube: shallower dip than holo-flicker, and off-centre so the
+   two never look like the same animation retimed. */
+@keyframes candle-waver {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	38% {
+		opacity: 0.93;
+	}
+	44% {
+		opacity: 0.97;
+	}
+	61% {
+		opacity: 0.9;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation: none !important;
+		transition: none !important;
+	}
+}

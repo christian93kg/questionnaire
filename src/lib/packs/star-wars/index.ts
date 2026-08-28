@@ -3,6 +3,7 @@ import { AXES } from './axes';
 import { CHARACTERS } from './characters';
 import { QUESTIONS } from './questions';
 import calibration from './calibration.json';
+import { CHROME, THEME } from './theme';
 
 export const starWars: QuizPack = {
 	id: 'star-wars',
@@ -96,7 +97,9 @@ export const starWars: QuizPack = {
 		}
 	],
 	signatureWeight: 0.12,
-	calibration
+	calibration,
+	theme: THEME,
+	chrome: CHROME
 };
 
 export default starWars;

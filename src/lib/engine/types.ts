@@ -1,3 +1,5 @@
+import type { PackChrome, PackTheme } from './theme';
+
 export type AxisId = string;
 export type TierId = 'short' | 'medium' | 'long';
 
@@ -124,7 +126,15 @@ export interface QuizPack {
 	signatureWeight: number;
 	calibration: PackCalibration;
 	migrations?: PackMigration[];
-	theme?: Record<string, string>;
+	/**
+	 * Colour, type and animation for this pack, rendered to a `:root {}` block by the root
+	 * layout. REQUIRED, not optional: optional was the previous state of this field, and it
+	 * went unread for the entire life of the one-pack site — which is precisely how a second
+	 * pack ends up silently inheriting the first one's palette.
+	 */
+	theme: PackTheme;
+	/** Shell header strings. Required for the same reason as `theme`. */
+	chrome: PackChrome;
 }
 
 export interface CharacterScore {

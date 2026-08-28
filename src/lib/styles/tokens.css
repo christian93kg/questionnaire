@@ -1,36 +1,20 @@
 /*
- * Design tokens — holo-blue intake terminal.
+ * Design tokens — the fandom-neutral half of the design system.
  *
- * Ported 1:1 from the approved concept (Star Wars assessment mock). Components reference
- * these custom properties only and never hardcode a colour, size, or timing, so a future
- * fandom pack or a redesign touches only this file plus component markup.
+ * Type scale, spacing, timing, layout and element resets. Every pack shares these; a quiz
+ * is a different *theme*, not a different type scale.
+ *
+ * THE COLOURS ARE NOT HERE, and nothing colour-shaped may come back. They live in each
+ * pack's `theme.ts` and are rendered into a `:root {}` block by `themeCss()` in the root
+ * layout's `<svelte:head>`. A colour token declared here would sit in a second `:root {}`
+ * block at identical specificity, so which one wins would depend on head order — i.e. it
+ * would work until it silently didn't. `--font-display` / `--font-mono` moved for the same
+ * reason: they are part of a pack's voice, and the resets below reference them as vars.
+ *
+ * Keyframes and the reduced-motion block moved to `animations.css`; see its header.
  */
 :root {
-	/* ---- thematic ---- */
-	--bg-base: #080b0f;
-	--surface-sunk: #05070a;
-	--surface-raised: #0e151d;
-	--surface-raised-2: #131c26;
-	--rule-hairline: color-mix(in oklch, oklch(0.8 0.075 225) 22%, transparent);
-	--rule-strong: color-mix(in oklch, oklch(0.8 0.075 225) 45%, transparent);
-	--text-primary: oklch(0.94 0.018 222);
-	--text-secondary: oklch(0.74 0.024 224);
-	--text-faint: oklch(0.55 0.022 226);
-	--accent-primary: oklch(0.8 0.075 225);
-	--accent-secondary: oklch(0.8 0.075 320);
-	--accent-primary-dim: color-mix(in oklch, oklch(0.8 0.075 225) 30%, var(--bg-base));
-	--accent-secondary-dim: color-mix(in oklch, oklch(0.8 0.075 320) 40%, transparent);
-	--glow-soft: 0 0 28px color-mix(in oklch, oklch(0.8 0.075 225) 18%, transparent);
-	--glow-text: 0 0 18px color-mix(in oklch, oklch(0.8 0.075 225) 35%, transparent);
-	--scanline: repeating-linear-gradient(
-		180deg,
-		color-mix(in oklch, oklch(0.8 0.075 225) 5%, transparent) 0 1px,
-		transparent 1px 3px
-	);
-
 	/* ---- type ---- */
-	--font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	--font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 	--type-2xs: 10px;
 	--type-xs: 11px;
 	--type-sm: 13px;
@@ -59,39 +43,6 @@
 
 	/* ---- layout ---- */
 	--measure: 460px;
-}
-
-@keyframes holo-rise {
-	from {
-		opacity: 0;
-		transform: translateY(6px);
-	}
-	to {
-		opacity: 1;
-		transform: none;
-	}
-}
-
-@keyframes holo-flicker {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	48% {
-		opacity: 0.86;
-	}
-	52% {
-		opacity: 1;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	*,
-	*::before,
-	*::after {
-		animation: none !important;
-		transition: none !important;
-	}
 }
 
 * {

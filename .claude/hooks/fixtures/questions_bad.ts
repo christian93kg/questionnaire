@@ -1,3 +1,4 @@
+// lint-pack: star-wars
 // KNOWN-BAD FIXTURE — every Tier-A rule tripped at least once, on purpose.
 //
 // This is the other half of the pair with questions_good.ts: `good` proves the
