@@ -1,11 +1,24 @@
 /**
- * harry-potter theme — ink, parchment and candle.
+ * harry-potter theme — "The Ledger".
  *
- * Deliberately not the star-wars terminal in a different hue. That pack is cold,
- * blue-grey and back-lit, like a screen in a dark room; this one is warm, low and
- * front-lit, like a page under a candle. The shared type scale and spacing stay the same,
- * which is the point of the split — the two quizzes are the same *product* and different
- * *rooms*.
+ * Values as delivered by the Claude Design pass against
+ * `_design/harry-potter.design-prompt.md` (project "Harry Potter questionnaire",
+ * `Ledger Theme.dc.html`). Transcribed verbatim; the hex comments are the design's own
+ * stated resolutions and the contrast ratios it measured are recorded below.
+ *
+ * The brief's stated trap was that "parchment" describes the register, not the background —
+ * a parchment-cream `bgBase` would be a light-mode page. This design keeps every surface
+ * under Y = 0.012 (the audit's ceiling is 0.15) and puts the warmth in hue rather than
+ * lightness, which is the right resolution.
+ *
+ * What makes it a library rather than the star-wars terminal, in the designer's own terms:
+ * the repeating line became a RULED PAGE instead of a raster. It runs at 28px — body
+ * leading, not a scan period — at 4% mix, so text sits on the rules the way handwriting
+ * sits on a ruled sheet. No bloom, no phosphor, no back-light.
+ *
+ * Measured contrast on `bgBase`: textPrimary 16.06:1, textSecondary 9.68:1,
+ * textFaint 4.60:1, accentPrimary 9.74:1. All five oklch triples sit inside sRGB before
+ * clamping (max chroma 0.09), so the social card and the browser resolve to the same hex.
  *
  * `import type` only, and never from `$lib`. Loaded by `tsx` in scripts/og.ts,
  * scripts/audit.ts and scripts/calibrate.ts, and by vitest — none resolve the alias.
@@ -13,60 +26,59 @@
 import type { PackChrome, PackTheme } from '../../engine/theme';
 
 export const THEME: PackTheme = {
-	/** Candle. Warm amber, kept under L 0.8 so parchment text still reads as the brightest thing. */
-	accentPrimary: [0.78, 0.115, 75],
-	/** Oxblood — the ledger-ink second colour, for the axis poles and the opposite card. */
-	accentSecondary: [0.55, 0.145, 25],
+	/** Iron-gall amber — candle on paper. The writing hand. */
+	accentPrimary: [0.78, 0.09, 72],
+	/** Sanguine chalk — the counterweight, used for axis poles and the opposite card. */
+	accentSecondary: [0.7, 0.08, 26],
 
-	textPrimary: [0.93, 0.022, 85],
-	textSecondary: [0.74, 0.026, 82],
-	textFaint: [0.55, 0.022, 78],
+	textPrimary: [0.93, 0.012, 80],
+	textSecondary: [0.775, 0.016, 74],
+	textFaint: [0.58, 0.018, 70],
 
 	// Warm near-blacks. star-wars' surfaces are blue-black (#080b0f); these carry the same
-	// lightness with the hue pulled to the other side of neutral, which is most of why the
+	// order of lightness with the hue on the other side of neutral, which is most of why the
 	// two pages read as different places before you have read a word.
 	bgBase: '#0d0a07',
-	surfaceSunk: '#080605',
-	surfaceRaised: '#17110c',
-	surfaceRaised2: '#201810',
+	surfaceSunk: '#080604',
+	surfaceRaised: '#17120c',
+	surfaceRaised2: '#211a12',
 
 	mix: {
-		ruleHairline: 20,
-		ruleStrong: 42,
-		accentPrimaryDim: 28,
-		accentSecondaryDim: 45,
-		// Candlelight is a wider, softer falloff than a holo-projector's edge glow.
-		glowSoft: 15,
-		glowText: 26,
-		// Ruled paper, not a CRT scanline: fainter and further apart, so it reads as the
-		// faint horizontal rule of a page rather than as a screen artefact.
+		ruleHairline: 14,
+		ruleStrong: 30,
+		accentPrimaryDim: 18,
+		accentSecondaryDim: 16,
+		glowSoft: 26,
+		glowText: 34,
+		// 4% at a 28px period: the rules of a page, not the raster of a screen.
 		scanline: 4
 	},
 
-	glow: { softBlurPx: 34, textBlurPx: 24 },
-	scanline: { stripePx: 1, periodPx: 5 },
+	glow: { softBlurPx: 26, textBlurPx: 18 },
+	/** One-px rule every 28px — the body leading, so text sits ON the rules. */
+	scanline: { stripePx: 1, periodPx: 28 },
 
-	fontDisplay: "'Iowan Old Style', Palatino, 'Palatino Linotype', Georgia, serif",
+	fontDisplay: "'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif",
 	/**
 	 * NOTE: `fontMono` is the BODY face, not necessarily a monospace one. The token name is
-	 * inherited from star-wars, where the body face happened to be mono; renaming it would
-	 * touch every component for no behavioural gain. Here it is a text serif, because a
+	 * inherited from star-wars, where the body happened to be mono; renaming it would touch
+	 * every component for no behavioural gain. Here it is Charter — a text serif, because a
 	 * monospaced body is a terminal tell and this room is a library.
 	 */
-	fontMono: "Georgia, 'Iowan Old Style', 'Times New Roman', serif",
+	fontMono: "Charter, 'Bitstream Charter', 'Sitka Text', Cambria, Georgia, serif",
 
-	anim: { enter: 'ink-settle', idle: 'candle-waver' }
+	anim: { enter: 'ink-settle', idle: 'candle-draught' }
 };
 
 /**
- * The shell header. star-wars runs an intake-record framing; this is the school's own
- * paperwork — a register that is opened, written in, and closed.
+ * The shell header. star-wars runs an intake-record framing; this is the book itself — a
+ * ledger that is closed, written in, then sealed.
  */
 export const CHROME: PackChrome = {
-	label: 'The register · open',
+	label: 'Ledger · entry',
 	status: {
-		idle: 'NO NAME ENTERED',
-		inProgress: 'ENTRY IN PROGRESS',
-		sealed: 'ENTRY CLOSED'
+		idle: 'CLOSED',
+		inProgress: 'IN WRITING',
+		sealed: 'SEALED'
 	}
 };

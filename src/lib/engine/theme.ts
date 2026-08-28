@@ -119,6 +119,16 @@ export function themeVars(t: PackTheme): Record<string, string> {
 		'accent-secondary-dim': MIX(t.accentSecondary, t.mix.accentSecondaryDim, 'transparent'),
 		'glow-soft': `0 0 ${t.glow.softBlurPx}px ${MIX(t.accentPrimary, t.mix.glowSoft, 'transparent')}`,
 		'glow-text': `0 0 ${t.glow.textBlurPx}px ${s.glowText}`,
+		/**
+		 * The bare colour behind `--glow-text`, without the offsets and blur.
+		 *
+		 * `--glow-text` is a complete `box-shadow` value, which is what `text-shadow`
+		 * consumers want but is syntactically invalid inside a `filter: drop-shadow()` —
+		 * substituting it there yields `drop-shadow(0 0 6px 0 0 18px …)`. A keyframe that
+		 * animates a glow radius needs the colour on its own, so it gets its own token
+		 * rather than a hardcoded colour in the shared animation stylesheet.
+		 */
+		'glow-text-color': s.glowText,
 		'scanline':
 			`repeating-linear-gradient(180deg, ${s.scanlineStripe} 0 ${t.scanline.stripePx}px, ` +
 			`transparent ${t.scanline.stripePx}px ${t.scanline.periodPx}px)`,

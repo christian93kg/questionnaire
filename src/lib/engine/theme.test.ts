@@ -28,6 +28,7 @@ describe('themeCss', () => {
 				'--accent-secondary-dim:color-mix(in oklch, oklch(0.8 0.075 320) 40%, transparent);' +
 				'--glow-soft:0 0 28px color-mix(in oklch, oklch(0.8 0.075 225) 18%, transparent);' +
 				'--glow-text:0 0 18px color-mix(in oklch, oklch(0.8 0.075 225) 35%, transparent);' +
+				'--glow-text-color:color-mix(in oklch, oklch(0.8 0.075 225) 35%, transparent);' +
 				'--scanline:repeating-linear-gradient(180deg, ' +
 				'color-mix(in oklch, oklch(0.8 0.075 225) 5%, transparent) 0 1px, transparent 1px 3px);' +
 				"--font-display:'Helvetica Neue', Helvetica, Arial, sans-serif;" +
@@ -84,6 +85,7 @@ describe('every registered pack', () => {
 			'accent-secondary-dim',
 			'glow-soft',
 			'glow-text',
+			'glow-text-color',
 			'scanline',
 			'font-display',
 			'font-mono',

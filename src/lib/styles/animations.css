@@ -45,34 +45,49 @@
 }
 
 /* --- harry-potter --- */
+/*
+ * Both delivered by the Claude Design pass (see _design/harry-potter.design-prompt.md and
+ * src/lib/packs/harry-potter/theme.ts). The brief required these to differ in KIND from the
+ * star-wars pair, not to be the same shapes retimed — star-wars uses a translate-and-fade
+ * and an opacity flicker, so neither of these touches transform or opacity after the first
+ * frame. They animate density and light instead.
+ */
 
-/* Slower and shorter than holo-rise: a page settling, not a projection snapping on. */
+/* Ink drying into legibility: a blur-and-density resolve, not a slide. 420ms, runs once. */
 @keyframes ink-settle {
-	from {
+	0% {
 		opacity: 0;
-		transform: translateY(3px);
+		filter: blur(7px) contrast(0.55) brightness(0.7);
 	}
-	to {
+	60% {
 		opacity: 1;
-		transform: none;
+		filter: blur(1.4px) contrast(0.9) brightness(0.96);
+	}
+	100% {
+		opacity: 1;
+		filter: blur(0) contrast(1) brightness(1);
 	}
 }
 
-/* A candle, not a failing tube: shallower dip than holo-flicker, and off-centre so the
-   two never look like the same animation retimed. */
-@keyframes candle-waver {
-	0%,
-	100% {
-		opacity: 1;
+/*
+ * A flame leaning in a draught, not a tube flickering: the drop-shadow RADIUS breathes.
+ * 6s ease-in-out infinite.
+ *
+ * Uses `--glow-text-color` rather than `--glow-text`: the latter is a complete box-shadow
+ * value and is invalid inside drop-shadow(), which would silently kill the whole filter.
+ */
+@keyframes candle-draught {
+	0% {
+		filter: drop-shadow(0 0 6px var(--glow-text-color)) brightness(1);
 	}
 	38% {
-		opacity: 0.93;
+		filter: drop-shadow(0 1px 15px var(--glow-text-color)) brightness(1.06);
 	}
-	44% {
-		opacity: 0.97;
+	64% {
+		filter: drop-shadow(0 0 9px var(--glow-text-color)) brightness(1.01);
 	}
-	61% {
-		opacity: 0.9;
+	100% {
+		filter: drop-shadow(0 0 6px var(--glow-text-color)) brightness(1);
 	}
 }
 
