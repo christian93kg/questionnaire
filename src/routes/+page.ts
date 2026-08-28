@@ -11,7 +11,16 @@ export const prerender = true;
  */
 export function load() {
 	return {
-		packs: PACKS.map((p) => ({
+		/**
+		 * Alphabetical by form code, fixed — per the landing design's scaling answer.
+		 *
+		 * Deliberately not newest-first and not most-taken: both of those imply a
+		 * recommendation, and the quizzes are peers. The order is arbitrary but visibly
+		 * mechanical, which is what stops any one of them reading as the featured slot.
+		 */
+		packs: [...PACKS]
+			.sort((a, b) => a.formCode.localeCompare(b.formCode))
+			.map((p) => ({
 			id: p.id,
 			title: p.title,
 			formCode: p.formCode,
