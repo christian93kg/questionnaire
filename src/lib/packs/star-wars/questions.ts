@@ -43,7 +43,7 @@ const q = (
 
 export const QUESTIONS: Question[] = [
 	// ============================================================ OBLIGATION (order) — 2 short, 1 medium
-	q('trip-falling-apart', 'short', 'order', 'obligation', 'A journey nobody has arranged is coming apart before it starts. What moves it forward?', [
+	q('trip-falling-apart', 'short', 'order', 'obligation', 'Nobody has booked the passage and the window closes tonight. Everyone is waiting on everyone.', [
 		['Write the plan and hand out the jobs.', { order: 75, ambition: 45, candor: 25 }],
 		['Set out alone, and leave word where you’ll be.', { order: -60, defiance: 65, warmth: -45, ambition: -10 }],
 		['Quietly smooth over the two who are at odds.', { order: 15, candor: -25, warmth: 45 }],
@@ -157,7 +157,7 @@ export const QUESTIONS: Question[] = [
 		['Do nothing. This isn’t yours to fix.', { warmth: -50, volatility: -65, candor: -20, hope: -30 }]
 	]),
 
-	q('someone-slipping', 'long', 'warmth', 'attachment', 'The medic you rely on, three days out, has started getting the doses wrong.', [
+	q('someone-slipping', 'long', 'warmth', 'attachment', 'The medic you rely on, a week from the nearest port, has started getting the doses wrong.', [
 		['Say it directly, before the next run.', { candor: 50, warmth: 10, volatility: 35 }],
 		['Cover for them, and wait for it to pass.', { warmth: 35, candor: -45, hope: 45 }],
 		['Quietly build a backup, then have the talk.', { order: 55, candor: -25, warmth: -5, hope: -55 }],
@@ -173,21 +173,21 @@ export const QUESTIONS: Question[] = [
 	]),
 
 	q('name-comes-off-the-project', 'short', 'defiance', 'authority', 'Someone strikes your name from the manifest, quietly, and offers no reason.', [
-		['Ask why, right there, in front of the clerk.', { defiance: 85, candor: 60, volatility: 35 }],
+		['Ask the clerk why, and don’t lower your voice.', { defiance: 85, candor: 60, volatility: 35 }],
 		['Let it go. Not worth the scene.', { defiance: -90, order: 30, volatility: -40 }],
 		['Do the work anyway. Make sure it shows.', { defiance: 20, ambition: 55, order: 35, candor: -20 }],
 		['Start looking for a posting that won’t do this.', { defiance: 55, ambition: -20, hope: -40, candor: -25 }]
 	]),
 
 	q('already-decided', 'medium', 'defiance', 'authority', 'You’re told the posting’s already been decided, above your head.', [
-		['Ask who made it, right there in the room.', { defiance: 90, candor: 50 }],
+		['Make them name who decided.', { defiance: 90, candor: 50 }],
 		['Accept it, and do it well.', { defiance: -95, order: 40, volatility: -50 }],
 		['Accept it, and quietly build what outlasts it.', { defiance: 45, candor: -40, order: 50 }],
 		['Ignore it, and see if anyone notices.', { defiance: 70, order: -65, candor: -25, volatility: 40 }]
 	]),
 
 	q('panel-about-to-reject-them', 'long', 'defiance', 'authority', 'The hiring board is about to turn someone away for a reason that has nothing to do with the job.', [
-		['Say it, right there, now.', { defiance: 80, candor: 40, volatility: 40 }],
+		['Stop the vote and say why.', { defiance: 80, candor: 40, volatility: 40 }],
 		['Say nothing. It’s not your call to make.', { defiance: -85, order: 35, candor: -30 }],
 		['Flag it to whoever can actually overrule it.', { defiance: 30, order: 45, ambition: 20, candor: -15 }],
 		['Vote your own way, and let the record show it.', { defiance: 60, candor: 20, order: -30 }]
@@ -247,7 +247,7 @@ export const QUESTIONS: Question[] = [
 	q('junior-does-it-better', 'medium', 'ambition', 'appetite', 'On the approach to the hangar, the newest hire calls it better than you would have.', [
 		['Hand them more, publicly.', { ambition: -45, warmth: 55, candor: 35 }],
 		['Note it, and watch how they handle the next one.', { ambition: 25, order: 35, candor: -35, volatility: -50 }],
-		['Feel it land, and keep it to yourself.', { volatility: 45, warmth: 15, hope: 15 }],
+		['Feel it land. Get past it.', { volatility: 45, warmth: 15, hope: 15 }],
 		['Work out what they know that you don’t, and learn it.', { ambition: 50, order: 30, warmth: -40 }]
 	]),
 
@@ -277,7 +277,7 @@ export const QUESTIONS: Question[] = [
 		['Say something sharper back, right away.', { volatility: 95, candor: 40, warmth: -25 }],
 		['Nothing. Go still, and deal with it later.', { volatility: -95, candor: -35, order: 30 }],
 		['Laugh. Let them own how that looked.', { volatility: -40, candor: 25, warmth: 30, hope: 40 }],
-		['Leave the room.', { volatility: 50, candor: -30, defiance: 50, warmth: -25 }]
+		['Get up and go, mid-sentence.', { volatility: 50, candor: -30, defiance: 50, warmth: -25 }]
 	]),
 
 	q('unexpected-hour', 'long', 'volatility', 'temper', 'An hour opens up that you didn’t expect to have.', [
