@@ -69,7 +69,63 @@ the active pack's set verbatim every turn. A pressure list on this card would be
 world's, silently applied to every world — the same failure the vocabulary tiers had when
 they were constants in `question-lint.py`. Format: `_craft/packs/_FORMAT.md`.
 
+## Legibility — the scene, and the shape that carries it
+
+**Added 2026-08-28 after the shipped harry-potter bank was read cold and found unanswerable
+on one pass.** Every rule above was satisfied and the bank still failed, because none of them
+checks the thing a taker actually needs first: *what is happening, and to whom.* Diegetic and
+legible are different properties, and the bank had the first without the second.
+
+### The two-part stem
+
+A unit is a **scene** and an optional **handback**. `Question.text` carries the scene;
+`Question.ask` carries the handback, rendered beneath it as a second, lighter line.
+
+> **text:** The first-year two benches down has the flame up far too high, and his cauldron
+> goes over — across the desk, across your notes, across his hands.
+> **ask:** You were not watching. Why not?
+
+The scene puts the taker in a room. The handback closes the loop, so the four options read as
+a choice rather than as a form to fill in.
+
+**The handback varies, always** — never the same line twice in the bank, never the same line
+in consecutive units, and absent entirely on roughly a third of them. Sometimes a question
+(*"What do you do?"*, *"Why not?"*, *"Where were you looking?"*), sometimes pressure with no
+question in it (*"He has not turned round yet."*, *"Two seconds, maybe three."*), sometimes
+nothing, because a scene that has already landed does not need to be asked twice.
+
+**This is not the repeated template the kill list bans, and the distinction is load-bearing.**
+That rule exists because `"What do you do?"` ×12 stops carrying information — the reader's eye
+skips it, and it becomes visual noise between the stem and the options. A handback that is
+different every time is doing the opposite: it is the last beat of the scene, and it is where
+the timing lives. Uniform it, and the rule fires for real. **`ask` is linted as part of the
+prompt** (`question-lint.py` concatenates the two), so nothing in it escapes the rules above.
+
+### Four rules for the scene
+
+- **Name an animate participant, on the page.** The first-year, the prefect, the boy who sat
+  next to you, the thing that cleans the dormitory. **`Whatever [verb]s the [noun]` is banned
+  outright** — *"Whatever keeps the gate…"*, *"Whatever keeps the common-room fire lit…"*,
+  *"Whatever dropped it…"* ran six-plus times in the shipped bank, and each one makes the
+  reader solve a riddle before reaching the choice. The construction was reached for to dodge
+  a WARN-tier noun; the cost is the whole unit.
+- **The inciting event is on the page.** If a reader cannot say what just happened, the stem
+  is not finished. `the-ghost-on-the-staircase` — *"The ghost has told it the only way it can
+  tell anything, and you are being asked whether to add the part it left out"* — never says
+  what happened, and no amount of rereading recovers it. This is delete-the-sentence run in
+  reverse: not *does every sentence earn its place*, but *is the one that matters there at all.*
+- **Present tense, physical verbs.** Something goes over, cracks, catches, drops, lands. A
+  stem built on states and abstractions (*"the sworn kind and not the said kind"*, *"what your
+  family is"*) reads as a proposition to be parsed, not a moment to be in.
+- **Setting quota: at most 12 of 34** units set around a document, book, file, form, register,
+  roll or press. The rest belong in classrooms, corridors at night, greenhouses, the pitch, the
+  lake, the forest edge, the Great Hall, the hospital wing, stairwells, the grounds in weather.
+  The register is the easiest place to generate a dilemma, which is exactly why it needs a cap
+  — the shipped bank ran near-total on paperwork and its own authoring-notes had already named
+  the result: *"the bank read as a civil-service drama."*
+
 ## Tests
+- Cold-read test: hand the unit to someone who has not seen it. Can they say what is happening, to whom, and what is at stake — on one read, without going back? This is the first test, and a unit that fails it fails regardless of what it passes below.
 - Delete-the-sentence: remove any sentence of the prompt — does the remaining prompt still pose the same choice? If yes, that sentence advanced nothing; cut it.
 - Downstream-state test: can you name a different downstream state for each of the four options, in a different phrase each time? If two share one, cut or merge — two options with the same consequence are one option wearing two coats.
 - Sentence-length test: read the four options aloud — do at least two differ in length and shape? If all four scan identically, vary one.
@@ -121,7 +177,9 @@ they were constants in `question-lint.py`. Format: `_craft/packs/_FORMAT.md`.
 - Intensifier-dressed stakes; world-by-adjective
 - Biography before situation; the character sheet recited back at the taker
 - Decorative second person
-- A rhetorical template repeated across consecutive units ("What do you do?" ×12)
+- A rhetorical template repeated across consecutive units ("What do you do?" ×12). Scoped to *repetition*, not to the handback itself — a varied `ask` is the scene's last beat and is required (`## Legibility`); a uniform one is this rule.
+- An indefinite-referent stem opener — `Whatever [verb]s the [noun]`, `The one who [verb]s the [noun]` — where a plain participant would do
+- A stem with no inciting event: the reader cannot say what just happened
 - An option opening repeated across more than two units ("Say nothing…" ×6)
 - A stem opener repeated as a shape across the bank ("[Duration] into X, and Y" ×5)
 - A clause certifying what the situation means about the taker ("it's clear that…", "it's genuinely not your business")
@@ -155,8 +213,10 @@ After (diegetic): "The one holding the manifest has sold you out before, and sti
 
 <!-- digest:start -->
 ### Digest — quiz-question
-When: every unit — a 1–2 sentence second-person situation, exactly four terse declarative options.
-- In-world is standard now (inverted 2026-08-27), not zero-fandom: diegetic, not costumed. Capitals test: delete capitals from the stem — collapses, referential; survives, diegetic. Substitution test: swap the world noun for its real equivalent — no change, costumed. Register, not proper nouns; ≤1 novel noun, glossed in-clause. Tiers + world-pressures: `_craft/packs/<pack>/vocabulary.md`.
+When: every unit — a 1–2 sentence second-person scene, an optional short handback (`ask`), exactly four terse declarative options.
+- LEGIBILITY FIRST (added 2026-08-28, cold-read failure): name an animate participant on the page; put the inciting event on the page; present tense and physical verbs. `Whatever [verb]s the [noun]` is banned. Setting quota — ≤12 of 34 units on paperwork; the rest in rooms, weather, bodies, crowds. Cold-read test outranks every test below it.
+- Two-part stem: `text` = scene, `ask` = handback, varied every time and absent on ~⅓. A varied handback is required; a uniform one trips the repeated-template rule. `ask` is linted as part of the prompt.
+- In-world is standard now (inverted 2026-08-27), not zero-fandom: diegetic, not costumed. Capitals test: delete capitals from the stem — collapses, referential; survives, diegetic. Substitution test: swap the world noun for its real equivalent — no change, costumed. Register, not proper nouns; ≤1 novel noun, glossed in-clause. Tiers + world-pressures: `_craft/packs/<pack>/vocabulary.md`. **Diegetic and legible are different properties — the 2026-08-28 bank had the first without the second.**
 - World budget in the stem, not options. Never grant the taker a role, a side, a possession or a power — collapses the roster.
 - Delete any prompt sentence: if the choice survives unchanged, it advanced nothing.
 - Name a different downstream state per option; two sharing one get cut or merged. Vary option length and shape.
@@ -167,5 +227,5 @@ When: every unit — a 1–2 sentence second-person situation, exactly four ters
 - Present situation not biography; one telling particular; no intensifiers; no decorative second person.
 - Filter-word sweep (you see/notice/feel).
 - Narrator stays out (no "it's clear that"); options enact, never instruct a feeling ("Feel it land"); no option opener across >2 units.
-KILL: trait names; announced virtue; hedges (try to, probably, maybe); one option far longer than its siblings; cost-free options; duplicate downstream states; prompts glossing their own meaning; repeated templates, option openers and stem-opener shapes; narrator certification; instructed feelings; costumed/referential nouns; role-preemption; capitalised options.
+KILL: trait names; announced virtue; hedges (try to, probably, maybe); one option far longer than its siblings; cost-free options; duplicate downstream states; prompts glossing their own meaning; repeated templates, option openers and stem-opener shapes; narrator certification; instructed feelings; costumed/referential nouns; role-preemption; capitalised options; indefinite-referent openers; stems with no inciting event.
 <!-- digest:end -->

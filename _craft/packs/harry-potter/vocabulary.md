@@ -118,11 +118,23 @@ deliver them through the situation, not through a name.
 - a school is also a jurisdiction, and what staff decide goes on a record that leaves with you
 - blood decides how a room treats you before you speak
 - portraits and ghosts remember, and repeat it to whoever asks
-- magic leaves a trace: underage use is detectable, and someone is counting
+- punishment is collective: what you do is charged to the people you sleep beside, and they know whose fault it was
 - a promise can be made binding, and breaking it takes something out of you
 - you were sorted at eleven, and the label followed you
 - a government can be captured quietly, and the newspaper goes first
 - the ones who serve you are owned, and how you treat one is characterising
+
+**The Trace is not on this list, and was, until 2026-08-28.** *"Magic leaves a trace: underage
+use is detectable, and someone is counting"* generated five units and **three of them fired
+inside the castle, where the Trace does not apply** — the Ministry does not monitor spellwork
+at school, which is the whole reason term is where underage wizards get to practise. It is
+still usable, but only where it is true: the holidays, and off the grounds. Two units keep it
+on those terms. It is not a pressure the bank may reach for by default, because seven of every
+ten times an author reaches for it, the scene is set at school.
+
+Its replacement is the points-and-detention pressure above, and that one is genuinely
+school-native: it is the only pressure on the list where the cost of your choice lands on
+people who did not make it, in a room you cannot leave for another seven years.
 
 ## authoring-notes
 
@@ -186,6 +198,18 @@ your family owns` and `three generations of your family have been served` (a hou
 bound servants), a word that `waves you past the queue` (the favoured side), and `your column`
 with an editor (a profession). Two survived two rewrites. When reviewing, ask what the stem
 assumes the taker HAS — not whether it uses a banned string.
+
+**Count the SETTINGS, not just the pressures.** The 2026-08-28 bank spread its pressures 4–5
+across all eight and still read as one thing, because pressure variety and scene variety are
+different axes and only the first was being measured. Every unit was a document: a book, a
+file, a form, a register, a roll, a set of printing plates, a post bag, a ledger, a punishment
+book. The register is where a dilemma is easiest to generate, so an author under a pressure cap
+will satisfy the cap and still write thirty-four office scenes. **Cap it directly: ≤12 of 34 on
+paperwork.** The rest go where the school actually is — a classroom mid-lesson, a corridor
+after curfew, a greenhouse, the pitch, the lake, the forest edge, the Great Hall at dinner, the
+hospital wing, a staircase, the grounds in bad weather. This is the same failure shape as the
+`skinned-question` and three-cap entries above: a rule that measures the wrong quantity gets
+satisfied without fixing anything.
 
 **And the pressure has to be ENACTED, not implied.** The same review found the difference
 sharply: *"The one who clears your plate comes straight after the exam goes wrong, and

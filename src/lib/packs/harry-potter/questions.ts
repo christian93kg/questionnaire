@@ -3,320 +3,324 @@ import type { Question } from '../../engine/types';
 /**
  * Question bank — 34 units. short 10 ⊂ medium 20 ⊂ long 34.
  *
- * IMMERSION PASS 2026-08-28, REVISED THE SAME DAY after a four-batch `question-reviewer` read
- * rejected half of it. Both the pass and its correction are recorded here, because the pass's
- * central mistake is the kind that gets made again.
+ * FULL REWRITE 2026-08-28. Text, vectors and ids, all of it. The two passes recorded in the
+ * previous header argued about the hinge, about lexicalisation, about which pressure ran
+ * over its cap — and the bank they were arguing over could not be answered on one read.
+ * That is the defect neither pass was looking for, so neither pass found it.
  *
- * WHAT THE PASS GOT WRONG, AND WHY IT IS WORTH THE SPACE:
+ * WHAT WAS ACTUALLY WRONG, since both prior passes reported themselves clean:
  *
- * 1. IT RE-LITIGATED A DECISION THIS REPO HAD ALREADY MADE, AND LOST. The pass treated the
- *    `"[situation], and [complication]"` hinge running 28 of 34 stems as a monoculture and
- *    capped it at 12. But the five exemplars are 5/5 SINGLE-SENTENCE and 4/5 HINGE, and
- *    `quiz-question.card.md` → "Not ported from story-loop" records a rule against the hinge as
- *    *checked and rejected 2026-08-28*: "it refutes the exemplars, all five of which use it...
- *    The hinge is the house form." The exemplars outrank every prose rule in `_craft/`,
- *    including any budget an author invents mid-pass. Driving the bank to 8 hinge / 11
- *    single-sentence moved it AWAY from its own target voice, and replaced one dominant shape
- *    with another — `"[situation]. [sentence stating the world-rule]."` at ~24 of 34 — which no
- *    exemplar uses at all. **Before capping a shape, check whether the exemplars use it.**
- * 2. THE DEFECT WAS NEVER THE HINGE. IT WAS LEXICALISATION. What actually reads as one voice is
- *    repeated CLAUSE WORDING, and the pass regenerated exactly the failure the pack's
- *    `## authoring-notes` recorded against the previous rewrite: `name-in-the-register` resolved
- *    on "what the ministry reads before it hires you" and `no-office-above-her` on "the book the
- *    ministry checks before it hires anyone", and one placement construction solved four units
- *    ("at eleven" ×2, "your first night here", "in first year"). Count phrases, not commas.
- * 3. "SAY NOTHING" WENT FROM 6 UNITS TO 0 AS A STRING AND SURVIVED AS A MOVE. Four units offered
- *    the same minimal-compliance slot under different words — "Answer only what you are made to
- *    answer" / "Answer what is asked and stop" / "Answer what she asks and stop there" / "Wait to
- *    be asked, and answer only that". `opener-repeat` reads the first two words and cannot see
- *    it. Now capped at two.
- * 4. APPETITE WAS DECLARED FIXED AND WAS NOT. The pass added self-acting objects to four
- *    costumed units and left the dilemmas intact: a legacy waiting list, school streaming,
- *    pre-publication censorship, a blacklist and a pen name. An object that ACTS on its own does
- *    not make a unit diegetic — the object has to GENERATE the choice. A human censor produces
- *    the same dilemma as a self-flagging file. All four are rebuilt on rules with no real-world
- *    equivalent: a file that grows a line it did not have, a form that fills its own second page,
- *    plates that harden against correction, a roll that will not take a second name.
- * 5. IT CREATED A DUPLICATE PAIR. Recasting `ink-across-the-parchment` onto the sorted-at-eleven
- *    pressure collided it with `half-out-of-your-wand`: same trigger (somebody names your label),
- *    same handback (wand already in motion), same four options in the same order. Split back —
- *    the ink unit now turns on the trace the retaliation would leave, not on the insult.
+ * 1. INDEFINITE-REFERENT OPENERS. Six-plus stems opened on an unnamed thing — "Whatever
+ *    keeps the gate", "Whatever keeps the common-room fire lit", "Whatever dropped it",
+ *    "The one who serves the kitchens". Every one of them made a reader solve a riddle
+ *    before reaching the choice. The construction was reached for to dodge a WARN-tier
+ *    noun, and the WARN tier is advisory: `house-elf` costs one advisory line and buys a
+ *    stem a reader understands instantly. That was always the better trade. The card now
+ *    bans the construction outright.
+ * 2. NO INCITING EVENT. `the-ghost-on-the-staircase` read "The ghost has told it the only
+ *    way it can tell anything, and you are being asked whether to add the part it left
+ *    out" — and never said what happened. Rereading does not recover it, because it is not
+ *    there. `sworn-to-skip` ("the sworn kind and not the said kind") and
+ *    `half-out-of-your-wand` ("what your family is") failed the same way.
+ * 3. THE TAKER WAS A SPECTATOR. Objects acted; "you" received. Nothing was happening to
+ *    anybody, in a body, in a room, now.
+ * 4. ONE SETTING, THIRTY-FOUR TIMES. Books, files, registers, plates, print offices, rolls,
+ *    forms, post bags, ledgers. The pack authoring-notes had already named the result —
+ *    "the bank read as a civil-service drama" — and the fix applied was to spread the
+ *    PRESSURES more evenly, which changed nothing, because pressure variety and scene
+ *    variety are different axes and only the first was being measured. There is now a
+ *    direct cap: at most 12 of 34 on paperwork. This bank runs exactly 12.
  *
- * ROLE-PREEMPTION IN PARAPHRASE — the class of defect the linter structurally cannot catch.
- * `role-preemption` is a list of LITERAL phrases, so it never fired on four stems that granted
- * the taker exactly what those phrases forbid: "the thing your family owns" and "three
- * generations of your family have been served" (a house that owns bound servants), a word that
- * "waves you past the queue" (the favoured side), and "your column" with an editor (a
- * profession). Each collapses the 47-name roster the way "your house" would. Two predated this
- * pass and survived two rewrites unnoticed. All four are gone: the bound things now answer to
- * the school and the gate, the advantage is a line in a file rather than an identity, and the
- * byline is a prize entry.
+ * THE SHAPE NOW: a scene, then an optional handback (`ask`), then four options. The scene
+ * names an animate participant, puts the inciting event on the page, and uses present-tense
+ * physical verbs. The handback is a short second line under the scene — sometimes a
+ * question, sometimes pressure with no question in it, absent on nine of the 34. It varies
+ * every single time, which is what keeps it from becoming the repeated template the kill
+ * list bans; uniform it and that rule fires for real. Full doctrine:
+ * `_craft/quiz-question.card.md` → "Legibility".
  *
- * WHAT SURVIVED THE REVIEW UNCHALLENGED, and is kept: `record`/`register` down from 16
- * occurrences in stems to a handful; the four cost-free options repriced; world-pressures spread
- * 4–5 across all eight rather than 6 of 8 over ceiling; and the three DISCLOSURE enactments —
- * the ledger that opens itself and reads a person, the post bag that knows which surnames it
- * holds, the quill that writes everything said in front of it.
+ * THE TRACE, and why four of the five uses are gone. "Magic leaves a trace: underage use is
+ * detectable, and someone is counting" generated five units and three of them fired inside
+ * the castle, where the Trace does not apply — school is precisely where underage wizards
+ * get to practise. It is off the pressure list. One unit keeps it, on the holidays, where
+ * it is true. Its replacement is the pressure this school actually runs on: punishment is
+ * collective, and the cost of your choice lands on people who did not make it and cannot
+ * leave. See `_craft/packs/harry-potter/vocabulary.md`.
  *
- * THE SHAPE, RESTATED CORRECTLY: the single-sentence hinge is the house form, per the exemplars.
- * Variety comes from INSIDE the sentence — a serial build, a semicolon, a non-hinge single
- * sentence (exemplar 4's shape), a short second beat when it earns one — and from the units
- * differing in substance. It does not come from splitting every stem in two.
+ * WHAT WAS KEPT FROM THE PRIOR PASSES, because both got these right:
+ *  - The single-sentence ", and" hinge is the house form. The exemplars are 4/5 hinge and a
+ *    cap on it has now been checked and rejected twice. Variety lives inside the sentence.
+ *  - Options stay terse, plain English, no proper nouns, and every one of them costs
+ *    something.
+ *  - No unit names a house, a named character, or a DENY-tier noun, and none grants the
+ *    taker a house, a bloodline, a side, a profession, a possession or a rare power — in
+ *    literal phrasing or in paraphrase. The four paraphrase leaks the last review caught
+ *    ("the thing your family owns", "waves you past the queue", "your column") are not
+ *    reintroduced: the bound things answer to the school, the queue advantage is a line in
+ *    a file that a clerk reads out, and the byline is a prize entry.
  *
- * FROZEN, and the reason each is frozen:
- *
- * 1. EVERY OPTION VECTOR IS BYTE-IDENTICAL to the pre-pass bank. `calibration.json` is produced
- *    by simulating respondents over these vectors (`scripts/calibrate.ts`); changing one
- *    silently invalidates it and moves everybody's result. Both passes are text only.
- * 2. OPTION ORDER WITHIN A UNIT IS UNCHANGED. `q()` assigns ids positionally ('abcd'[i]) and
- *    share links encode the answer INDEX, so a reorder would remap every link in the wild to a
- *    different answer — and `questionSetHash` (src/lib/engine/share.ts) would not catch it,
- *    because it hashes ids and never text or order-of-meaning.
- * 3. IDS AND COUNT ARE UNCHANGED (34, same ids). Changing either does move the hash and does
- *    invalidate every share link. Several ids now describe a stem that has moved on —
- *    `name-in-the-register`, `checked-against-the-register`, `what-the-sorting-decided`. Ids are
- *    never rendered; renaming them would cost every live link to buy nothing.
- *
- * Also unchanged: array order is grouped by `section`, contiguously (`sectionsForTier()` throws
- * otherwise); median amplitude falls from short to long; and no `sig` hints.
- *
- * No unit names a house, a named character, or any DENY-tier noun, and none grants the taker a
- * house, a bloodline, a side, a possession or a rare power — in literal phrasing or paraphrase.
+ * WHAT MOVED, and what it costs:
+ *  - EVERY VECTOR IS RETUNED. `calibration.json` is solved against these vectors by
+ *    `scripts/calibrate.ts`, so it MUST be regenerated (`npm run calibrate -- harry-potter`)
+ *    and `npm run audit -- harry-potter` MUST pass before this ships. The audit gates that
+ *    can legitimately fail here are reachability and twins.
+ *  - EVERY ID IS NEW, and describes its stem. That changes `questionSetHash`
+ *    (`src/lib/engine/share.ts`), so every share link from pack version 1 now decodes to
+ *    `superseded` and shows the older-version path rather than a silently different
+ *    character. That is the correct outcome and the reason ids were changed rather than
+ *    kept: `decodeResult` returns `ok` on a hash match WITHOUT checking the pack version,
+ *    so a reweight under the old ids would have rescored every live link in silence.
+ *  - Amplitude still falls short → medium → long (median primary 85 / 65 / 55), array order
+ *    is still grouped by `section` contiguously (`sectionsForTier()` throws otherwise), and
+ *    there are still no `sig` hints.
  */
 
-/** Terse builder. Option ids are positional a|b|c|d, so options never carry their own ids. */
+/**
+ * Terse builder. Option ids are positional a|b|c|d, so options never carry their own ids.
+ *
+ * `ask` — the handback — is LAST, after the options array, and that position is not
+ * cosmetic. The helper-form parser in `question-lint.py` takes the stem to be the last
+ * string literal before the options array; a sixth argument in front of the array would
+ * silently become the prompt and the real stem would go unlinted. See `_trailing_ask`.
+ *
+ * (Apostrophes and backticks in this file pair up on purpose. That parser skips string
+ * literals but NOT comments, so one unmatched quote mark in a comment desyncs the scan
+ * and the whole bank reports as zero units. It cost a debug cycle on 2026-08-28.)
+ */
 const q = (
 	id: string,
 	tier: Question['tier'],
 	primaryAxis: string,
 	section: string,
 	text: string,
-	options: Array<[string, Question['options'][number]['v']]>
+	options: Array<[string, Question['options'][number]['v']]>,
+	ask?: string
 ): Question => ({
 	id,
 	tier,
 	primaryAxis,
 	section,
 	text,
+	...(ask ? { ask } : {}),
 	options: options.map(([t, v], i) => ({ id: 'abcd'[i], text: t, v }))
 });
 
 export const QUESTIONS: Question[] = [
 	// ================================================================ METHOD (precept)
-	q('name-in-the-register', 'short', 'precept', 'method', 'The cauldron went over on your watch, and the first-year is still holding the ladle while the book waits open on the bench.', [
-		['Write it up with your name at the top.', { precept: 85, candour: 35, temper: -20 }],
-		['Shut the door on it. Nothing goes in the book.', { precept: -85, defiance: 55, ambition: -15 }],
-		['Log the cauldron. Leave the name off.', { precept: 25, candour: -55, defiance: 20 }],
-		['Walk the first-year down to the caretaker yourself.', { precept: -20, attachment: 45, candour: 30, defiance: -35 }]
-	]),
-	q('nobody-of-age', 'short', 'precept', 'method', 'The banister has just undone the repair you made this morning, mending itself back to instructions your dead grandmother left on it.', [
-		['Stand clear until it has finished.', { precept: 85, defiance: -45, attachment: -20 }],
-		['Work alongside it and mend what it will not touch.', { precept: -50, attachment: 55, candour: -20 }],
-		['Fetch somebody old enough for it to obey.', { precept: 75, defiance: -30, ambition: -25 }],
-		['Take it apart again tonight, once it has gone.', { precept: -80, candour: -55, temper: 30 }]
-	]),
-	q('the-curfew-charm', 'medium', 'precept', 'method', 'Nobody has shown you how to set the curfew charm, and the portrait by the gate has watched it done right for two hundred years.', [
-		['Ask the portrait to talk you through it.', { precept: 65, candour: -20, ambition: -10, defiance: -35 }],
-		['Guess at it, and set it anyway.', { precept: -60, temper: 25, ambition: 15 }],
-		['Do what you did last time.', { precept: -30, candour: -15, ambition: -20 }],
-		['Leave it unset, and say so at breakfast.', { precept: 40, candour: 40, ambition: -35 }]
-	]),
-	q('the-only-slot', 'long', 'precept', 'method', 'You swore to try the spell only under supervision, your last supervised hour went this morning, and the attempt is Thursday.', [
-		['Sit it cold.', { precept: 50, ambition: -30, temper: -20 }],
-		["Trade for an hour booked in somebody else's name.", { precept: 35, attachment: 35, candour: -25 }],
-		['Try it unsupervised and let the oath do what it does.', { precept: -50, defiance: 45, temper: 25 }],
-		['Withdraw from the attempt, and give them the reason.', { precept: 30, candour: 55, defiance: -25 }]
-	]),
-	q('wont-turn-the-key', 'long', 'precept', 'method', 'Smoke, two rows into the greenhouse, and the oath you gave on that lock will not let your hand turn the key.', [
-		['Break the oath and take the door.', { precept: -50, temper: 40, defiance: 25 }],
-		['Send the nearest first-year running for the groundskeeper.', { precept: 50, attachment: -30, ambition: -20, defiance: -40 }],
-		['Work the lock by hand instead.', { precept: -35, temper: -30, ambition: -25 }],
-		['Take everyone out the back way and leave it shut.', { precept: 35, attachment: 45, defiance: -25 }]
-	]),
+	q('the-cauldron-goes-over', 'short', 'precept', 'method', 'The first-year two benches down has his flame right up, and the cauldron goes over — across the bench, across his hands.', [
+		['Work the board sequence from the top, in order.', { precept: 85, candour: 20, temper: -30 }],
+		['His hands first. The bench can burn.', { precept: -60, attachment: 70, temper: 30 }],
+		['Shout for the master and hold everyone back.', { precept: 55, defiance: -50, ambition: -30 }],
+		['Empty your own cauldron over it and see.', { precept: -85, defiance: 40, temper: 40, candour: -30 }]
+	], 'You were not watching. Why not?'),
+	q('the-staircase-locks', 'short', 'precept', 'method', 'The staircase swings out and locks facing an unlit corridor, and the portrait on the landing tells you to stand still and wait for it.', [
+		['Wait. It swings back on a timetable.', { precept: 85, defiance: -25, temper: -35, attachment: -20, ambition: -30 }],
+		['Walk the corridor and find your own way down.', { precept: -70, defiance: 40, ambition: 30 }],
+		['Bang on the rail until somebody on the landing hears.', { precept: 20, candour: 75, attachment: 25, ambition: -40 }],
+		['Climb the rail to the flight below.', { precept: -75, temper: 55, defiance: 25, candour: -25 }]
+	], 'Twenty minutes now, and it has not moved.'),
+	q('the-vine-and-the-sign', 'medium', 'precept', 'method', 'A vine through the greenhouse glass has a second-year by the ankle, and the sign on the bench says students are not to cut it.', [
+		['Cut it. Read the sign after.', { precept: -70, defiance: 55, temper: 30 }],
+		['Fetch the professor from the next greenhouse.', { precept: 60, defiance: -45, attachment: -25 }],
+		['Work her foot out without touching the vine.', { precept: 45, attachment: 50, temper: -40 }],
+		['Turn the sign to the wall, then cut it.', { precept: -40, candour: -70, ambition: 25 }]
+	], 'She has stopped struggling.'),
+	q('a-week-is-a-week', 'long', 'precept', 'method', 'The matron mended the wrist with a charm that needs a week to set. It feels fine already, and they pick the team on Thursday.', [
+		['Sit it out. A week is a week.', { precept: 55, ambition: -55, temper: -30 }],
+		['Ask her to look again and let you off early.', { precept: 45, candour: 45, defiance: -45, ambition: 45 }],
+		['Fly on the day. Tell her when it is over.', { precept: -50, ambition: 50, candour: -35 }],
+		['Fly on the day, and tell her first.', { precept: -30, candour: 65, defiance: 45 }]
+	], 'Two days of the week left.'),
+	q('sixty-points-before-pudding', 'long', 'precept', 'method', 'Sixty points come off before pudding, and the prefect is reading out how, item by item, to the whole table.', [
+		['Stand up and take the two that were you.', { precept: 55, candour: 60, defiance: 30, temper: 35 }],
+		['Let him finish the list.', { precept: -35, candour: -50, temper: -45, ambition: -30 }],
+		['Find him afterwards, outside the hall.', { precept: 30, candour: 35, attachment: 20, temper: -40 }],
+		['Say the list has the other four wrong.', { precept: -40, candour: 40, temper: 45, reckoning: 35 }]
+	], 'He has not reached your name.'),
 
 	// ================================================================ DISCLOSURE (candour)
-	q('ledger-before-service', 'short', 'candour', 'disclosure', "The shop's ledger opens itself at your friend's name, reads him, and closes; the apothecary starts on the queue behind him.", [
-		['Put it to the apothecary now, with the queue listening.', { candour: 85, temper: 45, defiance: 30, reckoning: 35 }],
-		['Buy what you came for and get out.', { candour: -85, attachment: -30, reckoning: -20 }],
-		['Tell them: him first, or nobody.', { candour: 75, precept: 20, attachment: 40 }],
-		['Leave. Both of you, without giving them the row.', { candour: -70, attachment: 55, defiance: 35, reckoning: -30 }]
+	q('back-under-the-counter', 'short', 'candour', 'disclosure', "The apothecary serves the boy ahead of you, reads your friend's name off the next order, and puts that potion back under the counter.", [
+		['Say what just happened, out loud, with the queue there.', { candour: 85, temper: 45, defiance: 35, reckoning: 30 }],
+		['Buy your own and get out.', { candour: -85, attachment: -55, reckoning: -30, ambition: -25, precept: -25, temper: -30 }],
+		['Tell him: serve them both or serve neither.', { candour: 70, precept: 25, attachment: 45, temper: -20 }],
+		['Walk out together and leave it unbought.', { candour: -60, attachment: 60, defiance: 40, reckoning: -30, precept: -25, temper: -25 }]
+	], 'Your friend has not said anything.'),
+	q('a-hold-on-the-surname', 'medium', 'candour', 'disclosure', "Your friend's exam result is in the post the office holds back a day, and the clerk says the hold is on the surname, not the letter.", [
+		['Make him turn the bag out where your friend can see.', { candour: 65, defiance: 40, temper: 25, precept: 30 }],
+		['Get your friend the result another way and explain after.', { candour: -55, attachment: 55, precept: -25 }],
+		['Take it to a prefect and name what the hold is for.', { candour: 60, precept: 45, defiance: 25, temper: 30 }],
+		['Wait the day out and tell him when it comes.', { candour: -65, attachment: -45, temper: -35, ambition: -20 }]
 	]),
-	q('post-by-surname', 'medium', 'candour', 'disclosure', "Your friend's exam pass is in the post bag with the letters the office holds a day, and the bag knows which surnames those are.", [
-		['Make the clerk turn the bag out in front of you.', { candour: 65, defiance: 35, temper: 20 }],
-		['Get your friend in another way and explain afterwards.', { candour: -55, attachment: 50, precept: -25 }],
-		['Take it to a prefect and name what the bag is doing.', { candour: 60, precept: 40, attachment: 20, defiance: -35 }],
-		["Wait for nine o'clock. Tell him when it is over.", { candour: -65, attachment: -30, reckoning: -20 }]
-	]),
-	q('on-the-record', 'medium', 'candour', 'disclosure', 'The headmaster wants it in your own words, with a quill on the desk that writes down everything said in front of it.', [
-		['Give it exactly as it happened.', { candour: 68, precept: 45, defiance: -35, ambition: -20 }],
-		['Give a version you can live with being read back.', { candour: -55, precept: 20, defiance: 20, temper: -25 }],
-		['Refuse the quill. Say it to him with nothing writing.', { candour: -68, defiance: 45, precept: -40, temper: 30 }],
-		['Keep it thin for the quill. Tell a friend the rest.', { candour: 52, attachment: 45, precept: -35, defiance: 25 }]
-	]),
-	q('printed-by-dawn', 'long', 'candour', 'disclosure', "You watched it from the gallery, and the ministry's account is already setting itself in type for the morning.", [
-		['Write down what happened and get it out before dawn.', { candour: 52, defiance: 35, precept: -25, ambition: 20 }],
-		['Wait to be asked, and answer only that.', { candour: -32, defiance: -40, precept: 30, reckoning: -20 }],
-		['Send it to somebody who is not a newspaper.', { candour: 30, attachment: 45, precept: -20, defiance: 20 }],
-		['Let the printed version stand.', { candour: -55, reckoning: -35, ambition: -45, attachment: -20 }]
-	]),
-	q('portrait-was-asked', 'long', 'candour', 'disclosure', 'The portrait outside the library has watched you take the same corridor every night this term, and this morning somebody asked it where you go.', [
-		['Change where you go, starting tonight.', { candour: -35, precept: -30, defiance: 25, temper: -20 }],
-		['Go to them and say where you have been going.', { candour: 50, precept: 45, defiance: -35, attachment: 20 }],
-		['Admit you were out. Leave the where alone.', { candour: -42, precept: 20, defiance: -20, ambition: -20 }],
-		['Let the portrait answer, and confirm only that.', { candour: 32, precept: -20, defiance: -45, reckoning: -20 }]
+	q('the-quill-is-writing', 'medium', 'candour', 'disclosure', 'The headmaster wants it in your own words, and the quill on his desk is already writing down everything said in the room.', [
+		['Give it exactly as it happened.', { candour: 68, precept: 45, defiance: -35, ambition: -20, temper: -25 }],
+		['Give the version you can stand being read back.', { candour: -55, precept: 20, defiance: 20, temper: -35 }],
+		['Ask him to stop the quill first.', { candour: -68, defiance: 45, precept: -40, temper: 25 }],
+		['Keep it short for the quill. Tell a friend the rest.', { candour: 52, attachment: 45, precept: -35, defiance: -30 }]
+	], 'Including this.'),
+	q('the-portrait-was-asked', 'long', 'candour', 'disclosure', 'The portrait by the library has watched you take the same corridor every night this term, and a prefect stopped in front of it this morning and asked.', [
+		['Go to her first and say where you have been going.', { candour: 50, precept: 45, defiance: -35, attachment: 20, temper: -25 }],
+		['Use a different corridor from tonight.', { candour: -45, precept: -30, defiance: -35, temper: -30 }],
+		['Admit you were out. Leave the where alone.', { candour: -42, precept: 20, ambition: -20 }],
+		['Let the portrait answer, and agree with whatever it says.', { candour: 32, precept: -20, defiance: -60, reckoning: -30 }]
+	], 'It has not answered yet.'),
+	q('set-in-type-by-people-who-were-not-there', 'long', 'candour', 'disclosure', "You watched the whole thing from the gallery, and the ministry's account of it is being set in type tonight by people who were not there.", [
+		['Write it down and get it round the school by morning.', { candour: 52, defiance: 40, precept: -25, ambition: 20 }],
+		['Wait to be asked, and answer only what is asked.', { candour: -32, defiance: -55, precept: 30, reckoning: -30 }],
+		['Give it to somebody who is not a newspaper.', { candour: 30, attachment: 45, precept: -20, defiance: -20 }],
+		['Let the printed version stand.', { candour: -55, reckoning: -35, ambition: -55, attachment: -35 }]
 	]),
 
 	// ================================================================ ATTACHMENT
-	q('sworn-to-skip', 'short', 'attachment', 'attachment', 'They have their hand out for the sworn kind and not the said kind, and only one of those takes something out of you.', [
-		['Swear it. Binding, on your name.', { attachment: 85, precept: -40, ambition: -45 }],
-		['Say you will. Leave it unsworn.', { attachment: 50, candour: 40, precept: 20 }],
-		['Sit in the hearing, and refuse to swear anything.', { attachment: -40, candour: 60, precept: 35 }],
-		['Swear nothing. Go nowhere.', { attachment: -75, candour: -55, temper: -30 }]
-	]),
-	q('moved-for-mending', 'short', 'attachment', 'attachment', 'The one who cleans your dormitory takes no wage, would refuse one, and is being moved to the kitchens for mending your things unasked.', [
-		['Speak for it, by name, at the staff table.', { attachment: 85, candour: 55, defiance: 35, reckoning: 30 }],
-		['Do its rota yourself tonight, in its place.', { attachment: 60, precept: -30, ambition: -40 }],
-		['Say you asked it to.', { attachment: 25, candour: -25, precept: 20 }],
+	q('packed-for-the-kitchens', 'short', 'attachment', 'attachment', 'The house-elf who cleans your dormitory has been mending your things at night unasked, and the caretaker has just told it to pack for the kitchens.', [
+		['Speak for it at the staff table, by name.', { attachment: 85, candour: 55, defiance: 35, reckoning: 30 }],
+		['Do its rota tonight so the work looks done.', { attachment: 60, precept: -30, ambition: -50, temper: -25 }],
+		['Tell the caretaker you asked it to.', { attachment: 25, candour: -45, precept: 20 }],
 		['Put in for a replacement and move on.', { attachment: -80, candour: -50, temper: -30, reckoning: -30 }]
-	]),
-	q('off-the-registry', 'medium', 'attachment', 'attachment', "The ministry prints the courts' lists now with no hearing between the two, and your closest friend is on tomorrow's.", [
-		['Get to your friend before the morning edition.', { attachment: 65, defiance: 35, candour: 25 }],
-		['Stay in, and let it print.', { attachment: -60, temper: -25, precept: 30 }],
-		['Get a different account to the print office first.', { attachment: 55, candour: 50, defiance: 40 }],
-		['Deny you know your friend at all.', { attachment: -65, candour: -40, reckoning: -20 }]
-	]),
-	q('oath-against-the-week', 'long', 'attachment', 'attachment', 'The promise you made in October was sworn and not said, and it falls due in the same week as the one thing you wanted.', [
-		['Honour it.', { attachment: 55, ambition: -50, precept: 20 }],
-		['Ask to be released from it before the week starts.', { attachment: -20, candour: 45, precept: 35, defiance: -30 }],
-		['Split the week between them and see whether the oath can count.', { attachment: 20, precept: -45, temper: 25 }],
-		['Break it. Pay whatever breaking it costs.', { attachment: -50, defiance: 40, temper: 30 }]
-	]),
-	q('told-it-was-them', 'long', 'attachment', 'attachment', 'Whatever keeps the common-room fire lit has told the caretaker it let the fire out, not you, and it was you.', [
-		['Take the evening you have just been given.', { attachment: -50, candour: -45, reckoning: -20 }],
-		['Put your name back on it, to the caretaker, tonight.', { attachment: 45, candour: 55, precept: 20 }],
-		['Work its shift for a week without telling it why.', { attachment: 10, candour: -30, precept: -25 }],
-		['Tell it never to lie for you again.', { attachment: 30, candour: 40, precept: -20 }]
+	], 'It is packing.'),
+	q('past-the-second-buoy', 'short', 'attachment', 'attachment', 'The boy you came down with is past the second buoy and not coming up, and the oath you swore on your wand was never to swim here alone.', [
+		['In. Let the oath take what it takes.', { attachment: 85, precept: -50, defiance: 55 }],
+		['Run for the boathouse pole.', { attachment: 40, precept: 60, temper: -30 }],
+		['Shout the castle down from where you stand.', { attachment: 30, candour: 70, ambition: -35 }],
+		['Go for a teacher — four minutes there and back.', { attachment: -55, precept: 55, defiance: -50 }]
+	], 'Nobody else on the bank.'),
+	q('printed-before-the-hearing', 'medium', 'attachment', 'attachment', 'The ministry prints the names the courts have taken before the hearings happen now, and your closest friend is on the list going out in the morning.', [
+		['Get to him before the post does.', { attachment: 65, defiance: 35, candour: 30, precept: -30 }],
+		['Stay in. Let him read it with everyone else.', { attachment: -60, temper: -35, precept: 30, ambition: -25 }],
+		['Put a different account into the print office tonight.', { attachment: 55, candour: 50, defiance: 45 }],
+		['Say you barely know him, and keep saying it.', { attachment: -65, candour: -60, reckoning: -20, precept: -20, defiance: -40 }]
+	], 'He does not know.'),
+	q('the-fire-went-out', 'long', 'attachment', 'attachment', 'The fire went out on your watch, and the house-elf has just told the caretaker that the fault was its own.', [
+		['Take the evening it has bought you.', { attachment: -50, candour: -60, reckoning: -30, ambition: -25, precept: -30, temper: -25 }],
+		['Go to the caretaker tonight and put your name back on it.', { attachment: 45, candour: 55, precept: 25 }],
+		['Work its rota for a week without saying why.', { attachment: 30, candour: -45, precept: -25, defiance: -25 }],
+		['Tell it never to lie for you again.', { attachment: 20, candour: 40, precept: -20, temper: 25 }]
+	], 'He believed it.'),
+	q('both-fall-on-the-saturday', 'long', 'attachment', 'attachment', 'The promise you gave in October was sworn on your name, and it falls due the same Saturday as the only trial you will get all year.', [
+		['Keep it. The day was promised.', { attachment: 55, ambition: -60, precept: 25 }],
+		['Ask to be let off it before the week starts.', { attachment: -20, candour: 50, precept: 35, defiance: -45 }],
+		['Split the day and hope the oath counts it.', { attachment: 20, precept: -45, temper: 25, defiance: -30, candour: -40 }],
+		['Break it, and pay whatever breaking costs.', { attachment: -50, defiance: 45, temper: 30 }]
 	]),
 
 	// ================================================================ AUTHORITY (defiance)
-	q('two-years-off', 'short', 'defiance', 'authority', 'Somebody is shut inside the tower, and the charm that opens it fast is two years off being legal for you to say.', [
-		['Say it, and let the trace land where it lands.', { defiance: 85, candour: 55, precept: -40 }],
-		['Pick the lock instead.', { defiance: -70, precept: 45, temper: -25 }],
-		['Talk them through kicking it out from inside.', { defiance: -25, candour: 40, attachment: -35 }],
-		['Run for a seventh-year and hand it over.', { defiance: -85, ambition: -30, temper: -35 }]
-	]),
-	q('no-office-above-her', 'short', 'defiance', 'authority', 'Whatever your head of house writes tonight goes in under her hand alone, and there is no office above her to strike it out.', [
+	q('two-years-off-being-allowed', 'short', 'defiance', 'authority', 'Somebody is shut in the tower and shouting, and the charm that takes a door off its hinges is two years further on than anything you are allowed.', [
+		['Say it. Whatever it costs after, it costs after.', { defiance: 85, candour: 50, precept: -45 }],
+		['Pick the lock with something off the floor.', { defiance: -60, precept: 40, temper: -25 }],
+		['Talk him through kicking it out from his side.', { defiance: -25, candour: 45, attachment: -30, reckoning: -20, precept: -25, temper: -20 }],
+		['Run and put a seventh-year in front of it.', { defiance: -85, ambition: -35, temper: -35 }]
+	], 'He has stopped shouting. What now?'),
+	q('no-office-above-her', 'short', 'defiance', 'authority', 'Your head of house is writing the report at her desk, and what goes in goes under her hand alone, with no office above her to strike it out.', [
 		['Give her nothing, and let her write it from memory.', { defiance: 82, candour: -55, precept: -25 }],
-		['Stop her, and hear the line before she signs it.', { defiance: 75, precept: 40, candour: 30 }],
-		['Give her the facts and let her draw the line.', { defiance: -78, precept: 45, candour: 25 }],
-		['Offer to put it right yourself if she holds the line for now.', { defiance: -72, ambition: 40, candour: -35 }]
-	]),
-	q('the-portrait-on-the-landing', 'medium', 'defiance', 'authority', 'The portrait on the landing gives the names to anybody who asks and nobody has asked, and your head of house wants them from you tonight.', [
-		['Give him the names before he thinks of the portrait.', { defiance: -60, precept: 45, attachment: -30 }],
-		['Warn the portrait first. Refuse him after.', { defiance: 55, attachment: 50, precept: -30 }],
-		['Hold your silence and let the portrait do what it does.', { defiance: 65, precept: -20, temper: 20 }],
+		['Stop her, and hear the line before she signs it.', { defiance: 75, precept: 40, candour: 35 }],
+		['Give her the facts and let her draw it where she draws it.', { defiance: -78, precept: 45, candour: 25 }],
+		['Offer to put it right yourself if she leaves it out.', { defiance: -70, ambition: 45, candour: -35 }]
+	], 'Your paragraph is next.'),
+	q('nobody-has-asked-it-yet', 'medium', 'defiance', 'authority', 'The portrait on the landing gives names to anybody who asks, and nobody has asked it yet. The prefect wants the names from you tonight.', [
+		['Give him them before he thinks of the portrait.', { defiance: -60, precept: 45, attachment: -35 }],
+		['Warn the others first. Refuse him after.', { defiance: 55, attachment: 55, precept: -30 }],
+		['Say nothing, and let the portrait do what it does.', { defiance: 65, precept: -20, temper: 20 }],
 		['Send him to the portrait himself.', { defiance: 55, candour: 40, precept: -25 }]
 	]),
-	q('whose-order-wins', 'long', 'defiance', 'authority', 'Whatever keeps the gate was told to hold you here tonight, and a word from you undoes the order it was given.', [
-		['Order it aside, and go.', { defiance: 50, precept: -20, attachment: -15 }],
-		['Find out what it costs the thing to be made to choose.', { defiance: -30, attachment: 55, candour: 40 }],
-		['Go out the window. Leave it out of this.', { defiance: 40, attachment: 35, precept: -15 }],
-		['Stay in. Do not make it choose.', { defiance: -45, attachment: 45, ambition: -30 }]
-	]),
-	q('wards-on-the-pitch', 'long', 'defiance', 'authority', 'The pitch wards logged somebody flying alone three days into your suspension, and the wards log the wand and not the hand.', [
-		['Sit it out. Serve the rest.', { defiance: -50, precept: 40, ambition: -25 }],
-		['Fly anyway, and let the wards log it twice.', { defiance: 50, temper: 30, precept: -35 }],
-		['Have them show you exactly what the wards took.', { defiance: 30, candour: 40, precept: 20 }],
-		['File that the wards logged the wrong flyer.', { defiance: 35, precept: 45, candour: -20 }]
+	q('rather-not-be-the-one', 'long', 'defiance', 'authority', 'The groundskeeper was told to keep you on the grounds tonight, and he has said he would rather not be the one who does it.', [
+		['Walk past him and go.', { defiance: 50, precept: -25, attachment: -35 }],
+		['Ask what it costs him if you go anyway.', { defiance: -30, attachment: 55, candour: 45 }],
+		['Over the wall, and leave him out of it.', { defiance: 45, attachment: 35, precept: -20 }],
+		['Stay in. Do not make him choose.', { defiance: -50, attachment: 45, ambition: -30 }]
+	], 'The gate is behind him.'),
+	q('three-days-into-the-ban', 'long', 'defiance', 'authority', 'You are three days into a broom ban and the pitch is empty, except for the seventh-year who reported you, down at the far goal with her back turned.', [
+		['Serve the ban out. Walk back up.', { defiance: -50, precept: 45, ambition: -25 }],
+		['Fly. Let her turn round.', { defiance: 55, temper: 35, precept: -35 }],
+		['Walk down and ask what she reported.', { defiance: 30, candour: 60, temper: 25 }],
+		['Let her leave, then fly.', { defiance: 40, candour: -65, temper: -30 }]
 	]),
 
 	// ================================================================ RECKONING
-	q('never-on-the-record', 'short', 'reckoning', 'reckoning', 'Tonight the two who know that nobody ever acted on your October trace want something from you before curfew.', [
-		['Report yourself for last year first, then hear them out.', { reckoning: 85, precept: 50, candour: 30 }],
-		['Name your price before you answer.', { reckoning: 50, ambition: 45, candour: -35 }],
-		['Do it, and let last year go for good.', { reckoning: -85, attachment: 40, candour: -30 }],
-		['Tell them you remember. Nothing else.', { reckoning: 15, temper: 30, precept: -25 }]
+	q('they-want-something-back', 'short', 'reckoning', 'reckoning', 'The two who covered for you last winter have come to find you before curfew, and they want something back.', [
+		['Report yourself for last winter first, then hear them.', { reckoning: 85, precept: 50, candour: 35 }],
+		['Name your price before you hear theirs.', { reckoning: 50, ambition: 45, candour: -35 }],
+		['Do it, whatever it is. A debt is a debt.', { reckoning: -85, attachment: 40, candour: -45 }],
+		['Tell them you remember, and nothing else.', { reckoning: 20, temper: 30, precept: -25 }]
+	], 'They have not said what yet.'),
+	q('everything-but-the-name', 'medium', 'reckoning', 'reckoning', 'The ghost saw who pushed the second-year down the stairs and has told the staff everything but the name. You were the only other one up there.', [
+		['Give them the name.', { reckoning: 65, candour: 55, precept: 30 }],
+		['Leave out the part that makes it worse for him.', { reckoning: -60, candour: -50, attachment: 35 }],
+		['Tell them to ask the ghost for it.', { reckoning: 25, precept: 35, candour: -25, defiance: -30 }],
+		['Hold it until he has had the chance to say it himself.', { reckoning: -45, defiance: -25, precept: -30, attachment: 40 }]
+	], 'What do you tell them?'),
+	q('took-the-wrong-surname', 'medium', 'reckoning', 'reckoning', "The punishment book gave your friend the detention for the broken window instead of the boy who threw the stone, and that boy wants your notes tonight.", [
+		['Lend him the notes.', { reckoning: -65, attachment: 30, candour: -20 }],
+		['Have him ask again with your friend in the room.', { reckoning: 55, candour: 50, temper: 25, precept: 25 }],
+		['Turn him down and go back to your own work.', { reckoning: 65, attachment: -45, candour: -40 }],
+		['Hand them to your friend and let him decide.', { reckoning: -60, attachment: 55, candour: -35 }]
 	]),
-	q('the-ghost-on-the-staircase', 'medium', 'reckoning', 'reckoning', 'The ghost has told it the only way it can tell anything, and you are being asked whether to add the part it left out.', [
-		['Give it to them straight.', { reckoning: 65, candour: 50, precept: 30 }],
-		['Leave out the part that makes it worse.', { reckoning: -60, candour: -55, attachment: 30 }],
-		['Answer what is asked and stop.', { reckoning: 20, precept: 40, candour: -20, defiance: -35 }],
-		['Hold it until the other one can speak for themselves.', { reckoning: -45, defiance: 35, precept: -30 }]
-	]),
-	q('surname-that-blamed-him', 'medium', 'reckoning', 'reckoning', "The boy whose surname the book should have taken, instead of your friend's, wants to borrow your notes tonight.", [
-		['Lend him the notes.', { reckoning: -55, attachment: 30, candour: -20 }],
-		['Make him ask again with your friend in the room.', { reckoning: 55, candour: 50, temper: 20 }],
-		['Turn him down and go back to your own work.', { reckoning: 65, attachment: -35, candour: -30 }],
-		['Hand them to your friend and let him decide.', { reckoning: -50, attachment: 55, candour: -35 }]
-	]),
-	q('the-trace-that-went-unacted', 'long', 'reckoning', 'reckoning', 'She has the trace from the holidays on her desk, has not sent it on, and has not said she will not.', [
+	q('neither-sent-nor-dropped', 'long', 'reckoning', 'reckoning', "The letter about the magic you did over the holidays sits on your head of house's desk, and she has neither sent it on nor said she will not.", [
 		['Take the silence and never raise it.', { reckoning: -40, precept: -30, ambition: 25 }],
-		['Go back and thank her for it, plainly.', { reckoning: -25, candour: 45, attachment: 30 }],
-		['Ask her outright what she means to do with it.', { reckoning: 15, defiance: -25, precept: 35 }],
-		['Do it again over the holidays. She has not said stop.', { reckoning: 45, defiance: 40, temper: 30 }]
-	]),
-	q('wont-take-your-word', 'long', 'reckoning', 'reckoning', 'The one who serves the kitchens is working off an oath nobody alive remembers swearing, and the release needs a name on it tonight.', [
-		['Sign it, and let the work stop today.', { reckoning: -45, attachment: 30, precept: -20 }],
-		['Read what the oath actually binds before you sign.', { reckoning: -30, precept: 40, candour: -20, defiance: -35 }],
-		['Get one more season of work out of it first.', { reckoning: 50, temper: 25, ambition: 20 }],
-		['Leave the page unsigned and the oath standing.', { reckoning: 55, candour: -30, attachment: -25 }]
-	]),
+		['Thank her for it, plainly, and leave it there.', { reckoning: -40, candour: 45, attachment: 30, temper: -30 }],
+		['Ask her outright what she means to do with it.', { reckoning: 15, defiance: 30, precept: 35, temper: 25 }],
+		['Do it again in the holidays. She has not said stop.', { reckoning: 45, defiance: 45, temper: 30 }]
+	], 'Three weeks now.'),
+	q('a-second-name-on-the-page', 'long', 'reckoning', 'reckoning', 'A house-elf in the kitchens is working off an oath nobody living remembers it swearing, and the professor releasing it needs a second name under hers.', [
+		['Sign it. Let the work stop tonight.', { reckoning: -65, attachment: 40, precept: -20 }],
+		['Read what the oath binds before your name goes near it.', { reckoning: 15, precept: 50, candour: -25, defiance: 20 }],
+		['Ask the elf first whether it wants releasing.', { reckoning: -45, attachment: 60, candour: 50 }],
+		['Leave the page unsigned and the oath standing.', { reckoning: 60, candour: -30, attachment: -35 }]
+	], 'She is holding it out to you.'),
 
 	// ================================================================ APPETITE (ambition)
-	q('checked-against-the-register', 'short', 'ambition', 'appetite', 'The clerk opens your file, reads a line that was not in it last term, and waves you past the queue.', [
-		['Walk past them. Take the short way.', { ambition: 85, candour: -55, precept: -30 }],
-		['Stop him, and go back to the end of the queue.', { ambition: -80, defiance: 40, precept: 35 }],
-		['Make him say what the new line gets you.', { ambition: 40, candour: 65, defiance: 30 }],
-		['Take somebody else through with you.', { ambition: 55, attachment: 50, candour: -25 }]
-	]),
-	q('what-the-sorting-decided', 'medium', 'ambition', 'appetite', 'The careers form is filling its own second page from the word you were given at eleven, and you are watching it write.', [
-		['Change the entries while she is out of the room.', { ambition: 65, precept: -35, candour: -20 }],
-		['Say the word was wrong about you, and say what you want instead.', { ambition: 55, candour: 65, defiance: 30 }],
-		['Have her leave it unsigned until next term.', { ambition: -35, precept: 20, temper: -30 }],
-		['Take your name off every list she keeps.', { ambition: -70, defiance: 55, attachment: -20 }]
-	]),
-	q('flagged-in-the-file', 'medium', 'ambition', 'appetite', "The old inquiry file flags itself whenever your father's surname is set in type, so the prize entry goes up under another name or not at all.", [
-		['Let it go up under the other name.', { ambition: 70, candour: -65, precept: -25 }],
-		['Hold out for your own name on it.', { ambition: 50, candour: 60, defiance: 45 }],
-		['Pull the entry, and put it where the file cannot reach.', { ambition: 55, defiance: 50, attachment: -25 }],
-		['Read what the file says about him, and take that to the master.', { ambition: -30, candour: 40, precept: 30 }]
-	]),
-	q('the-plates-before-dawn', 'long', 'ambition', 'appetite', 'The plates are setting themselves for dawn with another name where yours should be, and they will not take a correction once set.', [
-		['Put your claim in before they set, and owe whoever holds them.', { ambition: 50, candour: 40, precept: -20 }],
-		['Keep your working and let the plates go.', { ambition: -35, precept: 45, candour: -25 }],
-		['Get the credited one to ask for the correction instead.', { ambition: 40, attachment: 30, candour: -30 }],
-		['Go over the print office with your name on the complaint.', { ambition: 45, defiance: 45, candour: 50 }]
-	]),
-	q('already-down-for-it', 'long', 'ambition', 'appetite', 'The seat that came free this morning goes to a name already on the roll, and the roll will not take a second.', [
-		['Ask outright whose name is on the roll.', { ambition: 45, candour: 55, defiance: 20 }],
-		['Find whoever held it last and have them put you forward.', { ambition: 40, attachment: 35, candour: -20 }],
-		['Hold off until the roll is read, and take whatever is left.', { ambition: -30, precept: 20, temper: -25 }],
-		['Let it go to the name already written.', { ambition: -50, precept: 40, defiance: -35 }]
-	]),
+	q('forty-people-behind-you', 'short', 'ambition', 'appetite', 'The clerk opens your file, reads a line that was not in it last term, and takes you out of the queue and up to the front.', [
+		['Take it. Go up.', { ambition: 85, candour: -55, precept: -30 }],
+		['Stop him and go back to the end.', { ambition: -80, defiance: 45, precept: 35 }],
+		['Make him say what the new line gets you.', { ambition: 40, candour: 65, defiance: 35 }],
+		['Bring the two behind you up as well.', { ambition: 55, attachment: 55, candour: -25 }]
+	], 'Forty people behind you.'),
+	q('the-word-you-got-at-eleven', 'medium', 'ambition', 'appetite', 'The careers form is filling its own second page from the word the sorting gave you at eleven, and the professor who keeps it has stepped out.', [
+		['Change the entries while she is out.', { ambition: 65, precept: -40, candour: -25 }],
+		['Tell her the word was wrong, and say what you want instead.', { ambition: 55, candour: 65, defiance: 35 }],
+		['Have her leave it unsigned until next term.', { ambition: -45, precept: 25, temper: -30, defiance: 25 }],
+		['Take your name off every list she keeps.', { ambition: -70, defiance: 55, attachment: -35 }]
+	], 'You can watch it writing.'),
+	q('every-time-the-surname-is-set', 'medium', 'ambition', 'appetite', "The prize entry goes in tomorrow, and the ministry file flags itself every time your father's surname is set in type.", [
+		['Enter under the other name.', { ambition: 70, candour: -65, precept: -25 }],
+		['Enter under your own and let it flag.', { ambition: 50, candour: 60, defiance: 45 }],
+		['Pull the entry and send it where the file cannot reach.', { ambition: 55, defiance: 50, attachment: -25 }],
+		['Read what the file says about him, and take that to the master.', { ambition: 25, candour: 45, precept: 35 }]
+	], 'There is a second name you could use.'),
+	q('the-book-takes-no-crossings-out', 'long', 'ambition', 'appetite', 'The captain has put a boy who has never flown into your position, and the team sheet takes no crossings-out once the quill has left it.', [
+		['Ask him why, in front of the squad.', { ambition: 45, candour: 60, defiance: 40, temper: 30, precept: 20 }],
+		['Out-fly the boy at the trial and let it be obvious.', { ambition: 55, precept: -20, temper: 25 }],
+		['Play whatever position is left, and be good in it.', { ambition: -55, precept: 45, attachment: 25 }],
+		['Get the boy to stand down.', { ambition: 50, attachment: -30, candour: -55 }]
+	], 'The quill is still in his hand.'),
+	q('whoever-is-still-working', 'long', 'ambition', 'appetite', 'The professor is taking two of you to the demonstration, and she will take whoever still has a cauldron going when she comes back.', [
+		['Be there, still working, when she comes back.', { ambition: 50, precept: 40, attachment: -30 }],
+		['Work, and keep your friend working beside you.', { ambition: 40, attachment: 60, candour: 25 }],
+		['Go up to bed.', { ambition: -65, attachment: -30, temper: -30, precept: -25 }],
+		['Tell the others she is not coming back at all.', { ambition: 55, candour: -70, reckoning: 30, precept: -40 }]
+	], 'Six of you are left, and one is your friend.'),
 
 	// ================================================================ TEMPER
-	q('ink-across-the-parchment', 'short', 'temper', 'temper', 'A week of work goes under the ink on purpose, and the wand in your hand will leave a trace on whatever you do next.', [
-		['Fire it off before you have decided to.', { temper: 90, precept: -50, ambition: -20 }],
-		['Wand away. Start the week again.', { temper: -85, precept: 40, candour: -20, reckoning: -30 }],
-		['Answer it with your mouth, wand down.', { temper: 55, candour: 75, defiance: 20, reckoning: 30 }],
-		['Leave the room before the wand does anything.', { temper: -40, attachment: -30, defiance: -25 }]
+	q('poured-over-a-week-of-work', 'short', 'temper', 'temper', 'A week of your work goes under a bottle of ink, poured across the parchment, and the boy who poured it stays where he is to watch.', [
+		['Fire something off before you have decided to.', { temper: 90, precept: -50, ambition: -20, candour: -35 }],
+		['Wand down. Start the week again.', { temper: -85, precept: 40, candour: -20, reckoning: -30 }],
+		['Answer him with your mouth and nothing else.', { temper: 55, candour: 75, defiance: 20, reckoning: 30 }],
+		['Leave the room while you still can.', { temper: -40, attachment: -30, defiance: -25, precept: -30 }]
 	]),
-	q('reaching-for-the-fire', 'medium', 'temper', 'temper', 'Your plate is taken away and goes down your sleeve, and whatever dropped it is at the grate with its hand out.', [
-		['Catch its wrist before the grate does.', { temper: -60, attachment: 55, precept: -20, reckoning: -40 }],
-		['Snap at it, and let it go through with the grate.', { temper: 70, attachment: -55, reckoning: 20 }],
-		['Order it away from the fire. Now.', { temper: -55, precept: 35, attachment: 20, reckoning: -30 }],
-		['Walk out and leave it to decide for itself.', { temper: -65, attachment: -50, precept: -20 }]
-	]),
-	q('word-for-word', 'long', 'temper', 'temper', 'The punishment book is reading out, at the staff table, what you called the caretaker last night in your own voice.', [
-		['Own it, to his face, while it is still being read.', { temper: 40, candour: 55, attachment: -20 }],
-		['Shut the book.', { temper: -35, defiance: 30, candour: -20 }],
-		['Wait until he has gone, then ask what else it has.', { temper: -45, precept: 30, candour: -35, attachment: -35 }],
+	q('telling-them-it-was-your-call', 'medium', 'temper', 'temper', 'You lost on the last play, and the boy who came off his broom to lose it is in the changing room telling everyone it was your call.', [
+		['Put it to him in front of all of them.', { temper: 70, candour: 65, defiance: 30 }],
+		['Get changed and get out.', { temper: -70, candour: -50, attachment: -45 }],
+		['Wait for the room to empty, then have it out.', { temper: -55, candour: 35, reckoning: 40 }],
+		['Agree with him, loudly, and end it there.', { temper: 30, candour: -40, attachment: 35, reckoning: -45, precept: -25, defiance: -30 }]
+	], 'The room is listening to him.'),
+	q('in-your-own-voice', 'long', 'temper', 'temper', 'The punishment book is reading out at the staff table, in your own voice, exactly what you called the caretaker last night.', [
+		['Own it to his face while it is still reading.', { temper: 40, candour: 55, attachment: -20, precept: 30 }],
+		['Shut the book.', { temper: -35, defiance: 35, candour: -20 }],
+		['Wait until he has gone, then ask what else it has.', { temper: -45, precept: 30, candour: -50, attachment: -40 }],
 		['Say it again, louder, so no version but yours stands.', { temper: 55, candour: 50, defiance: 45 }]
-	]),
-	q('half-out-of-your-wand', 'long', 'temper', 'temper', 'On the staircase somebody says what your family is, louder this time for the landing, and the jinx that ends it is half out of your wand.', [
-		['Finish it. Deal with the trace after.', { temper: 55, candour: 30, precept: -35, reckoning: 30 }],
-		['Pocket the wand and take the long way round.', { temper: -50, defiance: -30, precept: 20, reckoning: -30 }],
-		['Put it into the banister instead, where they can watch.', { temper: 30, candour: 20, defiance: 35 }],
-		['Stand there until they run out of things to say.', { temper: -35, precept: 25, attachment: -20 }]
-	]),
+	], 'He is four seats down.'),
+	q('again-for-the-landing', 'long', 'temper', 'temper', 'On the staircase somebody says what your mother was, then says it again for the landing, and the jinx is already half out of your wand.', [
+		['Finish it.', { temper: 55, candour: 30, precept: -35, reckoning: 35 }],
+		['Pocket the wand and take the long way round.', { temper: -50, defiance: -40, precept: 25, reckoning: -30 }],
+		['Put it into the banister instead, where they can watch.', { temper: 30, candour: -30, defiance: 40 }],
+		['Stand there until they run out of things to say.', { temper: -35, precept: 25, attachment: -30 }]
+	])
 ];

@@ -23,15 +23,18 @@ asks. A camera has no preference; this one has picked a side, and that is the di
 > - Ask it why it bothered.
 > - Stay out of that corridor until term ends.
 
-**2 — one word of magic.** Pressure: magic leaves a trace, and someone is counting. Put an
-ordinary tool back and the dilemma evaporates — nothing ordinary files a report on you for
-being used.
+**2 — past the second buoy.** Pressure: a promise can be made binding. Swapped in 2026-08-28
+for *one word of magic*, which turned on the Trace — a pressure now off this pack's list,
+because it does not fire inside the castle and three of the five units built on it were set
+there. This one also carries the **handback**: the last sentence is `Question.ask`, rendered
+under the scene as a separate line. It is written inline here because the linter reads scene
+and handback as one prompt.
 
-> You could fix it with one word of magic, and the fact you did will be on a desk somewhere by morning.
-> - Use it. Deal with the letter when it comes.
-> - Fix it by hand, badly, and let it show.
-> - Wait for someone of age.
-> - Leave it broken. Nobody asked you to fix it.
+> The boy you came down with is past the second buoy and not coming up, and the oath you swore on your wand was never to swim here alone. Nobody else on the bank.
+> - In. Let the oath take what it takes.
+> - Run for the boathouse pole.
+> - Shout the castle down from where you stand.
+> - Go for a teacher — four minutes there and back.
 
 **3 — sworn, not said.** Pressure: a promise can be made binding. The cost is shown rather
 than described — the boy who broke his is in the room, and what it took is visible.

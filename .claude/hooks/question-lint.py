@@ -93,8 +93,12 @@ CONVENTIONAL_PATH = "src/lib/packs/<pack>/questions.ts"
 
 # Structural spec for one unit. Set here, not in the card — the card points.
 OPTION_COUNT = 4
-MAX_PROMPT_SENTENCES = 2
-MAX_PROMPT_WORDS = 30
+# Scene + handback, counted together. The handback is a separate argument but it
+# is part of the prompt for every rule here (see `_trailing_ask`), so the budget
+# has to cover both: 2 sentences of scene plus a short third beat, and ~4 more
+# words for it. Raised from 2/30 on 2026-08-28 with the two-part stem.
+MAX_PROMPT_SENTENCES = 3
+MAX_PROMPT_WORDS = 34
 
 # option-asymmetry thresholds. The leak signature is ONE option standing clear
 # of its three siblings, so the comparison is longest vs. SECOND-longest, not
@@ -731,8 +735,44 @@ def parse_ts_object_form(raw):
 TUPLE_ARRAY_RE = re.compile(r"\[\s*\[\s*(?:%s)" % STR_RE.pattern, re.S)
 
 
+def _trailing_ask(raw, end):
+    """The optional handback argument, which sits AFTER the options array:
+    `q(id, tier, axis, section, text, [[…]], 'Why not?')`.
+
+    Placing it there rather than between `text` and `options` is deliberate and
+    load-bearing. The prompt is found as the LAST string literal before the
+    options array (`strs[-1]`), so a sixth argument in front of the array would
+    silently become the prompt and the real stem would go unlinted — exactly the
+    "clean means clean, minus the rules I skipped" failure this file's contract
+    forbids. After the array, `strs[-1]` is untouched and the handback is an
+    additive read.
+
+    Returns `(text, index just past it)`, or `(None, end)`. The index matters as
+    much as the text: the caller advances `prev_end` past the handback, because
+    the id of the NEXT unit is read as the first string literal in the window
+    since `prev_end`. Leave the handback inside that window and it is taken for
+    the next question's id — found and fixed 2026-08-28, before it shipped.
+
+    Scans from just past the options `]` to the call's closing paren, skipping
+    string bodies so a `)` inside the handback prose cannot end the scan early.
+    """
+    i, n = end, len(raw)
+    while i < n:
+        c = raw[i]
+        if c in "'\"`":
+            m = STR_RE.match(raw, i)
+            return (_unquote(m.group(0)), m.end()) if m else (None, end)
+        if c in ")]}":
+            return None, end
+        if not c.isspace() and c != ",":
+            return None, end
+        i += 1
+    return None, end
+
+
 def parse_ts_helper_form(raw):
-    """Extract units from `helper(…, 'prompt', [['option text', {vec}], …])`.
+    """Extract units from `helper(…, 'prompt', [['option text', {vec}], …])`,
+    plus an optional trailing handback argument (`_trailing_ask`).
     Recognises the options array by shape, not by key name: an array whose first
     element is itself an array whose first element is a string literal. Type
     annotations (`Array<[string, T['v']]>`) and index expressions (`'abcd'[i]`)
@@ -802,11 +842,18 @@ def parse_ts_helper_form(raw):
                     dict(text=_unquote(tm.group(0)), line=_lineno(raw, i + j), vec=vec)
                 )
             j = tend
+        ask, after = _trailing_ask(raw, end)
         if opts:
+            stem = _unquote(prompt)
             units.append(
-                dict(qid=qid, line=_lineno(raw, ppos), prompt=_unquote(prompt), options=opts)
+                dict(
+                    qid=qid,
+                    line=_lineno(raw, ppos),
+                    prompt=f"{stem} {ask}" if ask else stem,
+                    options=opts,
+                )
             )
-        i, prev_end = end, end
+        i, prev_end = after, after
     return units
 
 

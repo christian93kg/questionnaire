@@ -37,8 +37,9 @@
 
 	const current = $derived(questions[index]);
 	// Same rule the design applies to the stem: long stems drop a size to keep the question
-	// legible without pushing the options off-screen.
-	const long = $derived(current.text.length > 90);
+	// legible without pushing the options off-screen. Measured over scene AND handback, since
+	// both render above the options and both take vertical space.
+	const long = $derived(current.text.length + (current.ask?.length ?? 0) > 90);
 
 	const ROMAN: Array<[number, string]> = [
 		[10, 'X'],
@@ -158,6 +159,9 @@
 	<div class="qbody">
 		<div class="stem-wrap">
 			<p class="stem" class:long>{current.text}</p>
+			{#if current.ask}
+				<p class="ask">{current.ask}</p>
+			{/if}
 		</div>
 
 		<div class="opts">
@@ -273,6 +277,17 @@
 	.stem.long {
 		font-size: var(--type-lg);
 		line-height: 1.28;
+	}
+	/* The handback. Deliberately quieter than the stem and set in the body face: it is the
+	   last beat of the scene, not a second question competing with the first. */
+	.ask {
+		font-family: var(--font-mono);
+		font-weight: 400;
+		color: var(--text-secondary);
+		margin: var(--space-2) 0 0;
+		font-size: var(--type-base);
+		line-height: 1.4;
+		text-wrap: pretty;
 	}
 	.opts {
 		display: grid;

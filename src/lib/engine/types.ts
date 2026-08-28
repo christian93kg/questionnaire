@@ -51,7 +51,16 @@ export interface QuestionOption {
 
 export interface Question {
 	id: string;
+	/** The scene. Present tense, an animate participant, the inciting event on the page. */
 	text: string;
+	/**
+	 * The handback — a short second line under the scene ("Why not?", "He has not turned round
+	 * yet."). Optional and deliberately absent on about a third of a bank: a handback that is
+	 * uniform across the set stops carrying information and becomes the repeated template the
+	 * kill list bans. Linted as part of the prompt, not separately.
+	 * See `_craft/quiz-question.card.md` → `## Legibility`.
+	 */
+	ask?: string;
 	preamble?: string;
 	options: QuestionOption[];
 	/** Smallest tier that includes this question. Tiers are nested supersets. */
